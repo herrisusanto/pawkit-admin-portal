@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DashboardOutlined,
   GroupOutlined,
@@ -13,9 +13,16 @@ import {
   Flex,
   Avatar,
   Typography,
+  Button,
+  Layout,
+  Menu,
+  Table,
+  Tag,
+  theme,
 } from "antd";
-import { Layout, Menu, Table, Tag, theme } from "antd";
 import PawkitLogo from "../../assets/pawkit_logo.png";
+import { fetchAuthSession, signOut } from "aws-amplify/auth";
+import { useNavigate } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { RangePicker } = DatePicker;
@@ -140,7 +147,7 @@ function getItem(
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
-  children?: MenuItem[]
+  children?: MenuItem[],
 ): MenuItem {
   return {
     key,
@@ -160,6 +167,29 @@ const Dashboard: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      const authSession = (
+        await fetchAuthSession()
+      ).tokens?.accessToken.toString();
+      if (!authSession) {
+        navigate("/login");
+      }
+      console.log((await fetchAuthSession()).tokens?.accessToken.toString());
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -189,15 +219,17 @@ const Dashboard: React.FC = () => {
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
           <Flex
-            gap='middle'
+            gap="middle"
             justify="flex-end"
             align="center"
-            style={{ height: "100%", padding: 24}}
+            style={{ height: "100%", padding: 24 }}
           >
             <Avatar icon={<UserOutlined />} />
             <Typography>Jonathan Joestar</Typography>
 
-            <Typography.Text type="secondary">Admin</Typography.Text>
+            <Button type="text" danger onClick={handleSignOut}>
+              Sign Out
+            </Button>
           </Flex>
         </Header>
         <Content style={{ margin: "0 16px" }}>

@@ -5,7 +5,6 @@ input AMPLIFY {
 } # FOR TESTING ONLY!
 type Booking
   @model
-  @searchable
   @auth(
     rules: [
       { allow: owner, ownerField: "owners", operations: [create, read, update] }
@@ -127,7 +126,6 @@ type DisclaimerAcceptance
 }
 
 type Order
-  @searchable
   @model
   @auth(
     rules: [
@@ -155,7 +153,6 @@ type Order
 
 type Payment
   @model
-  @searchable
   @auth(
     rules: [
       { allow: owner, ownerField: "customerId", operations: [create, read] }
@@ -208,8 +205,7 @@ type Pet
   customer: Customer! @belongsTo(fields: ["customerId"])
   gender: Gender!
   petType: PetType!
-  breedName: String!
-  breed: Breed @hasOne(fields: ["breedName"])
+  breedName: String @index(name: "byBreed", queryField: "petsByBreed")
   imageUrl: AWSURL
   birthdate: AWSDate
   weightValue: Float
@@ -223,10 +219,10 @@ type Pet
   hasMedicalCondition: Boolean
   additionalCareInstructions: String
   bookings: [Booking!] @manyToMany(relationName: "PetBookings")
+  isDeleted: Boolean! @default(value: "false")
 }
 
 type Service
-  @searchable
   @model
   @auth(
     rules: [
@@ -306,7 +302,6 @@ type ServiceProvider
 
 type TimeSlot
   @model
-  @searchable
   @auth(
     rules: [
       { allow: owner, ownerField: "serviceProviderId" }

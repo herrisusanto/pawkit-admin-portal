@@ -1,5 +1,17 @@
 node_modules
 
+
+# Ignore unnecessary files in the backend
+amplify/backend/tags.json
+amplify/backend/api/AdminQueries/*
+amplify/backend/api/pawkit/*
+!amplify/backend/api/pawkit/schema.graphql
+amplify/backend/api/payments/*
+amplify/backend/auth/*
+amplify/backend/function/*
+amplify/backend/storage/*
+amplify/backend/types/*
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
@@ -21,14 +33,3 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
-
-# Ignore unnecessary files in the backend
-amplify/backend/tags.json
-amplify/backend/api/AdminQueries/*
-amplify/backend/api/pawkit/*
-!amplify/backend/api/pawkit/schema.graphql
-amplify/backend/api/payments/*
-amplify/backend/auth/*
-amplify/backend/function/*
-amplify/backend/storage/*
-amplify/backend/types/*

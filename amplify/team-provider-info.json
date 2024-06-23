@@ -57,21 +57,18 @@
           "s3Key": "amplify-builds/pawkitVerifyAuthChallengeResponse-594a3732754273523769-build.zip"
         }
       },
-      "api": {
-        "pawkit": {}
-      },
       "auth": {
         "pawkit": {},
         "userPoolGroups": {}
-      },
-      "storage": {
-        "content": {}
       },
       "hosting": {
         "amplifyhosting": {
           "appId": "dd5j6wo9u36ak",
           "type": "cicd"
         }
+      },
+      "storage": {
+        "content": {}
       }
     }
   }

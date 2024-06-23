@@ -12,8 +12,8 @@ const router = createBrowserRouter(
     <Route path="/">
       <Route index element={<Dashboard />} />
       <Route path="login" element={<SignIn />} />
-    </Route>
-  )
+    </Route>,
+  ),
 );
 
 function App() {
