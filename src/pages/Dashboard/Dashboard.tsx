@@ -23,37 +23,35 @@ import {
 import PawkitLogo from "../../assets/pawkit_logo.png";
 import { fetchAuthSession, signOut } from "aws-amplify/auth";
 import { useNavigate } from "react-router-dom";
+import { fetchBookings } from "../../api/booking";
+import { BookingStatus, ListBookingsQuery } from "../../API";
+import { format } from "date-fns";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { RangePicker } = DatePicker;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-interface DataType {
-  createdAt: string;
-  bookingId: string;
-  petcustomerUsername: string;
-  serviceName: string;
-  petCount: number;
-  status: "In Progress" | "Confirmed" | "Cancelled";
-  total: number;
-}
-
-const columns: TableProps<DataType>["columns"] = [
+const columns: TableProps<ListBookingsQuery>["columns"] = [
   {
     title: "Booking Created",
     dataIndex: "createdAt",
     key: "createdAt",
+    render: (createdAt) => {
+      return createdAt
+        ? format(new Date(createdAt), "yyyy-MM-dd hh:mm aa")
+        : "";
+    },
   },
   {
     title: "Booking ID",
-    dataIndex: "bookingId",
-    key: "bookingId",
+    dataIndex: "id",
+    key: "id",
   },
   {
     title: "Owner Name",
-    dataIndex: "petcustomerUsername",
-    key: "petcustomerUsername",
+    dataIndex: "customerUsername",
+    key: "customerUsername",
   },
   {
     title: "Service",
@@ -61,28 +59,26 @@ const columns: TableProps<DataType>["columns"] = [
     key: "serviceName",
   },
   {
-    title: "Pet(s)",
-    dataIndex: "petCount",
-    key: "petCount",
-  },
-  {
     title: "Booking Status",
     key: "status",
     dataIndex: "status",
     render: (status) => {
-      if (status === "In Progress") {
+      if (status === BookingStatus.PENDING) {
         return (
           <Tag color="warning" key={status}>
             {status.toUpperCase()}
           </Tag>
         );
-      } else if (status === "Cancelled") {
+      } else if (status === BookingStatus.CANCELLED) {
         return (
           <Tag color="error" key={status}>
             {status.toUpperCase()}
           </Tag>
         );
-      } else if (status === "Confirmed") {
+      } else if (
+        status === BookingStatus.CONFIRMED ||
+        status === BookingStatus.COMPLETED
+      ) {
         return (
           <Tag color="success" key={status}>
             {status.toUpperCase()}
@@ -93,53 +89,14 @@ const columns: TableProps<DataType>["columns"] = [
   },
   {
     title: "Total",
-    dataIndex: "total",
-    key: "total",
+    dataIndex: "amount",
+    key: "amount",
     render: (value) => `S$${value}`,
   },
   {
     title: "Action",
     key: "action",
     render: () => <MoreOutlined />,
-  },
-];
-
-const data: DataType[] = [
-  {
-    bookingId: "PET-11111",
-    createdAt: "02/05/2024 10:38:13",
-    petcustomerUsername: "Jane Doe",
-    serviceName: "Grooming",
-    petCount: 1,
-    status: "In Progress",
-    total: 150,
-  },
-  {
-    bookingId: "PET-11112",
-    createdAt: "02/05/2024 10:38:13",
-    petcustomerUsername: "Jane Doe",
-    serviceName: "Grooming",
-    petCount: 1,
-    status: "Cancelled",
-    total: 200,
-  },
-  {
-    bookingId: "PET-11113",
-    createdAt: "02/05/2024 10:38:13",
-    petcustomerUsername: "Jane Doe",
-    serviceName: "Grooming",
-    petCount: 1,
-    status: "Confirmed",
-    total: 15,
-  },
-  {
-    bookingId: "PET-11114",
-    createdAt: "02/05/2024 10:38:13",
-    petcustomerUsername: "Jane Doe",
-    serviceName: "Grooming",
-    petCount: 1,
-    status: "In Progress",
-    total: 23,
   },
 ];
 
@@ -167,6 +124,7 @@ const Dashboard: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const [bookingList, setBookingList] = useState<any[]>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -179,6 +137,20 @@ const Dashboard: React.FC = () => {
       }
       console.log((await fetchAuthSession()).tokens?.accessToken.toString());
     })();
+
+    const getBookings = async () => {
+      try {
+        const result = await fetchBookings();
+        console.log(result);
+        if (result) {
+          setBookingList(result);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getBookings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -276,7 +248,7 @@ const Dashboard: React.FC = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            <Table columns={columns} dataSource={data} />
+            <Table columns={columns} dataSource={bookingList} />
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
