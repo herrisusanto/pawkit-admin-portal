@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   DashboardOutlined,
+  EditOutlined,
   GroupOutlined,
-  MoreOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import {
@@ -19,11 +19,14 @@ import {
   Table,
   Tag,
   theme,
+  Modal,
+  Col,
+  Row,
 } from "antd";
 import PawkitLogo from "../../assets/pawkit_logo.png";
 import { fetchAuthSession, signOut } from "aws-amplify/auth";
 import { useNavigate } from "react-router-dom";
-import { fetchBookings } from "../../api/booking";
+import { fetchBookings, updateBookingStatus } from "../../api/booking";
 import { BookingStatus, ListBookingsQuery } from "../../API";
 import { format } from "date-fns";
 
@@ -32,79 +35,11 @@ const { RangePicker } = DatePicker;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-const columns: TableProps<ListBookingsQuery>["columns"] = [
-  {
-    title: "Booking Created",
-    dataIndex: "createdAt",
-    key: "createdAt",
-    render: (createdAt) => {
-      return createdAt
-        ? format(new Date(createdAt), "yyyy-MM-dd hh:mm aa")
-        : "";
-    },
-  },
-  {
-    title: "Booking ID",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
-    title: "Owner Name",
-    dataIndex: "customerUsername",
-    key: "customerUsername",
-  },
-  {
-    title: "Service",
-    dataIndex: "serviceName",
-    key: "serviceName",
-  },
-  {
-    title: "Booking Status",
-    key: "status",
-    dataIndex: "status",
-    render: (status) => {
-      if (status === BookingStatus.PENDING) {
-        return (
-          <Tag color="warning" key={status}>
-            {status.toUpperCase()}
-          </Tag>
-        );
-      } else if (status === BookingStatus.CANCELLED) {
-        return (
-          <Tag color="error" key={status}>
-            {status.toUpperCase()}
-          </Tag>
-        );
-      } else if (
-        status === BookingStatus.CONFIRMED ||
-        status === BookingStatus.COMPLETED
-      ) {
-        return (
-          <Tag color="success" key={status}>
-            {status.toUpperCase()}
-          </Tag>
-        );
-      }
-    },
-  },
-  {
-    title: "Total",
-    dataIndex: "amount",
-    key: "amount",
-    render: (value) => `S$${value}`,
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: () => <MoreOutlined />,
-  },
-];
-
 function getItem(
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
-  children?: MenuItem[],
+  children?: MenuItem[]
 ): MenuItem {
   return {
     key,
@@ -125,7 +60,108 @@ const Dashboard: React.FC = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const [bookingList, setBookingList] = useState<any[]>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openedRecord, setOpenedRecord] = useState<any>({});
+  const [bookingStatus, setBookingStatus] = useState<BookingStatus | null>(
+    null
+  );
   const navigate = useNavigate();
+
+  const columns: TableProps<ListBookingsQuery>["columns"] = useMemo(
+    () => [
+      {
+        title: "Booking Created",
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (createdAt) => {
+          return createdAt
+            ? format(new Date(createdAt), "yyyy-MM-dd hh:mm aa")
+            : "";
+        },
+      },
+      {
+        title: "Booking ID",
+        dataIndex: "id",
+        key: "id",
+      },
+      {
+        title: "Owner Name",
+        dataIndex: "customerUsername",
+        key: "customerUsername",
+      },
+      {
+        title: "Service",
+        dataIndex: "serviceName",
+        key: "serviceName",
+      },
+      {
+        title: "Booking Status",
+        key: "status",
+        dataIndex: "status",
+        render: (status) => {
+          if (status === BookingStatus.PENDING) {
+            return (
+              <Tag color="warning" key={status}>
+                {status.toUpperCase()}
+              </Tag>
+            );
+          } else if (status === BookingStatus.CANCELLED) {
+            return (
+              <Tag color="error" key={status}>
+                {status.toUpperCase()}
+              </Tag>
+            );
+          } else if (
+            status === BookingStatus.CONFIRMED ||
+            status === BookingStatus.COMPLETED
+          ) {
+            return (
+              <Tag color="success" key={status}>
+                {status.toUpperCase()}
+              </Tag>
+            );
+          }
+        },
+      },
+      {
+        title: "Total",
+        dataIndex: "amount",
+        key: "amount",
+        render: (value) => `S$${value}`,
+      },
+      {
+        title: "Action",
+        key: "action",
+        render: (_, record) => {
+          return (
+            <Flex>
+              <Button
+                onClick={() => handleShowModal(record)}
+                type="default"
+                shape="circle"
+                icon={<EditOutlined />}
+                size="small"
+              />
+            </Flex>
+          );
+        },
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bookingList, openedRecord]
+  );
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setOpenedRecord({});
+    setBookingStatus(null);
+  };
+
+  const handleShowModal = (record: any) => {
+    setIsModalOpen(true);
+    setOpenedRecord(record);
+    setBookingStatus(record.status);
+  };
 
   useEffect(() => {
     (async () => {
@@ -135,13 +171,11 @@ const Dashboard: React.FC = () => {
       if (!authSession) {
         navigate("/login");
       }
-      console.log((await fetchAuthSession()).tokens?.accessToken.toString());
     })();
 
     const getBookings = async () => {
       try {
         const result = await fetchBookings();
-        console.log(result);
         if (result) {
           setBookingList(result);
         }
@@ -154,6 +188,24 @@ const Dashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleUpdateBooking = async (id: string) => {
+    try {
+      if (bookingStatus) {
+        const result = await updateBookingStatus(id, bookingStatus, false);
+        if (result) {
+          setIsModalOpen(false);
+          setOpenedRecord({});
+          setBookingStatus(null);
+        }
+      }
+      // if (result) {
+      //   setBookingList(result);
+      // }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -161,6 +213,10 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleChangeStatus = (value: BookingStatus) => {
+    setBookingStatus(value);
   };
 
   return (
@@ -197,7 +253,7 @@ const Dashboard: React.FC = () => {
             style={{ height: "100%", padding: 24 }}
           >
             <Avatar icon={<UserOutlined />} />
-            <Typography>Jonathan Joestar</Typography>
+            <Typography>Admin</Typography>
 
             <Button type="text" danger onClick={handleSignOut}>
               Sign Out
@@ -250,6 +306,91 @@ const Dashboard: React.FC = () => {
           >
             <Table columns={columns} dataSource={bookingList} />
           </div>
+          <Modal
+            title="Booking Detail"
+            open={isModalOpen}
+            // footer={null}
+            onOk={() => handleUpdateBooking(openedRecord?.id)}
+            okText="Update Booking Status"
+            onCancel={handleCancel}
+          >
+            <Typography.Title level={3}>
+              ID: {openedRecord?.id}
+            </Typography.Title>
+            <Flex vertical gap={24} style={{ marginBottom: 30 }}>
+              <Row>
+                <Col span={12}>
+                  <Typography.Text type="secondary">
+                    Date Created
+                  </Typography.Text>
+                  <br />
+                  <Typography.Text>
+                    {openedRecord?.startDateTime
+                      ? format(
+                          new Date(openedRecord?.startDateTime),
+                          "yyyy/MM/dd hh:mm aa"
+                        )
+                      : "-"}
+                  </Typography.Text>
+                </Col>
+                <Col span={12}>
+                  <Typography.Text type="secondary">Booking ID</Typography.Text>
+                  <br />
+                  <Typography.Text>
+                    {openedRecord?.id ? openedRecord?.id : "-"}
+                  </Typography.Text>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <Typography.Text type="secondary">Owner Name</Typography.Text>
+                  <br />
+                  <Typography.Text>
+                    {openedRecord?.customerUsername
+                      ? openedRecord?.customerUsername
+                      : "-"}
+                  </Typography.Text>
+                </Col>
+                <Col span={12}>
+                  <Typography.Text type="secondary">Status</Typography.Text>
+                  <br />
+                  {/* <Typography.Text>
+                    {openedRecord?.status ? openedRecord?.status : "-"}
+                  </Typography.Text> */}
+
+                  <Select
+                    // defaultValue="all"
+                    value={bookingStatus}
+                    placeholder="Status"
+                    style={{ width: 180 }}
+                    onChange={handleChangeStatus}
+                    options={[
+                      {
+                        value: BookingStatus.COMPLETED,
+                        label: BookingStatus.COMPLETED,
+                      },
+                      {
+                        value: BookingStatus.CONFIRMED,
+                        label: BookingStatus.CONFIRMED,
+                      },
+                      {
+                        value: BookingStatus.PENDING,
+                        label: BookingStatus.PENDING,
+                      },
+                      {
+                        value: BookingStatus.IN_PROGRESS,
+                        label: BookingStatus.IN_PROGRESS,
+                      },
+                      {
+                        value: BookingStatus.CANCELLED,
+                        label: BookingStatus.CANCELLED,
+                      },
+                    ]}
+                  />
+                </Col>
+              </Row>
+            </Flex>
+          </Modal>
         </Content>
         <Footer style={{ textAlign: "center" }}>
           Pawkit ©{new Date().getFullYear()} Created by Pawkit Dev

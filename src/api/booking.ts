@@ -466,6 +466,8 @@ export const fetchBookingById = async (id: string) => {
       throw new BadRequestError("Booking id is required");
     }
 
+    console.log("meong2");
+
     const bookingResult: any = await graphqlClient.graphql({
       query: customBookingById,
       variables: {
@@ -501,7 +503,10 @@ export const updateBookingStatus = async (
       throw new BadRequestError("Booking id is required");
     }
 
+    console.log("meong");
+
     const { booking } = await fetchBookingById(id);
+
     if (!booking) {
       logger.error(`Booking with id=${id} not found`);
       throw new NotFoundError("Booking not found");
