@@ -5,13 +5,13 @@ import {
   DeleteServiceProviderInput,
   ListServiceProvidersQueryVariables,
   UpdateServiceProviderInput,
-} from "../API";
+} from "./graphql/API";
 import {
   createServiceProvider,
   deleteServiceProvider,
   updateServiceProvider,
-} from "../graphql/mutations";
-import { getServiceProvider, listServiceProviders } from "../graphql/queries";
+} from "./graphql/mutations";
+import { getServiceProvider, listServiceProviders } from "./graphql/queries";
 import { fetchServicesByServiceProvider, removeService } from "./service";
 import { BadRequestError, CustomError, InternalServerError } from "./errors";
 
@@ -36,7 +36,7 @@ export const addServiceProvider = async (input: CreateServiceProviderInput) => {
 
 // Read
 export const fetchServiceProviders = async (
-  variables: ListServiceProvidersQueryVariables,
+  variables: ListServiceProvidersQueryVariables
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -75,7 +75,7 @@ export const fetchServiceProvider = async (name: string) => {
 
 // Update
 export const modifyServiceProvider = async (
-  input: UpdateServiceProviderInput,
+  input: UpdateServiceProviderInput
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -94,7 +94,7 @@ export const modifyServiceProvider = async (
 
 // Delete
 export const removeServiceProvider = async (
-  input: DeleteServiceProviderInput,
+  input: DeleteServiceProviderInput
 ) => {
   try {
     const services = await fetchServicesByServiceProvider(input.name);
@@ -103,7 +103,7 @@ export const removeServiceProvider = async (
         service.name,
         service.serviceProviderName,
         service.serviceCategory,
-        service.petType,
+        service.petType
       );
     });
 

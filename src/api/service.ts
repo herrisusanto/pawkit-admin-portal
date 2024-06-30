@@ -1,29 +1,28 @@
 import { graphqlClient } from "./core";
 import {
-  listServices,
   servicesByServiceProvider,
   servicesByCategory,
   servicesByPetType,
   getService,
   serviceById,
-  searchServices,
-} from "../graphql/queries";
+  getQuestion,
+} from "./graphql/queries";
 import {
   BookingStatus,
+  CreateQuestionInput,
   CreateServiceInput,
   ListServicesQueryVariables,
   PetType,
-  SearchableServiceSortableFields,
-  SearchableSortDirection,
   ServiceCategory,
   UpdateServiceInput,
-} from "../API";
+} from "./graphql/API";
 import { ConsoleLogger } from "aws-amplify/utils";
 import {
+  createQuestion,
   createService,
   deleteService,
   updateService,
-} from "../graphql/mutations";
+} from "./graphql/mutations";
 import { fetchBookingsByService, updateBookingStatus } from "./booking";
 import { fetchTimeSlotsByServiceId, removeTimeSlot } from "./time-slot";
 import {
@@ -33,6 +32,7 @@ import {
   InternalServerError,
   NotFoundError,
 } from "./errors";
+import { customListServices } from "./graphql/custom";
 
 const logger = new ConsoleLogger("api/services.ts");
 
@@ -53,51 +53,31 @@ export const addService = async (input: CreateServiceInput) => {
   }
 };
 
-// Read
-export const queryServices = async (
-  petType: PetType,
-  category: ServiceCategory,
-) => {
+export const addQuestion = async (input: CreateQuestionInput) => {
   try {
     const result = await graphqlClient.graphql({
-      query: searchServices,
+      query: createQuestion,
       variables: {
-        filter: {
-          petType: { eq: petType },
-          serviceCategory: { eq: category },
-        },
-        sort: [
-          {
-            field: SearchableServiceSortableFields.name,
-            direction: SearchableSortDirection.asc,
-          },
-          {
-            field: SearchableServiceSortableFields.basePrice,
-            direction: SearchableSortDirection.asc,
-          },
-          {
-            field: SearchableServiceSortableFields.baseDuration,
-            direction: SearchableSortDirection.asc,
-          },
-        ],
+        input,
       },
     });
-    logger.info("Called searchServices query");
-    return result.data.searchServices.items;
+    logger.info("Called createQuestion mutation");
+    return result.data.createQuestion;
   } catch (error) {
-    logger.error("Error searching services: ", error);
-    throw new InternalServerError("Error searching services");
+    logger.error("Error creating question: ", error);
+    throw new InternalServerError("Error creating question");
   }
 };
 
+// Read
 export const fetchServices = async (variables: ListServicesQueryVariables) => {
   try {
     const result = await graphqlClient.graphql({
-      query: listServices,
+      query: customListServices,
       variables,
     });
     logger.info(
-      `Called listServices query with variables: ${JSON.stringify(variables)}`,
+      `Called customListServices query with variables: ${JSON.stringify(variables)}`
     );
     return result.data.listServices.items;
   } catch (error) {
@@ -107,7 +87,7 @@ export const fetchServices = async (variables: ListServicesQueryVariables) => {
 };
 
 export const fetchServicesByServiceProvider = async (
-  serviceProviderName: string,
+  serviceProviderName: string
 ) => {
   try {
     if (!serviceProviderName) {
@@ -126,7 +106,7 @@ export const fetchServicesByServiceProvider = async (
   } catch (error) {
     logger.error(
       `Error fetching services provided by ${serviceProviderName}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching services");
@@ -134,7 +114,7 @@ export const fetchServicesByServiceProvider = async (
 };
 
 export const fetchServicesByCategory = async (
-  serviceCategory: ServiceCategory,
+  serviceCategory: ServiceCategory
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -171,7 +151,7 @@ export const fetchService = async (
   name: string,
   serviceProviderName: string,
   serviceCategory: ServiceCategory,
-  petType: PetType,
+  petType: PetType
 ) => {
   try {
     if (!name) {
@@ -198,7 +178,7 @@ export const fetchService = async (
   } catch (error) {
     logger.error(
       `Error fetching ${serviceCategory} service named ${name} provided by ${serviceProviderName} for ${petType}s: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching service");
@@ -232,6 +212,56 @@ export const fetchServiceById = async (id: string) => {
   }
 };
 
+export const fetchQuestionsByService = async (serviceId: string) => {
+  try {
+    if (!serviceId) {
+      logger.error("Service id is required");
+      throw new BadRequestError("Service id is required");
+    }
+
+    const service = await fetchServiceById(serviceId);
+    if (!service) {
+      logger.error(`Service id=${serviceId} not found`);
+      throw new NotFoundError("Service not found");
+    }
+
+    if (
+      !service.requiredQuestionIds ||
+      service.requiredQuestionIds.length === 0
+    ) {
+      logger.warn(`No required questions found for service id=${serviceId}`);
+      return [];
+    }
+
+    const questionPromises = service.requiredQuestionIds.map(async (id) => {
+      try {
+        const question = await graphqlClient.graphql({
+          query: getQuestion,
+          variables: {
+            id,
+          },
+        });
+        return question.data.getQuestion;
+      } catch (error) {
+        logger.error(
+          `Error fetching question id=${id} for service id=${serviceId}: `,
+          error
+        );
+        return null;
+      }
+    });
+
+    return await Promise.all(questionPromises);
+  } catch (error) {
+    logger.error(
+      `Error fetching questions for service id=${serviceId}: `,
+      error
+    );
+    if (error instanceof CustomError) throw error;
+    throw new InternalServerError("Error fetching questions");
+  }
+};
+
 // Update
 export const modifyService = async (input: UpdateServiceInput) => {
   try {
@@ -251,7 +281,7 @@ export const modifyService = async (input: UpdateServiceInput) => {
 
 export const addServiceRelationship = async (
   parentServiceId: string,
-  childServiceId: string,
+  childServiceId: string
 ) => {
   try {
     if (!parentServiceId || !childServiceId) {
@@ -313,7 +343,7 @@ export const addServiceRelationship = async (
 
 export const removeServiceRelationship = async (
   parentServiceId: string,
-  childServiceId: string,
+  childServiceId: string
 ) => {
   try {
     if (!parentServiceId || !childServiceId) {
@@ -349,7 +379,7 @@ export const removeServiceRelationship = async (
         serviceCategory: parent.serviceCategory,
         petType: parent.petType,
         childServiceIds: childServiceIds.filter(
-          (id: string) => id !== childServiceId,
+          (id: string) => id !== childServiceId
         ),
       });
     }
@@ -362,7 +392,7 @@ export const removeServiceRelationship = async (
         serviceCategory: child.serviceCategory,
         petType: child.petType,
         parentServiceIds: parentServiceIds.filter(
-          (id: string) => id !== parentServiceId,
+          (id: string) => id !== parentServiceId
         ),
       });
     }
@@ -378,7 +408,7 @@ export const removeServiceRelationship = async (
 
 export const addTimeSlotToService = async (
   serviceId: string,
-  timeSlotId: string,
+  timeSlotId: string
 ) => {
   try {
     if (!serviceId) {
@@ -400,7 +430,7 @@ export const addTimeSlotToService = async (
     const timeSlotIds = service.timeSlotIds || [];
     if (timeSlotIds.includes(timeSlotId)) {
       logger.warn(
-        `Time slot id=${timeSlotId} already exists in service id=${serviceId}`,
+        `Time slot id=${timeSlotId} already exists in service id=${serviceId}`
       );
       return service;
     }
@@ -422,7 +452,7 @@ export const addTimeSlotToService = async (
   } catch (error) {
     logger.error(
       `Error adding time slot id=${timeSlotId} to service id=${serviceId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error adding time slot to service");
@@ -431,7 +461,7 @@ export const addTimeSlotToService = async (
 
 export const removeTimeSlotFromService = async (
   serviceId: string,
-  timeSlotId: string,
+  timeSlotId: string
 ) => {
   try {
     if (!serviceId) {
@@ -453,7 +483,7 @@ export const removeTimeSlotFromService = async (
     const timeSlotIds = service.timeSlotIds || [];
     if (!timeSlotIds.includes(timeSlotId)) {
       logger.warn(
-        `Time slot id=${timeSlotId} does not exist in service id=${serviceId}`,
+        `Time slot id=${timeSlotId} does not exist in service id=${serviceId}`
       );
       return service;
     }
@@ -471,13 +501,13 @@ export const removeTimeSlotFromService = async (
       },
     });
     logger.info(
-      "Called updateService mutation to remove time slot from service",
+      "Called updateService mutation to remove time slot from service"
     );
     return updatedService.data.updateService;
   } catch (error) {
     logger.error(
       `Error removing time slot id=${timeSlotId} from service id=${serviceId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error removing time slot from service");
@@ -486,7 +516,7 @@ export const removeTimeSlotFromService = async (
 
 export const addBookingToService = async (
   serviceId: string,
-  bookingId: string,
+  bookingId: string
 ) => {
   try {
     if (!serviceId) {
@@ -508,7 +538,7 @@ export const addBookingToService = async (
     const bookingIds = service.bookingIds || [];
     if (bookingIds.includes(bookingId)) {
       logger.warn(
-        `Booking id=${bookingId} already exists in service id=${serviceId}`,
+        `Booking id=${bookingId} already exists in service id=${serviceId}`
       );
       return service;
     }
@@ -530,7 +560,7 @@ export const addBookingToService = async (
   } catch (error) {
     logger.error(
       `Error adding booking id=${bookingId} to service id=${serviceId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error adding booking to service");
@@ -539,7 +569,7 @@ export const addBookingToService = async (
 
 export const removeBookingFromService = async (
   serviceId: string,
-  bookingId: string,
+  bookingId: string
 ) => {
   try {
     if (!serviceId) {
@@ -561,7 +591,7 @@ export const removeBookingFromService = async (
     const bookingIds = service.bookingIds || [];
     if (!bookingIds.includes(bookingId)) {
       logger.warn(
-        `Booking id=${bookingId} does not exist in service id=${serviceId}`,
+        `Booking id=${bookingId} does not exist in service id=${serviceId}`
       );
       return service;
     }
@@ -583,10 +613,120 @@ export const removeBookingFromService = async (
   } catch (error) {
     logger.error(
       `Error removing booking id=${bookingId} from service id=${serviceId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error removing booking from service");
+  }
+};
+
+export const addQuestionToService = async (
+  questionId: string,
+  serviceId: string
+) => {
+  try {
+    if (!questionId) {
+      logger.error("Question id is required");
+      throw new BadRequestError("Question id is required");
+    }
+
+    if (!serviceId) {
+      logger.error("Service id is required");
+      throw new BadRequestError("Service id is required");
+    }
+
+    const service = await fetchServiceById(serviceId);
+    if (!service) {
+      logger.error(`Service id=${serviceId} not found`);
+      throw new NotFoundError("Service not found");
+    }
+
+    const questionIds = service.requiredQuestionIds || [];
+    if (questionIds.includes(questionId)) {
+      logger.warn(
+        `Question id=${questionId} already exists in service id=${serviceId}`
+      );
+      return service;
+    }
+
+    const updatedService = await graphqlClient.graphql({
+      query: updateService,
+      variables: {
+        input: {
+          name: service.name,
+          serviceProviderName: service.serviceProviderName,
+          serviceCategory: service.serviceCategory,
+          petType: service.petType,
+          requiredQuestionIds: [...questionIds, questionId],
+        },
+      },
+    });
+    logger.info("Called updateService mutation to add question to service");
+    return updatedService.data.updateService;
+  } catch (error) {
+    logger.error(
+      `Error adding question id=${questionId} to service id=${serviceId}: `,
+      error
+    );
+    if (error instanceof CustomError) throw error;
+    throw new InternalServerError("Error adding question to service");
+  }
+};
+
+export const removeQuestionFromService = async (
+  questionId: string,
+  serviceId: string
+) => {
+  try {
+    if (!questionId) {
+      logger.error("Question id is required");
+      throw new BadRequestError("Question id is required");
+    }
+
+    if (!serviceId) {
+      logger.error("Service id is required");
+      throw new BadRequestError("Service id is required");
+    }
+
+    const service = await fetchServiceById(serviceId);
+    if (!service) {
+      logger.error(`Service id=${serviceId} not found`);
+      throw new NotFoundError("Service not found");
+    }
+
+    const questionIds = service.requiredQuestionIds || [];
+    if (!questionIds.includes(questionId)) {
+      logger.warn(
+        `Question id=${questionId} does not exist in service id=${serviceId}`
+      );
+      return service;
+    }
+
+    const updatedService = await graphqlClient.graphql({
+      query: updateService,
+      variables: {
+        input: {
+          name: service.name,
+          serviceProviderName: service.serviceProviderName,
+          serviceCategory: service.serviceCategory,
+          petType: service.petType,
+          requiredQuestionIds: questionIds.filter(
+            (id: string) => id !== questionId
+          ),
+        },
+      },
+    });
+    logger.info(
+      "Called updateService mutation to remove question from service"
+    );
+    return updatedService.data.updateService;
+  } catch (error) {
+    logger.error(
+      `Error removing question id=${questionId} from service id=${serviceId}: `,
+      error
+    );
+    if (error instanceof CustomError) throw error;
+    throw new InternalServerError("Error removing question from service");
   }
 };
 
@@ -595,7 +735,7 @@ export const removeService = async (
   name: string,
   serviceProviderName: string,
   category: ServiceCategory,
-  petType: PetType,
+  petType: PetType
 ) => {
   try {
     if (!name) {
@@ -612,12 +752,12 @@ export const removeService = async (
       name,
       serviceProviderName,
       category,
-      petType,
+      petType
     );
 
     if (!service) {
       logger.error(
-        `Service named ${name} provided by ${serviceProviderName} for ${petType}s in ${category} not found`,
+        `Service named ${name} provided by ${serviceProviderName} for ${petType}s in ${category} not found`
       );
       throw new NotFoundError("Service not found");
     }
@@ -630,14 +770,14 @@ export const removeService = async (
         booking.status === BookingStatus.IN_PROGRESS
       ) {
         throw new ConflictError(
-          "Cannot delete service with confirmed bookings",
+          "Cannot delete service with confirmed bookings"
         );
       }
     }
     bookings
       .filter((booking) => booking.status === BookingStatus.PENDING)
       .forEach((booking) =>
-        updateBookingStatus(booking.id, BookingStatus.CANCELLED, true),
+        updateBookingStatus(booking.id, BookingStatus.CANCELLED, true)
       );
 
     // Remove time slots for the service

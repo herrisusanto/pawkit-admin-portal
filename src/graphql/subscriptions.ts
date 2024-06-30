@@ -11,6 +11,21 @@ type GeneratedSubscription<InputType, OutputType> = string & {
 export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filter: ModelSubscriptionBookingFilterInput) {
   onCreateBooking(filter: $filter) {
     id
+    orderId
+    order {
+      id
+      customerId
+      currency
+      totalAmount
+      pendingRefundAmount
+      refundedAmount
+      bookingIds
+      paymentRequestId
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
     customerUsername
     owners
     customerId
@@ -59,6 +74,7 @@ export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filt
       __typename
     }
     timeSlotId
+    petNames
     pets {
       nextToken
       __typename
@@ -68,21 +84,6 @@ export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filt
     amount
     currency
     status
-    orderId
-    order {
-      id
-      customerId
-      currency
-      totalAmount
-      pendingRefundAmount
-      refundedAmount
-      bookingIds
-      paymentRequestId
-      status
-      createdAt
-      updatedAt
-      __typename
-    }
     createdAt
     updatedAt
     serviceProviderBookingsName
@@ -98,6 +99,21 @@ export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filt
 export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filter: ModelSubscriptionBookingFilterInput) {
   onUpdateBooking(filter: $filter) {
     id
+    orderId
+    order {
+      id
+      customerId
+      currency
+      totalAmount
+      pendingRefundAmount
+      refundedAmount
+      bookingIds
+      paymentRequestId
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
     customerUsername
     owners
     customerId
@@ -146,6 +162,7 @@ export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filt
       __typename
     }
     timeSlotId
+    petNames
     pets {
       nextToken
       __typename
@@ -155,21 +172,6 @@ export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filt
     amount
     currency
     status
-    orderId
-    order {
-      id
-      customerId
-      currency
-      totalAmount
-      pendingRefundAmount
-      refundedAmount
-      bookingIds
-      paymentRequestId
-      status
-      createdAt
-      updatedAt
-      __typename
-    }
     createdAt
     updatedAt
     serviceProviderBookingsName
@@ -185,6 +187,21 @@ export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filt
 export const onDeleteBooking = /* GraphQL */ `subscription OnDeleteBooking($filter: ModelSubscriptionBookingFilterInput) {
   onDeleteBooking(filter: $filter) {
     id
+    orderId
+    order {
+      id
+      customerId
+      currency
+      totalAmount
+      pendingRefundAmount
+      refundedAmount
+      bookingIds
+      paymentRequestId
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
     customerUsername
     owners
     customerId
@@ -233,6 +250,7 @@ export const onDeleteBooking = /* GraphQL */ `subscription OnDeleteBooking($filt
       __typename
     }
     timeSlotId
+    petNames
     pets {
       nextToken
       __typename
@@ -242,21 +260,6 @@ export const onDeleteBooking = /* GraphQL */ `subscription OnDeleteBooking($filt
     amount
     currency
     status
-    orderId
-    order {
-      id
-      customerId
-      currency
-      totalAmount
-      pendingRefundAmount
-      refundedAmount
-      bookingIds
-      paymentRequestId
-      status
-      createdAt
-      updatedAt
-      __typename
-    }
     createdAt
     updatedAt
     serviceProviderBookingsName
@@ -493,6 +496,7 @@ export const onCreateDisclaimer = /* GraphQL */ `subscription OnCreateDisclaimer
       disclaimerName
       timeSlotIds
       bookingIds
+      requiredQuestionIds
       createdAt
       updatedAt
       serviceProviderId
@@ -562,6 +566,7 @@ export const onUpdateDisclaimer = /* GraphQL */ `subscription OnUpdateDisclaimer
       disclaimerName
       timeSlotIds
       bookingIds
+      requiredQuestionIds
       createdAt
       updatedAt
       serviceProviderId
@@ -631,6 +636,7 @@ export const onDeleteDisclaimer = /* GraphQL */ `subscription OnDeleteDisclaimer
       disclaimerName
       timeSlotIds
       bookingIds
+      requiredQuestionIds
       createdAt
       updatedAt
       serviceProviderId
@@ -808,36 +814,6 @@ export const onCreateOrder = /* GraphQL */ `subscription OnCreateOrder(
       __typename
     }
     paymentRequestId
-    payment {
-      paymentRequestId
-      orderId
-      customerId
-      name
-      email
-      phone
-      amount
-      currency
-      requestCreatedAt
-      requestUpdatedAt
-      status
-      purpose
-      referenceNumber
-      paymentId
-      paymentMethod
-      url
-      webhookUrl
-      redirectUrl
-      sendSMS
-      sendEmail
-      smsStatus
-      emailStatus
-      allowRepeatedPayments
-      expiryDateTime
-      errors
-      createdAt
-      updatedAt
-      __typename
-    }
     status
     createdAt
     updatedAt
@@ -874,36 +850,6 @@ export const onUpdateOrder = /* GraphQL */ `subscription OnUpdateOrder(
       __typename
     }
     paymentRequestId
-    payment {
-      paymentRequestId
-      orderId
-      customerId
-      name
-      email
-      phone
-      amount
-      currency
-      requestCreatedAt
-      requestUpdatedAt
-      status
-      purpose
-      referenceNumber
-      paymentId
-      paymentMethod
-      url
-      webhookUrl
-      redirectUrl
-      sendSMS
-      sendEmail
-      smsStatus
-      emailStatus
-      allowRepeatedPayments
-      expiryDateTime
-      errors
-      createdAt
-      updatedAt
-      __typename
-    }
     status
     createdAt
     updatedAt
@@ -940,36 +886,6 @@ export const onDeleteOrder = /* GraphQL */ `subscription OnDeleteOrder(
       __typename
     }
     paymentRequestId
-    payment {
-      paymentRequestId
-      orderId
-      customerId
-      name
-      email
-      phone
-      amount
-      currency
-      requestCreatedAt
-      requestUpdatedAt
-      status
-      purpose
-      referenceNumber
-      paymentId
-      paymentMethod
-      url
-      webhookUrl
-      redirectUrl
-      sendSMS
-      sendEmail
-      smsStatus
-      emailStatus
-      allowRepeatedPayments
-      expiryDateTime
-      errors
-      createdAt
-      updatedAt
-      __typename
-    }
     status
     createdAt
     updatedAt
@@ -1185,19 +1101,8 @@ export const onCreatePet = /* GraphQL */ `subscription OnCreatePet(
     }
     gender
     petType
+    isDeleted
     breedName
-    breed {
-      name
-      petType
-      coats
-      undercoatRemoval
-      durationUnit
-      basicGroomingDuration
-      fullGroomingDuration
-      createdAt
-      updatedAt
-      __typename
-    }
     imageUrl
     birthdate
     weightValue
@@ -1214,6 +1119,7 @@ export const onCreatePet = /* GraphQL */ `subscription OnCreatePet(
       nextToken
       __typename
     }
+    questionAnswerIds
     createdAt
     updatedAt
     __typename
@@ -1242,19 +1148,8 @@ export const onUpdatePet = /* GraphQL */ `subscription OnUpdatePet(
     }
     gender
     petType
+    isDeleted
     breedName
-    breed {
-      name
-      petType
-      coats
-      undercoatRemoval
-      durationUnit
-      basicGroomingDuration
-      fullGroomingDuration
-      createdAt
-      updatedAt
-      __typename
-    }
     imageUrl
     birthdate
     weightValue
@@ -1271,6 +1166,7 @@ export const onUpdatePet = /* GraphQL */ `subscription OnUpdatePet(
       nextToken
       __typename
     }
+    questionAnswerIds
     createdAt
     updatedAt
     __typename
@@ -1299,19 +1195,8 @@ export const onDeletePet = /* GraphQL */ `subscription OnDeletePet(
     }
     gender
     petType
+    isDeleted
     breedName
-    breed {
-      name
-      petType
-      coats
-      undercoatRemoval
-      durationUnit
-      basicGroomingDuration
-      fullGroomingDuration
-      createdAt
-      updatedAt
-      __typename
-    }
     imageUrl
     birthdate
     weightValue
@@ -1328,6 +1213,7 @@ export const onDeletePet = /* GraphQL */ `subscription OnDeletePet(
       nextToken
       __typename
     }
+    questionAnswerIds
     createdAt
     updatedAt
     __typename
@@ -1336,6 +1222,204 @@ export const onDeletePet = /* GraphQL */ `subscription OnDeletePet(
 ` as GeneratedSubscription<
   APITypes.OnDeletePetSubscriptionVariables,
   APITypes.OnDeletePetSubscription
+>;
+export const onCreateQuestion = /* GraphQL */ `subscription OnCreateQuestion($filter: ModelSubscriptionQuestionFilterInput) {
+  onCreateQuestion(filter: $filter) {
+    id
+    serviceCategory
+    questionString
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateQuestionSubscriptionVariables,
+  APITypes.OnCreateQuestionSubscription
+>;
+export const onUpdateQuestion = /* GraphQL */ `subscription OnUpdateQuestion($filter: ModelSubscriptionQuestionFilterInput) {
+  onUpdateQuestion(filter: $filter) {
+    id
+    serviceCategory
+    questionString
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateQuestionSubscriptionVariables,
+  APITypes.OnUpdateQuestionSubscription
+>;
+export const onDeleteQuestion = /* GraphQL */ `subscription OnDeleteQuestion($filter: ModelSubscriptionQuestionFilterInput) {
+  onDeleteQuestion(filter: $filter) {
+    id
+    serviceCategory
+    questionString
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteQuestionSubscriptionVariables,
+  APITypes.OnDeleteQuestionSubscription
+>;
+export const onCreateQuestionAnswer = /* GraphQL */ `subscription OnCreateQuestionAnswer(
+  $filter: ModelSubscriptionQuestionAnswerFilterInput
+  $customerId: String
+) {
+  onCreateQuestionAnswer(filter: $filter, customerId: $customerId) {
+    petName
+    customerUsername
+    pet {
+      name
+      customerUsername
+      customerId
+      gender
+      petType
+      isDeleted
+      breedName
+      imageUrl
+      birthdate
+      weightValue
+      weightUnit
+      additionalInfo
+      predefinedBehaviors
+      customBehaviors
+      isNeutered
+      isMicrochipped
+      microchipNumber
+      hasMedicalCondition
+      additionalCareInstructions
+      questionAnswerIds
+      createdAt
+      updatedAt
+      __typename
+    }
+    customerId
+    questionId
+    question {
+      id
+      serviceCategory
+      questionString
+      createdAt
+      updatedAt
+      __typename
+    }
+    answer
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnCreateQuestionAnswerSubscriptionVariables,
+  APITypes.OnCreateQuestionAnswerSubscription
+>;
+export const onUpdateQuestionAnswer = /* GraphQL */ `subscription OnUpdateQuestionAnswer(
+  $filter: ModelSubscriptionQuestionAnswerFilterInput
+  $customerId: String
+) {
+  onUpdateQuestionAnswer(filter: $filter, customerId: $customerId) {
+    petName
+    customerUsername
+    pet {
+      name
+      customerUsername
+      customerId
+      gender
+      petType
+      isDeleted
+      breedName
+      imageUrl
+      birthdate
+      weightValue
+      weightUnit
+      additionalInfo
+      predefinedBehaviors
+      customBehaviors
+      isNeutered
+      isMicrochipped
+      microchipNumber
+      hasMedicalCondition
+      additionalCareInstructions
+      questionAnswerIds
+      createdAt
+      updatedAt
+      __typename
+    }
+    customerId
+    questionId
+    question {
+      id
+      serviceCategory
+      questionString
+      createdAt
+      updatedAt
+      __typename
+    }
+    answer
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnUpdateQuestionAnswerSubscriptionVariables,
+  APITypes.OnUpdateQuestionAnswerSubscription
+>;
+export const onDeleteQuestionAnswer = /* GraphQL */ `subscription OnDeleteQuestionAnswer(
+  $filter: ModelSubscriptionQuestionAnswerFilterInput
+  $customerId: String
+) {
+  onDeleteQuestionAnswer(filter: $filter, customerId: $customerId) {
+    petName
+    customerUsername
+    pet {
+      name
+      customerUsername
+      customerId
+      gender
+      petType
+      isDeleted
+      breedName
+      imageUrl
+      birthdate
+      weightValue
+      weightUnit
+      additionalInfo
+      predefinedBehaviors
+      customBehaviors
+      isNeutered
+      isMicrochipped
+      microchipNumber
+      hasMedicalCondition
+      additionalCareInstructions
+      questionAnswerIds
+      createdAt
+      updatedAt
+      __typename
+    }
+    customerId
+    questionId
+    question {
+      id
+      serviceCategory
+      questionString
+      createdAt
+      updatedAt
+      __typename
+    }
+    answer
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedSubscription<
+  APITypes.OnDeleteQuestionAnswerSubscriptionVariables,
+  APITypes.OnDeleteQuestionAnswerSubscription
 >;
 export const onCreateService = /* GraphQL */ `subscription OnCreateService(
   $filter: ModelSubscriptionServiceFilterInput
@@ -1458,6 +1542,7 @@ export const onCreateService = /* GraphQL */ `subscription OnCreateService(
     }
     timeSlotIds
     bookingIds
+    requiredQuestionIds
     createdAt
     updatedAt
     serviceProviderId
@@ -1589,6 +1674,7 @@ export const onUpdateService = /* GraphQL */ `subscription OnUpdateService(
     }
     timeSlotIds
     bookingIds
+    requiredQuestionIds
     createdAt
     updatedAt
     serviceProviderId
@@ -1720,6 +1806,7 @@ export const onDeleteService = /* GraphQL */ `subscription OnDeleteService(
     }
     timeSlotIds
     bookingIds
+    requiredQuestionIds
     createdAt
     updatedAt
     serviceProviderId
@@ -2008,6 +2095,7 @@ export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookin
     petcustomerUsername
     booking {
       id
+      orderId
       customerUsername
       owners
       customerId
@@ -2018,12 +2106,12 @@ export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookin
       serviceId
       startDateTime
       timeSlotId
+      petNames
       addOns
       bookingType
       amount
       currency
       status
-      orderId
       createdAt
       updatedAt
       serviceProviderBookingsName
@@ -2037,6 +2125,7 @@ export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookin
       customerId
       gender
       petType
+      isDeleted
       breedName
       imageUrl
       birthdate
@@ -2050,6 +2139,7 @@ export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookin
       microchipNumber
       hasMedicalCondition
       additionalCareInstructions
+      questionAnswerIds
       createdAt
       updatedAt
       __typename
@@ -2082,6 +2172,7 @@ export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookin
     petcustomerUsername
     booking {
       id
+      orderId
       customerUsername
       owners
       customerId
@@ -2092,12 +2183,12 @@ export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookin
       serviceId
       startDateTime
       timeSlotId
+      petNames
       addOns
       bookingType
       amount
       currency
       status
-      orderId
       createdAt
       updatedAt
       serviceProviderBookingsName
@@ -2111,6 +2202,7 @@ export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookin
       customerId
       gender
       petType
+      isDeleted
       breedName
       imageUrl
       birthdate
@@ -2124,6 +2216,7 @@ export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookin
       microchipNumber
       hasMedicalCondition
       additionalCareInstructions
+      questionAnswerIds
       createdAt
       updatedAt
       __typename
@@ -2156,6 +2249,7 @@ export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookin
     petcustomerUsername
     booking {
       id
+      orderId
       customerUsername
       owners
       customerId
@@ -2166,12 +2260,12 @@ export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookin
       serviceId
       startDateTime
       timeSlotId
+      petNames
       addOns
       bookingType
       amount
       currency
       status
-      orderId
       createdAt
       updatedAt
       serviceProviderBookingsName
@@ -2185,6 +2279,7 @@ export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookin
       customerId
       gender
       petType
+      isDeleted
       breedName
       imageUrl
       birthdate
@@ -2198,6 +2293,7 @@ export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookin
       microchipNumber
       hasMedicalCondition
       additionalCareInstructions
+      questionAnswerIds
       createdAt
       updatedAt
       __typename

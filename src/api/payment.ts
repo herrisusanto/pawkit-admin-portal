@@ -4,11 +4,9 @@ import {
   CreatePaymentInput,
   Currency,
   PaymentStatus,
-  SearchablePaymentSortableFields,
-  SearchableSortDirection,
   UpdatePaymentInput,
-} from "../API";
-import { createPayment, updatePayment } from "../graphql/mutations";
+} from "./graphql/API";
+import { createPayment, updatePayment } from "./graphql/mutations";
 import { get, post } from "aws-amplify/api";
 import {
   BadRequestError,
@@ -16,13 +14,8 @@ import {
   InternalServerError,
   InvalidResponseError,
 } from "./errors";
-import {
-  getPayment,
-  paymentsByOrder,
-  searchPayments,
-} from "../graphql/queries";
+import { getPayment, paymentsByOrder } from "./graphql/queries";
 import { updateOrderPayment } from "./order";
-import { isStartDateBeforeEndDate, isValidDate } from "./validation";
 
 const logger = new ConsoleLogger("api/payments.ts");
 
@@ -128,7 +121,7 @@ export const createPaymentRequest = async ({
     }
 
     logger.debug(
-      `Creating payment request with input: ${JSON.stringify(input)}`,
+      `Creating payment request with input: ${JSON.stringify(input)}`
     );
     const paymentRequest: HitPayRequest = {
       amount: input.amount,
@@ -242,183 +235,6 @@ export const addPayment = async (input: CreatePaymentInput) => {
 };
 
 // Read
-export const queryPaymentsByCustomerInDateRange = async (
-  customerId: string,
-  fromDate: string,
-  toDate: string,
-) => {
-  try {
-    if (!customerId) {
-      logger.error("Customer id is required");
-      throw new BadRequestError("Customer id is required");
-    }
-
-    if (!fromDate) {
-      logger.error("From date is required");
-      throw new BadRequestError("From date is required");
-    }
-
-    if (!toDate) {
-      logger.error("To date is required");
-      throw new BadRequestError("To date is required");
-    }
-
-    if (!isValidDate(fromDate)) {
-      logger.error("Invalid from date");
-      throw new BadRequestError("Invalid from date");
-    }
-
-    if (!isValidDate(toDate)) {
-      logger.error("Invalid to date");
-      throw new BadRequestError("Invalid to date");
-    }
-
-    if (!isStartDateBeforeEndDate(fromDate, toDate)) {
-      logger.error("From date is after to date");
-      throw new BadRequestError("From date is after to date");
-    }
-
-    const result = await graphqlClient.graphql({
-      query: searchPayments,
-      variables: {
-        filter: {
-          customerId: { eq: customerId },
-          requestCreatedAt: {
-            gte: fromDate,
-            lte: toDate,
-          },
-        },
-        sort: [
-          {
-            field: SearchablePaymentSortableFields.createdAt,
-            direction: SearchableSortDirection.desc,
-          },
-        ],
-      },
-    });
-    logger.debug("Called searchPayments query by customer in date range");
-    return result.data.searchPayments.items;
-  } catch (error) {
-    logger.error(
-      `Error searching payments by customer id=${customerId} from ${fromDate} to ${toDate}: ${error}`,
-    );
-    if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error searching payments");
-  }
-};
-
-export const queryPaymentsByCustomerOnDate = async (
-  customerId: string,
-  date: string,
-) => {
-  try {
-    if (!customerId) {
-      logger.error("Customer id is required");
-      throw new BadRequestError("Customer id is required");
-    }
-
-    if (!date) {
-      logger.error("Date is required");
-      throw new BadRequestError("Date is required");
-    }
-
-    if (!isValidDate(date)) {
-      logger.error("Invalid date");
-      throw new BadRequestError("Invalid date");
-    }
-
-    const result = await graphqlClient.graphql({
-      query: searchPayments,
-      variables: {
-        filter: {
-          customerId: { eq: customerId },
-          requestCreatedAt: { eq: date },
-        },
-        sort: [
-          {
-            field: SearchablePaymentSortableFields.createdAt,
-            direction: SearchableSortDirection.desc,
-          },
-        ],
-      },
-    });
-    logger.debug("Called searchPayments query by customer on date");
-    return result.data.searchPayments.items;
-  } catch (error) {
-    logger.error(
-      `Error searching payments by customer id=${customerId} on ${date}: ${error}`,
-    );
-    if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error searching payments");
-  }
-};
-
-export const queryPaymentsByCustomer = async (customerId: string) => {
-  try {
-    if (!customerId) {
-      logger.error("Customer id is required");
-      throw new BadRequestError("Customer id is required");
-    }
-
-    const result = await graphqlClient.graphql({
-      query: searchPayments,
-      variables: {
-        filter: { customerId: { eq: customerId } },
-        sort: [
-          {
-            field: SearchablePaymentSortableFields.requestCreatedAt,
-            direction: SearchableSortDirection.desc,
-          },
-        ],
-      },
-    });
-    logger.debug("Called searchPayments query by customer");
-    return result.data.searchPayments.items;
-  } catch (error) {
-    logger.error(
-      `Error searching payments by customer id=${customerId}: ${error}`,
-    );
-    if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error searching payments");
-  }
-};
-
-export const queryPaymentsByCustomerAndStatus = async (
-  customerId: string,
-  status: PaymentStatus,
-) => {
-  try {
-    if (!customerId) {
-      logger.error("Customer id is required");
-      throw new BadRequestError("Customer id is required");
-    }
-
-    const result = await graphqlClient.graphql({
-      query: searchPayments,
-      variables: {
-        filter: {
-          customerId: { eq: customerId },
-          status: { eq: status },
-        },
-        sort: [
-          {
-            field: SearchablePaymentSortableFields.requestCreatedAt,
-            direction: SearchableSortDirection.desc,
-          },
-        ],
-      },
-    });
-    logger.debug("Called searchPayments query by customer and status");
-    return result.data.searchPayments.items;
-  } catch (error) {
-    logger.error(
-      `Error searching payments by customer id=${customerId}: ${error}`,
-    );
-    if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error searching payments");
-  }
-};
-
 export const fetchPayment = async (paymentRequestId: string) => {
   try {
     if (!paymentRequestId) {

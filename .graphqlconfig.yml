@@ -1,11 +1,12 @@
 projects:
   pawkit:
-    schemaPath: amplify/backend/api/pawkit/schema.graphql
+    schemaPath: amplify/backend/api/pawkit/schema.json
     includes:
-      - src/graphql/**/*.ts
+      - src/api/graphql/**/*.ts
     excludes:
       - ./amplify/**
-      - src/API.ts
+      - src/api/graphql/API.ts
+      - src/api/*.ts
     extensions:
       amplify:
         codeGenTarget: typescript

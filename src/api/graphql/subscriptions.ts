@@ -2,17 +2,14 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../API";
-type GeneratedMutation<InputType, OutputType> = string & {
-  __generatedMutationInput: InputType;
-  __generatedMutationOutput: OutputType;
+import * as APITypes from "./API";
+type GeneratedSubscription<InputType, OutputType> = string & {
+  __generatedSubscriptionInput: InputType;
+  __generatedSubscriptionOutput: OutputType;
 };
 
-export const createBooking = /* GraphQL */ `mutation CreateBooking(
-  $input: CreateBookingInput!
-  $condition: ModelBookingConditionInput
-) {
-  createBooking(input: $input, condition: $condition) {
+export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filter: ModelSubscriptionBookingFilterInput) {
+  onCreateBooking(filter: $filter) {
     id
     orderId
     order {
@@ -95,15 +92,12 @@ export const createBooking = /* GraphQL */ `mutation CreateBooking(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateBookingMutationVariables,
-  APITypes.CreateBookingMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateBookingSubscriptionVariables,
+  APITypes.OnCreateBookingSubscription
 >;
-export const updateBooking = /* GraphQL */ `mutation UpdateBooking(
-  $input: UpdateBookingInput!
-  $condition: ModelBookingConditionInput
-) {
-  updateBooking(input: $input, condition: $condition) {
+export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filter: ModelSubscriptionBookingFilterInput) {
+  onUpdateBooking(filter: $filter) {
     id
     orderId
     order {
@@ -186,15 +180,12 @@ export const updateBooking = /* GraphQL */ `mutation UpdateBooking(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateBookingMutationVariables,
-  APITypes.UpdateBookingMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateBookingSubscriptionVariables,
+  APITypes.OnUpdateBookingSubscription
 >;
-export const deleteBooking = /* GraphQL */ `mutation DeleteBooking(
-  $input: DeleteBookingInput!
-  $condition: ModelBookingConditionInput
-) {
-  deleteBooking(input: $input, condition: $condition) {
+export const onDeleteBooking = /* GraphQL */ `subscription OnDeleteBooking($filter: ModelSubscriptionBookingFilterInput) {
+  onDeleteBooking(filter: $filter) {
     id
     orderId
     order {
@@ -277,15 +268,12 @@ export const deleteBooking = /* GraphQL */ `mutation DeleteBooking(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteBookingMutationVariables,
-  APITypes.DeleteBookingMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteBookingSubscriptionVariables,
+  APITypes.OnDeleteBookingSubscription
 >;
-export const createBreed = /* GraphQL */ `mutation CreateBreed(
-  $input: CreateBreedInput!
-  $condition: ModelBreedConditionInput
-) {
-  createBreed(input: $input, condition: $condition) {
+export const onCreateBreed = /* GraphQL */ `subscription OnCreateBreed($filter: ModelSubscriptionBreedFilterInput) {
+  onCreateBreed(filter: $filter) {
     name
     petType
     coats
@@ -298,15 +286,12 @@ export const createBreed = /* GraphQL */ `mutation CreateBreed(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateBreedMutationVariables,
-  APITypes.CreateBreedMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateBreedSubscriptionVariables,
+  APITypes.OnCreateBreedSubscription
 >;
-export const updateBreed = /* GraphQL */ `mutation UpdateBreed(
-  $input: UpdateBreedInput!
-  $condition: ModelBreedConditionInput
-) {
-  updateBreed(input: $input, condition: $condition) {
+export const onUpdateBreed = /* GraphQL */ `subscription OnUpdateBreed($filter: ModelSubscriptionBreedFilterInput) {
+  onUpdateBreed(filter: $filter) {
     name
     petType
     coats
@@ -319,15 +304,12 @@ export const updateBreed = /* GraphQL */ `mutation UpdateBreed(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateBreedMutationVariables,
-  APITypes.UpdateBreedMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateBreedSubscriptionVariables,
+  APITypes.OnUpdateBreedSubscription
 >;
-export const deleteBreed = /* GraphQL */ `mutation DeleteBreed(
-  $input: DeleteBreedInput!
-  $condition: ModelBreedConditionInput
-) {
-  deleteBreed(input: $input, condition: $condition) {
+export const onDeleteBreed = /* GraphQL */ `subscription OnDeleteBreed($filter: ModelSubscriptionBreedFilterInput) {
+  onDeleteBreed(filter: $filter) {
     name
     petType
     coats
@@ -340,15 +322,15 @@ export const deleteBreed = /* GraphQL */ `mutation DeleteBreed(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteBreedMutationVariables,
-  APITypes.DeleteBreedMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteBreedSubscriptionVariables,
+  APITypes.OnDeleteBreedSubscription
 >;
-export const createCustomer = /* GraphQL */ `mutation CreateCustomer(
-  $input: CreateCustomerInput!
-  $condition: ModelCustomerConditionInput
+export const onCreateCustomer = /* GraphQL */ `subscription OnCreateCustomer(
+  $filter: ModelSubscriptionCustomerFilterInput
+  $id: String
 ) {
-  createCustomer(input: $input, condition: $condition) {
+  onCreateCustomer(filter: $filter, id: $id) {
     id
     username
     isDeactivated
@@ -385,15 +367,15 @@ export const createCustomer = /* GraphQL */ `mutation CreateCustomer(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateCustomerMutationVariables,
-  APITypes.CreateCustomerMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateCustomerSubscriptionVariables,
+  APITypes.OnCreateCustomerSubscription
 >;
-export const updateCustomer = /* GraphQL */ `mutation UpdateCustomer(
-  $input: UpdateCustomerInput!
-  $condition: ModelCustomerConditionInput
+export const onUpdateCustomer = /* GraphQL */ `subscription OnUpdateCustomer(
+  $filter: ModelSubscriptionCustomerFilterInput
+  $id: String
 ) {
-  updateCustomer(input: $input, condition: $condition) {
+  onUpdateCustomer(filter: $filter, id: $id) {
     id
     username
     isDeactivated
@@ -430,15 +412,15 @@ export const updateCustomer = /* GraphQL */ `mutation UpdateCustomer(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateCustomerMutationVariables,
-  APITypes.UpdateCustomerMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateCustomerSubscriptionVariables,
+  APITypes.OnUpdateCustomerSubscription
 >;
-export const deleteCustomer = /* GraphQL */ `mutation DeleteCustomer(
-  $input: DeleteCustomerInput!
-  $condition: ModelCustomerConditionInput
+export const onDeleteCustomer = /* GraphQL */ `subscription OnDeleteCustomer(
+  $filter: ModelSubscriptionCustomerFilterInput
+  $id: String
 ) {
-  deleteCustomer(input: $input, condition: $condition) {
+  onDeleteCustomer(filter: $filter, id: $id) {
     id
     username
     isDeactivated
@@ -475,15 +457,14 @@ export const deleteCustomer = /* GraphQL */ `mutation DeleteCustomer(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteCustomerMutationVariables,
-  APITypes.DeleteCustomerMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteCustomerSubscriptionVariables,
+  APITypes.OnDeleteCustomerSubscription
 >;
-export const createDisclaimer = /* GraphQL */ `mutation CreateDisclaimer(
-  $input: CreateDisclaimerInput!
-  $condition: ModelDisclaimerConditionInput
+export const onCreateDisclaimer = /* GraphQL */ `subscription OnCreateDisclaimer(
+  $filter: ModelSubscriptionDisclaimerFilterInput
 ) {
-  createDisclaimer(input: $input, condition: $condition) {
+  onCreateDisclaimer(filter: $filter) {
     name
     serviceName
     serviceProviderName
@@ -546,15 +527,14 @@ export const createDisclaimer = /* GraphQL */ `mutation CreateDisclaimer(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateDisclaimerMutationVariables,
-  APITypes.CreateDisclaimerMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateDisclaimerSubscriptionVariables,
+  APITypes.OnCreateDisclaimerSubscription
 >;
-export const updateDisclaimer = /* GraphQL */ `mutation UpdateDisclaimer(
-  $input: UpdateDisclaimerInput!
-  $condition: ModelDisclaimerConditionInput
+export const onUpdateDisclaimer = /* GraphQL */ `subscription OnUpdateDisclaimer(
+  $filter: ModelSubscriptionDisclaimerFilterInput
 ) {
-  updateDisclaimer(input: $input, condition: $condition) {
+  onUpdateDisclaimer(filter: $filter) {
     name
     serviceName
     serviceProviderName
@@ -617,15 +597,14 @@ export const updateDisclaimer = /* GraphQL */ `mutation UpdateDisclaimer(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateDisclaimerMutationVariables,
-  APITypes.UpdateDisclaimerMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateDisclaimerSubscriptionVariables,
+  APITypes.OnUpdateDisclaimerSubscription
 >;
-export const deleteDisclaimer = /* GraphQL */ `mutation DeleteDisclaimer(
-  $input: DeleteDisclaimerInput!
-  $condition: ModelDisclaimerConditionInput
+export const onDeleteDisclaimer = /* GraphQL */ `subscription OnDeleteDisclaimer(
+  $filter: ModelSubscriptionDisclaimerFilterInput
 ) {
-  deleteDisclaimer(input: $input, condition: $condition) {
+  onDeleteDisclaimer(filter: $filter) {
     name
     serviceName
     serviceProviderName
@@ -688,15 +667,15 @@ export const deleteDisclaimer = /* GraphQL */ `mutation DeleteDisclaimer(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteDisclaimerMutationVariables,
-  APITypes.DeleteDisclaimerMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteDisclaimerSubscriptionVariables,
+  APITypes.OnDeleteDisclaimerSubscription
 >;
-export const createDisclaimerAcceptance = /* GraphQL */ `mutation CreateDisclaimerAcceptance(
-  $input: CreateDisclaimerAcceptanceInput!
-  $condition: ModelDisclaimerAcceptanceConditionInput
+export const onCreateDisclaimerAcceptance = /* GraphQL */ `subscription OnCreateDisclaimerAcceptance(
+  $filter: ModelSubscriptionDisclaimerAcceptanceFilterInput
+  $customerId: String
 ) {
-  createDisclaimerAcceptance(input: $input, condition: $condition) {
+  onCreateDisclaimerAcceptance(filter: $filter, customerId: $customerId) {
     id
     customerId
     customer {
@@ -727,15 +706,15 @@ export const createDisclaimerAcceptance = /* GraphQL */ `mutation CreateDisclaim
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateDisclaimerAcceptanceMutationVariables,
-  APITypes.CreateDisclaimerAcceptanceMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateDisclaimerAcceptanceSubscriptionVariables,
+  APITypes.OnCreateDisclaimerAcceptanceSubscription
 >;
-export const updateDisclaimerAcceptance = /* GraphQL */ `mutation UpdateDisclaimerAcceptance(
-  $input: UpdateDisclaimerAcceptanceInput!
-  $condition: ModelDisclaimerAcceptanceConditionInput
+export const onUpdateDisclaimerAcceptance = /* GraphQL */ `subscription OnUpdateDisclaimerAcceptance(
+  $filter: ModelSubscriptionDisclaimerAcceptanceFilterInput
+  $customerId: String
 ) {
-  updateDisclaimerAcceptance(input: $input, condition: $condition) {
+  onUpdateDisclaimerAcceptance(filter: $filter, customerId: $customerId) {
     id
     customerId
     customer {
@@ -766,15 +745,15 @@ export const updateDisclaimerAcceptance = /* GraphQL */ `mutation UpdateDisclaim
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateDisclaimerAcceptanceMutationVariables,
-  APITypes.UpdateDisclaimerAcceptanceMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateDisclaimerAcceptanceSubscriptionVariables,
+  APITypes.OnUpdateDisclaimerAcceptanceSubscription
 >;
-export const deleteDisclaimerAcceptance = /* GraphQL */ `mutation DeleteDisclaimerAcceptance(
-  $input: DeleteDisclaimerAcceptanceInput!
-  $condition: ModelDisclaimerAcceptanceConditionInput
+export const onDeleteDisclaimerAcceptance = /* GraphQL */ `subscription OnDeleteDisclaimerAcceptance(
+  $filter: ModelSubscriptionDisclaimerAcceptanceFilterInput
+  $customerId: String
 ) {
-  deleteDisclaimerAcceptance(input: $input, condition: $condition) {
+  onDeleteDisclaimerAcceptance(filter: $filter, customerId: $customerId) {
     id
     customerId
     customer {
@@ -805,15 +784,15 @@ export const deleteDisclaimerAcceptance = /* GraphQL */ `mutation DeleteDisclaim
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteDisclaimerAcceptanceMutationVariables,
-  APITypes.DeleteDisclaimerAcceptanceMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteDisclaimerAcceptanceSubscriptionVariables,
+  APITypes.OnDeleteDisclaimerAcceptanceSubscription
 >;
-export const createOrder = /* GraphQL */ `mutation CreateOrder(
-  $input: CreateOrderInput!
-  $condition: ModelOrderConditionInput
+export const onCreateOrder = /* GraphQL */ `subscription OnCreateOrder(
+  $filter: ModelSubscriptionOrderFilterInput
+  $customerId: String
 ) {
-  createOrder(input: $input, condition: $condition) {
+  onCreateOrder(filter: $filter, customerId: $customerId) {
     id
     customerId
     customer {
@@ -841,15 +820,15 @@ export const createOrder = /* GraphQL */ `mutation CreateOrder(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateOrderMutationVariables,
-  APITypes.CreateOrderMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateOrderSubscriptionVariables,
+  APITypes.OnCreateOrderSubscription
 >;
-export const updateOrder = /* GraphQL */ `mutation UpdateOrder(
-  $input: UpdateOrderInput!
-  $condition: ModelOrderConditionInput
+export const onUpdateOrder = /* GraphQL */ `subscription OnUpdateOrder(
+  $filter: ModelSubscriptionOrderFilterInput
+  $customerId: String
 ) {
-  updateOrder(input: $input, condition: $condition) {
+  onUpdateOrder(filter: $filter, customerId: $customerId) {
     id
     customerId
     customer {
@@ -877,15 +856,15 @@ export const updateOrder = /* GraphQL */ `mutation UpdateOrder(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateOrderMutationVariables,
-  APITypes.UpdateOrderMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateOrderSubscriptionVariables,
+  APITypes.OnUpdateOrderSubscription
 >;
-export const deleteOrder = /* GraphQL */ `mutation DeleteOrder(
-  $input: DeleteOrderInput!
-  $condition: ModelOrderConditionInput
+export const onDeleteOrder = /* GraphQL */ `subscription OnDeleteOrder(
+  $filter: ModelSubscriptionOrderFilterInput
+  $customerId: String
 ) {
-  deleteOrder(input: $input, condition: $condition) {
+  onDeleteOrder(filter: $filter, customerId: $customerId) {
     id
     customerId
     customer {
@@ -913,15 +892,15 @@ export const deleteOrder = /* GraphQL */ `mutation DeleteOrder(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteOrderMutationVariables,
-  APITypes.DeleteOrderMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteOrderSubscriptionVariables,
+  APITypes.OnDeleteOrderSubscription
 >;
-export const createPayment = /* GraphQL */ `mutation CreatePayment(
-  $input: CreatePaymentInput!
-  $condition: ModelPaymentConditionInput
+export const onCreatePayment = /* GraphQL */ `subscription OnCreatePayment(
+  $filter: ModelSubscriptionPaymentFilterInput
+  $customerId: String
 ) {
-  createPayment(input: $input, condition: $condition) {
+  onCreatePayment(filter: $filter, customerId: $customerId) {
     paymentRequestId
     orderId
     order {
@@ -975,15 +954,15 @@ export const createPayment = /* GraphQL */ `mutation CreatePayment(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreatePaymentMutationVariables,
-  APITypes.CreatePaymentMutation
+` as GeneratedSubscription<
+  APITypes.OnCreatePaymentSubscriptionVariables,
+  APITypes.OnCreatePaymentSubscription
 >;
-export const updatePayment = /* GraphQL */ `mutation UpdatePayment(
-  $input: UpdatePaymentInput!
-  $condition: ModelPaymentConditionInput
+export const onUpdatePayment = /* GraphQL */ `subscription OnUpdatePayment(
+  $filter: ModelSubscriptionPaymentFilterInput
+  $customerId: String
 ) {
-  updatePayment(input: $input, condition: $condition) {
+  onUpdatePayment(filter: $filter, customerId: $customerId) {
     paymentRequestId
     orderId
     order {
@@ -1037,15 +1016,15 @@ export const updatePayment = /* GraphQL */ `mutation UpdatePayment(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdatePaymentMutationVariables,
-  APITypes.UpdatePaymentMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdatePaymentSubscriptionVariables,
+  APITypes.OnUpdatePaymentSubscription
 >;
-export const deletePayment = /* GraphQL */ `mutation DeletePayment(
-  $input: DeletePaymentInput!
-  $condition: ModelPaymentConditionInput
+export const onDeletePayment = /* GraphQL */ `subscription OnDeletePayment(
+  $filter: ModelSubscriptionPaymentFilterInput
+  $customerId: String
 ) {
-  deletePayment(input: $input, condition: $condition) {
+  onDeletePayment(filter: $filter, customerId: $customerId) {
     paymentRequestId
     orderId
     order {
@@ -1099,15 +1078,15 @@ export const deletePayment = /* GraphQL */ `mutation DeletePayment(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeletePaymentMutationVariables,
-  APITypes.DeletePaymentMutation
+` as GeneratedSubscription<
+  APITypes.OnDeletePaymentSubscriptionVariables,
+  APITypes.OnDeletePaymentSubscription
 >;
-export const createPet = /* GraphQL */ `mutation CreatePet(
-  $input: CreatePetInput!
-  $condition: ModelPetConditionInput
+export const onCreatePet = /* GraphQL */ `subscription OnCreatePet(
+  $filter: ModelSubscriptionPetFilterInput
+  $customerId: String
 ) {
-  createPet(input: $input, condition: $condition) {
+  onCreatePet(filter: $filter, customerId: $customerId) {
     name
     customerUsername
     customerId
@@ -1146,15 +1125,15 @@ export const createPet = /* GraphQL */ `mutation CreatePet(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreatePetMutationVariables,
-  APITypes.CreatePetMutation
+` as GeneratedSubscription<
+  APITypes.OnCreatePetSubscriptionVariables,
+  APITypes.OnCreatePetSubscription
 >;
-export const updatePet = /* GraphQL */ `mutation UpdatePet(
-  $input: UpdatePetInput!
-  $condition: ModelPetConditionInput
+export const onUpdatePet = /* GraphQL */ `subscription OnUpdatePet(
+  $filter: ModelSubscriptionPetFilterInput
+  $customerId: String
 ) {
-  updatePet(input: $input, condition: $condition) {
+  onUpdatePet(filter: $filter, customerId: $customerId) {
     name
     customerUsername
     customerId
@@ -1193,15 +1172,15 @@ export const updatePet = /* GraphQL */ `mutation UpdatePet(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdatePetMutationVariables,
-  APITypes.UpdatePetMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdatePetSubscriptionVariables,
+  APITypes.OnUpdatePetSubscription
 >;
-export const deletePet = /* GraphQL */ `mutation DeletePet(
-  $input: DeletePetInput!
-  $condition: ModelPetConditionInput
+export const onDeletePet = /* GraphQL */ `subscription OnDeletePet(
+  $filter: ModelSubscriptionPetFilterInput
+  $customerId: String
 ) {
-  deletePet(input: $input, condition: $condition) {
+  onDeletePet(filter: $filter, customerId: $customerId) {
     name
     customerUsername
     customerId
@@ -1240,15 +1219,12 @@ export const deletePet = /* GraphQL */ `mutation DeletePet(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeletePetMutationVariables,
-  APITypes.DeletePetMutation
+` as GeneratedSubscription<
+  APITypes.OnDeletePetSubscriptionVariables,
+  APITypes.OnDeletePetSubscription
 >;
-export const createQuestion = /* GraphQL */ `mutation CreateQuestion(
-  $input: CreateQuestionInput!
-  $condition: ModelQuestionConditionInput
-) {
-  createQuestion(input: $input, condition: $condition) {
+export const onCreateQuestion = /* GraphQL */ `subscription OnCreateQuestion($filter: ModelSubscriptionQuestionFilterInput) {
+  onCreateQuestion(filter: $filter) {
     id
     serviceCategory
     questionString
@@ -1257,15 +1233,12 @@ export const createQuestion = /* GraphQL */ `mutation CreateQuestion(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateQuestionMutationVariables,
-  APITypes.CreateQuestionMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateQuestionSubscriptionVariables,
+  APITypes.OnCreateQuestionSubscription
 >;
-export const updateQuestion = /* GraphQL */ `mutation UpdateQuestion(
-  $input: UpdateQuestionInput!
-  $condition: ModelQuestionConditionInput
-) {
-  updateQuestion(input: $input, condition: $condition) {
+export const onUpdateQuestion = /* GraphQL */ `subscription OnUpdateQuestion($filter: ModelSubscriptionQuestionFilterInput) {
+  onUpdateQuestion(filter: $filter) {
     id
     serviceCategory
     questionString
@@ -1274,15 +1247,12 @@ export const updateQuestion = /* GraphQL */ `mutation UpdateQuestion(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateQuestionMutationVariables,
-  APITypes.UpdateQuestionMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateQuestionSubscriptionVariables,
+  APITypes.OnUpdateQuestionSubscription
 >;
-export const deleteQuestion = /* GraphQL */ `mutation DeleteQuestion(
-  $input: DeleteQuestionInput!
-  $condition: ModelQuestionConditionInput
-) {
-  deleteQuestion(input: $input, condition: $condition) {
+export const onDeleteQuestion = /* GraphQL */ `subscription OnDeleteQuestion($filter: ModelSubscriptionQuestionFilterInput) {
+  onDeleteQuestion(filter: $filter) {
     id
     serviceCategory
     questionString
@@ -1291,15 +1261,15 @@ export const deleteQuestion = /* GraphQL */ `mutation DeleteQuestion(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteQuestionMutationVariables,
-  APITypes.DeleteQuestionMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteQuestionSubscriptionVariables,
+  APITypes.OnDeleteQuestionSubscription
 >;
-export const createQuestionAnswer = /* GraphQL */ `mutation CreateQuestionAnswer(
-  $input: CreateQuestionAnswerInput!
-  $condition: ModelQuestionAnswerConditionInput
+export const onCreateQuestionAnswer = /* GraphQL */ `subscription OnCreateQuestionAnswer(
+  $filter: ModelSubscriptionQuestionAnswerFilterInput
+  $customerId: String
 ) {
-  createQuestionAnswer(input: $input, condition: $condition) {
+  onCreateQuestionAnswer(filter: $filter, customerId: $customerId) {
     petName
     customerUsername
     pet {
@@ -1343,15 +1313,15 @@ export const createQuestionAnswer = /* GraphQL */ `mutation CreateQuestionAnswer
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateQuestionAnswerMutationVariables,
-  APITypes.CreateQuestionAnswerMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateQuestionAnswerSubscriptionVariables,
+  APITypes.OnCreateQuestionAnswerSubscription
 >;
-export const updateQuestionAnswer = /* GraphQL */ `mutation UpdateQuestionAnswer(
-  $input: UpdateQuestionAnswerInput!
-  $condition: ModelQuestionAnswerConditionInput
+export const onUpdateQuestionAnswer = /* GraphQL */ `subscription OnUpdateQuestionAnswer(
+  $filter: ModelSubscriptionQuestionAnswerFilterInput
+  $customerId: String
 ) {
-  updateQuestionAnswer(input: $input, condition: $condition) {
+  onUpdateQuestionAnswer(filter: $filter, customerId: $customerId) {
     petName
     customerUsername
     pet {
@@ -1395,15 +1365,15 @@ export const updateQuestionAnswer = /* GraphQL */ `mutation UpdateQuestionAnswer
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateQuestionAnswerMutationVariables,
-  APITypes.UpdateQuestionAnswerMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateQuestionAnswerSubscriptionVariables,
+  APITypes.OnUpdateQuestionAnswerSubscription
 >;
-export const deleteQuestionAnswer = /* GraphQL */ `mutation DeleteQuestionAnswer(
-  $input: DeleteQuestionAnswerInput!
-  $condition: ModelQuestionAnswerConditionInput
+export const onDeleteQuestionAnswer = /* GraphQL */ `subscription OnDeleteQuestionAnswer(
+  $filter: ModelSubscriptionQuestionAnswerFilterInput
+  $customerId: String
 ) {
-  deleteQuestionAnswer(input: $input, condition: $condition) {
+  onDeleteQuestionAnswer(filter: $filter, customerId: $customerId) {
     petName
     customerUsername
     pet {
@@ -1447,15 +1417,15 @@ export const deleteQuestionAnswer = /* GraphQL */ `mutation DeleteQuestionAnswer
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteQuestionAnswerMutationVariables,
-  APITypes.DeleteQuestionAnswerMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteQuestionAnswerSubscriptionVariables,
+  APITypes.OnDeleteQuestionAnswerSubscription
 >;
-export const createService = /* GraphQL */ `mutation CreateService(
-  $input: CreateServiceInput!
-  $condition: ModelServiceConditionInput
+export const onCreateService = /* GraphQL */ `subscription OnCreateService(
+  $filter: ModelSubscriptionServiceFilterInput
+  $serviceProviderId: String
 ) {
-  createService(input: $input, condition: $condition) {
+  onCreateService(filter: $filter, serviceProviderId: $serviceProviderId) {
     id
     name
     serviceProviderName
@@ -1579,15 +1549,15 @@ export const createService = /* GraphQL */ `mutation CreateService(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateServiceMutationVariables,
-  APITypes.CreateServiceMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateServiceSubscriptionVariables,
+  APITypes.OnCreateServiceSubscription
 >;
-export const updateService = /* GraphQL */ `mutation UpdateService(
-  $input: UpdateServiceInput!
-  $condition: ModelServiceConditionInput
+export const onUpdateService = /* GraphQL */ `subscription OnUpdateService(
+  $filter: ModelSubscriptionServiceFilterInput
+  $serviceProviderId: String
 ) {
-  updateService(input: $input, condition: $condition) {
+  onUpdateService(filter: $filter, serviceProviderId: $serviceProviderId) {
     id
     name
     serviceProviderName
@@ -1711,15 +1681,15 @@ export const updateService = /* GraphQL */ `mutation UpdateService(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateServiceMutationVariables,
-  APITypes.UpdateServiceMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateServiceSubscriptionVariables,
+  APITypes.OnUpdateServiceSubscription
 >;
-export const deleteService = /* GraphQL */ `mutation DeleteService(
-  $input: DeleteServiceInput!
-  $condition: ModelServiceConditionInput
+export const onDeleteService = /* GraphQL */ `subscription OnDeleteService(
+  $filter: ModelSubscriptionServiceFilterInput
+  $serviceProviderId: String
 ) {
-  deleteService(input: $input, condition: $condition) {
+  onDeleteService(filter: $filter, serviceProviderId: $serviceProviderId) {
     id
     name
     serviceProviderName
@@ -1843,15 +1813,15 @@ export const deleteService = /* GraphQL */ `mutation DeleteService(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteServiceMutationVariables,
-  APITypes.DeleteServiceMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteServiceSubscriptionVariables,
+  APITypes.OnDeleteServiceSubscription
 >;
-export const createServiceProvider = /* GraphQL */ `mutation CreateServiceProvider(
-  $input: CreateServiceProviderInput!
-  $condition: ModelServiceProviderConditionInput
+export const onCreateServiceProvider = /* GraphQL */ `subscription OnCreateServiceProvider(
+  $filter: ModelSubscriptionServiceProviderFilterInput
+  $id: String
 ) {
-  createServiceProvider(input: $input, condition: $condition) {
+  onCreateServiceProvider(filter: $filter, id: $id) {
     id
     name
     displayName
@@ -1903,15 +1873,15 @@ export const createServiceProvider = /* GraphQL */ `mutation CreateServiceProvid
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateServiceProviderMutationVariables,
-  APITypes.CreateServiceProviderMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateServiceProviderSubscriptionVariables,
+  APITypes.OnCreateServiceProviderSubscription
 >;
-export const updateServiceProvider = /* GraphQL */ `mutation UpdateServiceProvider(
-  $input: UpdateServiceProviderInput!
-  $condition: ModelServiceProviderConditionInput
+export const onUpdateServiceProvider = /* GraphQL */ `subscription OnUpdateServiceProvider(
+  $filter: ModelSubscriptionServiceProviderFilterInput
+  $id: String
 ) {
-  updateServiceProvider(input: $input, condition: $condition) {
+  onUpdateServiceProvider(filter: $filter, id: $id) {
     id
     name
     displayName
@@ -1963,15 +1933,15 @@ export const updateServiceProvider = /* GraphQL */ `mutation UpdateServiceProvid
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateServiceProviderMutationVariables,
-  APITypes.UpdateServiceProviderMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateServiceProviderSubscriptionVariables,
+  APITypes.OnUpdateServiceProviderSubscription
 >;
-export const deleteServiceProvider = /* GraphQL */ `mutation DeleteServiceProvider(
-  $input: DeleteServiceProviderInput!
-  $condition: ModelServiceProviderConditionInput
+export const onDeleteServiceProvider = /* GraphQL */ `subscription OnDeleteServiceProvider(
+  $filter: ModelSubscriptionServiceProviderFilterInput
+  $id: String
 ) {
-  deleteServiceProvider(input: $input, condition: $condition) {
+  onDeleteServiceProvider(filter: $filter, id: $id) {
     id
     name
     displayName
@@ -2023,15 +1993,15 @@ export const deleteServiceProvider = /* GraphQL */ `mutation DeleteServiceProvid
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteServiceProviderMutationVariables,
-  APITypes.DeleteServiceProviderMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteServiceProviderSubscriptionVariables,
+  APITypes.OnDeleteServiceProviderSubscription
 >;
-export const createTimeSlot = /* GraphQL */ `mutation CreateTimeSlot(
-  $input: CreateTimeSlotInput!
-  $condition: ModelTimeSlotConditionInput
+export const onCreateTimeSlot = /* GraphQL */ `subscription OnCreateTimeSlot(
+  $filter: ModelSubscriptionTimeSlotFilterInput
+  $serviceProviderId: String
 ) {
-  createTimeSlot(input: $input, condition: $condition) {
+  onCreateTimeSlot(filter: $filter, serviceProviderId: $serviceProviderId) {
     id
     serviceId
     startDateTime
@@ -2050,15 +2020,15 @@ export const createTimeSlot = /* GraphQL */ `mutation CreateTimeSlot(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreateTimeSlotMutationVariables,
-  APITypes.CreateTimeSlotMutation
+` as GeneratedSubscription<
+  APITypes.OnCreateTimeSlotSubscriptionVariables,
+  APITypes.OnCreateTimeSlotSubscription
 >;
-export const updateTimeSlot = /* GraphQL */ `mutation UpdateTimeSlot(
-  $input: UpdateTimeSlotInput!
-  $condition: ModelTimeSlotConditionInput
+export const onUpdateTimeSlot = /* GraphQL */ `subscription OnUpdateTimeSlot(
+  $filter: ModelSubscriptionTimeSlotFilterInput
+  $serviceProviderId: String
 ) {
-  updateTimeSlot(input: $input, condition: $condition) {
+  onUpdateTimeSlot(filter: $filter, serviceProviderId: $serviceProviderId) {
     id
     serviceId
     startDateTime
@@ -2077,15 +2047,15 @@ export const updateTimeSlot = /* GraphQL */ `mutation UpdateTimeSlot(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdateTimeSlotMutationVariables,
-  APITypes.UpdateTimeSlotMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdateTimeSlotSubscriptionVariables,
+  APITypes.OnUpdateTimeSlotSubscription
 >;
-export const deleteTimeSlot = /* GraphQL */ `mutation DeleteTimeSlot(
-  $input: DeleteTimeSlotInput!
-  $condition: ModelTimeSlotConditionInput
+export const onDeleteTimeSlot = /* GraphQL */ `subscription OnDeleteTimeSlot(
+  $filter: ModelSubscriptionTimeSlotFilterInput
+  $serviceProviderId: String
 ) {
-  deleteTimeSlot(input: $input, condition: $condition) {
+  onDeleteTimeSlot(filter: $filter, serviceProviderId: $serviceProviderId) {
     id
     serviceId
     startDateTime
@@ -2104,15 +2074,20 @@ export const deleteTimeSlot = /* GraphQL */ `mutation DeleteTimeSlot(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeleteTimeSlotMutationVariables,
-  APITypes.DeleteTimeSlotMutation
+` as GeneratedSubscription<
+  APITypes.OnDeleteTimeSlotSubscriptionVariables,
+  APITypes.OnDeleteTimeSlotSubscription
 >;
-export const createPetBookings = /* GraphQL */ `mutation CreatePetBookings(
-  $input: CreatePetBookingsInput!
-  $condition: ModelPetBookingsConditionInput
+export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookings(
+  $filter: ModelSubscriptionPetBookingsFilterInput
+  $owners: String
+  $customerId: String
 ) {
-  createPetBookings(input: $input, condition: $condition) {
+  onCreatePetBookings(
+    filter: $filter
+    owners: $owners
+    customerId: $customerId
+  ) {
     id
     bookingCustomerUsername
     bookingtimeSlotId
@@ -2176,15 +2151,20 @@ export const createPetBookings = /* GraphQL */ `mutation CreatePetBookings(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.CreatePetBookingsMutationVariables,
-  APITypes.CreatePetBookingsMutation
+` as GeneratedSubscription<
+  APITypes.OnCreatePetBookingsSubscriptionVariables,
+  APITypes.OnCreatePetBookingsSubscription
 >;
-export const updatePetBookings = /* GraphQL */ `mutation UpdatePetBookings(
-  $input: UpdatePetBookingsInput!
-  $condition: ModelPetBookingsConditionInput
+export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookings(
+  $filter: ModelSubscriptionPetBookingsFilterInput
+  $owners: String
+  $customerId: String
 ) {
-  updatePetBookings(input: $input, condition: $condition) {
+  onUpdatePetBookings(
+    filter: $filter
+    owners: $owners
+    customerId: $customerId
+  ) {
     id
     bookingCustomerUsername
     bookingtimeSlotId
@@ -2248,15 +2228,20 @@ export const updatePetBookings = /* GraphQL */ `mutation UpdatePetBookings(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.UpdatePetBookingsMutationVariables,
-  APITypes.UpdatePetBookingsMutation
+` as GeneratedSubscription<
+  APITypes.OnUpdatePetBookingsSubscriptionVariables,
+  APITypes.OnUpdatePetBookingsSubscription
 >;
-export const deletePetBookings = /* GraphQL */ `mutation DeletePetBookings(
-  $input: DeletePetBookingsInput!
-  $condition: ModelPetBookingsConditionInput
+export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookings(
+  $filter: ModelSubscriptionPetBookingsFilterInput
+  $owners: String
+  $customerId: String
 ) {
-  deletePetBookings(input: $input, condition: $condition) {
+  onDeletePetBookings(
+    filter: $filter
+    owners: $owners
+    customerId: $customerId
+  ) {
     id
     bookingCustomerUsername
     bookingtimeSlotId
@@ -2320,7 +2305,7 @@ export const deletePetBookings = /* GraphQL */ `mutation DeletePetBookings(
     __typename
   }
 }
-` as GeneratedMutation<
-  APITypes.DeletePetBookingsMutationVariables,
-  APITypes.DeletePetBookingsMutation
+` as GeneratedSubscription<
+  APITypes.OnDeletePetBookingsSubscriptionVariables,
+  APITypes.OnDeletePetBookingsSubscription
 >;

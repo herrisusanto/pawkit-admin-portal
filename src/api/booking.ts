@@ -1,33 +1,27 @@
 import { ConsoleLogger } from "aws-amplify/utils";
-import { graphqlClient } from "./core";
+import { generateCustomerSpecificShortId, graphqlClient } from "./core";
 import {
   createBooking,
   createPetBookings,
   updateBooking,
-} from "../graphql/mutations";
+} from "./graphql/mutations";
 import {
+  bookingsByOrder,
   bookingsByService,
   bookingsByTimeSlot,
-  getBooking,
   listBookings,
   listPetBookings,
-  petBookingsByBookingCustomerUsernameAndBookingtimeSlotId,
   petBookingsByPetNameAndPetcustomerUsername,
-  searchBookings,
-} from "../graphql/queries";
+} from "./graphql/queries";
 import {
   BookingStatus,
   CreateBookingInput,
   GetBookingQueryVariables,
   ListBookingsQueryVariables,
-  ModelIDKeyConditionInput,
   ModelPetBookingsFilterInput,
   ModelStringKeyConditionInput,
-  SearchBookingsQueryVariables,
-  SearchableBookingSortableFields,
-  SearchableSortDirection,
   UpdateBookingInput,
-} from "../API";
+} from "./graphql/API";
 import {
   addBookingToOrder,
   addOrder,
@@ -48,18 +42,23 @@ import {
   NotFoundError,
 } from "./errors";
 import { isValidBookingStatusTransition } from "./validation";
-import { customBookingById, customBookingsByCustomer } from "../graphql/custom";
+import {
+  customBookingById,
+  customBookingsByCustomer,
+  customGetBooking,
+} from "./graphql/custom";
 import { fetchPaymentsByOrderId } from "./payment";
 
 const logger = new ConsoleLogger("api/booking.ts");
 
+const generateBookingId = async (customerId: string, timeSlotId: string) => {
+  return await generateCustomerSpecificShortId(customerId, timeSlotId, 7);
+};
+
 // Create
 // Make sure there is an order before adding a booking
 // Check that disclaimer was accepted before creating booking
-export const addBooking = async (
-  input: CreateBookingInput,
-  petName: string,
-) => {
+export const addBooking = async (input: CreateBookingInput) => {
   try {
     let order;
     let orderId = input.orderId;
@@ -78,7 +77,7 @@ export const addBooking = async (
     const timeSlot = await fetchTimeSlot(input.serviceId, input.startDateTime);
     if (!timeSlot) {
       logger.error(
-        `Time slot not found for service with id=${input.serviceId} at ${input.startDateTime}`,
+        `Time slot not found for service with id=${input.serviceId} at ${input.startDateTime}`
       );
       throw new NotFoundError("Time slot not found");
     }
@@ -88,10 +87,12 @@ export const addBooking = async (
       throw new ConflictError("Time slot is full");
     }
 
+    const id = await generateBookingId(input.customerId, timeSlot.id);
     const bookingResult = await graphqlClient.graphql({
       query: createBooking,
       variables: {
         input: {
+          id,
           ...input,
           owners: [input.customerId, input.serviceProviderName],
           timeSlotId: timeSlot.id,
@@ -102,24 +103,24 @@ export const addBooking = async (
     const booking = bookingResult.data.createBooking;
     logger.info("Called createBooking mutation");
 
-    const [updatedTimeSlot, updatedService, updatedOrder, petBooking] =
+    const [updatedTimeSlot, updatedService, updatedOrder, petBookings] =
       await Promise.all([
         addBookingToTimeSlot(
           booking.serviceId,
           booking.startDateTime,
-          booking.id,
+          booking.id
         ),
         addBookingToService(booking.serviceId, booking.id),
         addBookingToOrder(
           orderId,
           booking.id,
           booking.currency,
-          booking.amount,
+          booking.amount
         ),
-        addPetBookingRelationship(
+        addPetBookingRelationships(
           booking.customerUsername,
-          petName,
-          timeSlot.id,
+          input.petNames,
+          timeSlot.id
         ),
       ]);
 
@@ -128,7 +129,7 @@ export const addBooking = async (
       updatedOrder,
       updatedTimeSlot,
       updatedService,
-      petBooking,
+      petBookings,
     };
   } catch (error) {
     logger.error("Error creating booking: ", error);
@@ -137,10 +138,30 @@ export const addBooking = async (
   }
 };
 
+export const addPetBookingRelationships = (
+  customerUsername: string,
+  petNames: string[],
+  timeSlotId: string
+) => {
+  try {
+    const petBookingPromises: any[] = [];
+    petNames.forEach((petName) =>
+      petBookingPromises.push(
+        addPetBookingRelationship(customerUsername, petName, timeSlotId)
+      )
+    );
+    return Promise.all(petBookingPromises);
+  } catch (error) {
+    logger.error("Error creating pet booking relationships: ", error);
+    if (error instanceof CustomError) throw error;
+    throw new InternalServerError("Error creating pet booking relationships");
+  }
+};
+
 export const addPetBookingRelationship = async (
   customerUsername: string,
   petName: string,
-  timeSlotId: string,
+  timeSlotId: string
 ) => {
   try {
     if (!customerUsername) {
@@ -180,68 +201,11 @@ export const addPetBookingRelationship = async (
 };
 
 // Read
-export const queryBookingsByService = async (serviceId: string) => {
-  try {
-    if (!serviceId) {
-      logger.error("Service id is required");
-      throw new BadRequestError("Service id is required");
-    }
-
-    const result = await graphqlClient.graphql({
-      query: searchBookings,
-      variables: {
-        filter: { serviceId: { eq: serviceId } },
-        sort: [
-          {
-            field: SearchableBookingSortableFields.startDateTime,
-            direction: SearchableSortDirection.asc,
-          },
-        ],
-      },
-    });
-    logger.info("Called searchBookings query by service");
-    return result.data.searchBookings.items;
-  } catch (error) {
-    logger.error(
-      `Error fetching bookings for service with id=${serviceId}: `,
-      error,
-    );
-    if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error fetching bookings");
-  }
-};
-
-export const queryBookingsByStatus = async (status: BookingStatus) => {
-  try {
-    const result = await graphqlClient.graphql({
-      query: searchBookings,
-      variables: {
-        filter: { status: { eq: status } },
-        sort: [
-          {
-            field: SearchableBookingSortableFields.startDateTime,
-            direction: SearchableSortDirection.asc,
-          },
-          {
-            field: SearchableBookingSortableFields.serviceName,
-            direction: SearchableSortDirection.asc,
-          },
-        ],
-      } as SearchBookingsQueryVariables,
-    });
-    logger.info("Called searchBookings query by status");
-    return result.data.searchBookings.items;
-  } catch (error) {
-    logger.error("Error searching bookings: ", error);
-    throw new InternalServerError("Error searching bookings");
-  }
-};
-
-export const fetchBookings = async (variables?: ListBookingsQueryVariables) => {
+export const fetchBookings = async (variables: ListBookingsQueryVariables) => {
   try {
     const result = await graphqlClient.graphql({
       query: listBookings,
-      ...(variables && variables),
+      variables,
     });
     logger.info("Called listBookings query");
     return result.data.listBookings.items;
@@ -264,7 +228,31 @@ export const fetchBookingsByCustomer = async (customerId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching bookings by customer id=${customerId}: `,
-      error,
+      error
+    );
+    throw new InternalServerError("Error fetching bookings");
+  }
+};
+
+export const fetchBookingsByOrder = async (orderId: string) => {
+  try {
+    if (!orderId) {
+      logger.error("Order id is required");
+      throw new BadRequestError("Order id is required");
+    }
+
+    const result = await graphqlClient.graphql({
+      query: bookingsByOrder,
+      variables: {
+        orderId,
+      },
+    });
+    logger.info("Called bookingsByOrder query");
+    return result.data.bookingsByOrder.items;
+  } catch (error) {
+    logger.error(
+      `Error fetching bookings for order with id=${orderId}: `,
+      error
     );
     throw new InternalServerError("Error fetching bookings");
   }
@@ -272,7 +260,7 @@ export const fetchBookingsByCustomer = async (customerId: string) => {
 
 export const fetchBookingsByPet = async (
   petName: string,
-  customerUsername: string,
+  customerUsername: string
 ) => {
   try {
     if (!petName) {
@@ -299,62 +287,7 @@ export const fetchBookingsByPet = async (
   } catch (error) {
     logger.error(
       `Error fetching bookings for pet named ${petName} owned by ${customerUsername}: `,
-      error,
-    );
-    if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error fetching bookings");
-  }
-};
-
-export const fetchPetsByBooking = async (
-  customerUsername: string,
-  timeSlotId: string,
-) => {
-  try {
-    if (!customerUsername) {
-      logger.error("Customer username is required");
-      throw new BadRequestError("Customer username is required");
-    }
-
-    if (!timeSlotId) {
-      logger.error("Time slot id is required");
-      throw new BadRequestError("Time slot id is required");
-    }
-
-    const result = await graphqlClient.graphql({
-      query: petBookingsByBookingCustomerUsernameAndBookingtimeSlotId,
-      variables: {
-        bookingCustomerUsername: customerUsername,
-        bookingtimeSlotId: { eq: timeSlotId } as ModelIDKeyConditionInput,
-      },
-    });
-    logger.info(
-      "Called petBookingsByBookingCustomerUsernameAndBookingtimeSlotId query",
-    );
-    const petBookings =
-      result.data.petBookingsByBookingCustomerUsernameAndBookingtimeSlotId
-        .items;
-    return petBookings;
-    // logger.debug("PetBookings:", petBookings);
-    // const enhancedPetBookings = [];
-    // const errors = [];
-    // for (const petBooking of petBookings) {
-    //   logger.debug("PetBooking:", petBooking);
-    //   try {
-    //     const pet = await fetchPet(petBooking.petName, petBooking.petcustomerUsername);
-    //     if (pet) {
-    //       enhancedPetBookings.push({ ...petBooking, petImageUrl: pet.imageUrl, petBirthDate: pet.birthdate });
-    //     }
-    //   } catch (error) {
-    //     logger.error(`Pet with name=${petBooking.petName} and owner=${petBooking.petcustomerUsername} not found`);
-    //     errors.push(error);
-    //   }
-    // }
-    // return { enhancedPetBookings, errors };
-  } catch (error) {
-    logger.error(
-      `Error fetching bookings for customer ${customerUsername} at time slot ${timeSlotId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching bookings");
@@ -396,7 +329,7 @@ export const fetchBookingsByService = async (serviceId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching bookings for service with id=${serviceId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching bookings");
@@ -421,16 +354,17 @@ export const fetchBookingsByTimeSlot = async (timeSlotId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching bookings by timeslot with id=${timeSlotId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching bookings");
   }
 };
 
+// This is preferred over fetchBookingById as it uses the GSI
 export const fetchBooking = async (
   customerUsername: string,
-  timeSlotId: string,
+  timeSlotId: string
 ) => {
   try {
     if (!customerUsername) {
@@ -444,14 +378,17 @@ export const fetchBooking = async (
     }
 
     const result = await graphqlClient.graphql({
-      query: getBooking,
+      query: customGetBooking,
       variables: {
         customerUsername,
         timeSlotId,
       } as GetBookingQueryVariables,
     });
+
     logger.info("Called getBooking query");
-    return result.data.getBooking;
+    const booking = result.data.getBooking;
+    const payments = await fetchPaymentsByOrderId(booking.orderId);
+    return { booking, payments };
   } catch (error) {
     logger.error(`Error fetching booking: `, error);
     if (error instanceof CustomError) throw error;
@@ -459,6 +396,7 @@ export const fetchBooking = async (
   }
 };
 
+// WARN: Fetching by primary key is safer as booking id is a short id that has a high chance of collision
 export const fetchBookingById = async (id: string) => {
   try {
     if (!id) {
@@ -466,9 +404,7 @@ export const fetchBookingById = async (id: string) => {
       throw new BadRequestError("Booking id is required");
     }
 
-    console.log("meong2");
-
-    const bookingResult: any = await graphqlClient.graphql({
+    const result: any = await graphqlClient.graphql({
       query: customBookingById,
       variables: {
         id,
@@ -476,7 +412,7 @@ export const fetchBookingById = async (id: string) => {
     });
 
     logger.info("Called bookingById query");
-    const bookingItems = bookingResult.data.bookingById.items;
+    const bookingItems = result.data.bookingById.items;
     if (!bookingItems || bookingItems.length === 0) {
       logger.error(`Booking with id=${id} not found`);
       throw new NotFoundError("Booking not found");
@@ -493,28 +429,33 @@ export const fetchBookingById = async (id: string) => {
 
 // Update
 export const updateBookingStatus = async (
-  id: string,
+  customerUsername: string,
+  timeSlotId: string,
   status: BookingStatus,
-  toRefund: boolean,
+  toRefund: boolean
 ) => {
   try {
-    if (!id) {
-      logger.error("Booking id is required");
-      throw new BadRequestError("Booking id is required");
+    if (!customerUsername) {
+      logger.error("Customer username is required");
+      throw new BadRequestError("Customer username is required");
     }
 
-    console.log("meong");
+    if (!timeSlotId) {
+      logger.error("Time slot id is required");
+      throw new BadRequestError("Time slot id is required");
+    }
 
-    const { booking } = await fetchBookingById(id);
-
+    const { booking } = await fetchBooking(customerUsername, timeSlotId);
     if (!booking) {
-      logger.error(`Booking with id=${id} not found`);
+      logger.error(
+        `Booking not found for customer=${customerUsername} and time slot=${timeSlotId}`
+      );
       throw new NotFoundError("Booking not found");
     }
 
     if (!isValidBookingStatusTransition(booking.status, status)) {
       logger.error(
-        `Booking status cannot transition from ${booking.status} to ${status}`,
+        `Booking status cannot transition from ${booking.status} to ${status}`
       );
       throw new BadRequestError("Invalid booking status transition");
     }
@@ -527,12 +468,12 @@ export const updateBookingStatus = async (
         booking.orderId,
         booking.id,
         booking.amount,
-        toRefund,
+        toRefund
       );
       timeSlot = await removeBookingFromTimeSlot(
         booking.serviceId,
         booking.startDateTime,
-        booking.id,
+        booking.id
       );
     }
 
@@ -540,7 +481,8 @@ export const updateBookingStatus = async (
       query: updateBooking,
       variables: {
         input: {
-          id,
+          customerUsername,
+          timeSlotId,
           status,
         } as UpdateBookingInput,
       },

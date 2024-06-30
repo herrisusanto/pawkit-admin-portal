@@ -1,4 +1,4 @@
-import { BookingStatus } from "../API";
+import { BookingStatus } from "./graphql/API";
 
 const bookingStatusTransitions: Record<BookingStatus, BookingStatus[]> = {
   [BookingStatus.PENDING]: [BookingStatus.CONFIRMED, BookingStatus.CANCELLED],
@@ -10,7 +10,7 @@ const bookingStatusTransitions: Record<BookingStatus, BookingStatus[]> = {
 
 export function isValidBookingStatusTransition(
   from: BookingStatus,
-  to: BookingStatus,
+  to: BookingStatus
 ): boolean {
   return bookingStatusTransitions[from].includes(to);
 }
@@ -32,7 +32,7 @@ export function isValidDate(dateString: string): boolean {
 
 export function isStartDateBeforeEndDate(
   startDateString: string,
-  endDateString: string,
+  endDateString: string
 ): boolean {
   // Parse the date strings into Date objects
   const startDate = new Date(startDateString);

@@ -7,9 +7,9 @@ import {
   ModelBreedConditionInput,
   PetType,
   UpdateBreedInput,
-} from "../API";
-import { breedsByPetType, getBreed, listBreeds } from "../graphql/queries";
-import { createBreed, deleteBreed, updateBreed } from "../graphql/mutations";
+} from "./graphql/API";
+import { breedsByPetType, getBreed, listBreeds } from "./graphql/queries";
+import { createBreed, deleteBreed, updateBreed } from "./graphql/mutations";
 import { BadRequestError, CustomError, InternalServerError } from "./errors";
 
 const logger = new ConsoleLogger("api/breed.ts");
@@ -87,7 +87,7 @@ export const fetchBreed = async (name: string) => {
 // Update
 export const modifyBreed = async (
   input: UpdateBreedInput,
-  condition: ModelBreedConditionInput,
+  condition: ModelBreedConditionInput
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -108,7 +108,7 @@ export const modifyBreed = async (
 // Delete
 export const removeBreed = async (
   input: DeleteBreedInput,
-  condition: ModelBreedConditionInput,
+  condition: ModelBreedConditionInput
 ) => {
   try {
     const result = await graphqlClient.graphql({
