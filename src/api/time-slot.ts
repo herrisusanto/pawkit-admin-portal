@@ -49,7 +49,7 @@ export const addTimeSlot = async (input: CreateTimeSlotInput) => {
     // Update service with new time slot
     const updatedService = addTimeSlotToService(
       input.serviceId,
-      input.startDateTime
+      input.startDateTime,
     );
 
     return updatedService;
@@ -62,7 +62,7 @@ export const addTimeSlot = async (input: CreateTimeSlotInput) => {
 
 // Read
 export const fetchTimeSlots = async (
-  variables: ListTimeSlotsQueryVariables
+  variables: ListTimeSlotsQueryVariables,
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -95,7 +95,7 @@ export const fetchTimeSlotsByServiceId = async (serviceId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching time slots for service with id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching time slots");
@@ -126,7 +126,7 @@ export const fetchTimeSlotById = async (id: string) => {
 
 export const fetchTimeSlot = async (
   serviceId: string,
-  startDateTime: string
+  startDateTime: string,
 ) => {
   try {
     if (!serviceId) {
@@ -152,13 +152,13 @@ export const fetchTimeSlot = async (
       },
     });
     logger.info(
-      `Called getTimeSlot query for timeslot with serviceId=${serviceId} and startDateTime=${startDateTime}`
+      `Called getTimeSlot query for timeslot with serviceId=${serviceId} and startDateTime=${startDateTime}`,
     );
     return result.data.getTimeSlot;
   } catch (error) {
     logger.error(
       `Error fetching time slot with serviceId=${serviceId} and startDateTime=${startDateTime}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching time slot");
@@ -179,10 +179,10 @@ export const modifyTimeSlot = async (input: UpdateTimeSlotInput) => {
     if (bookings?.length && bookings.length > 0) {
       logger.error(
         "Cannot update a time slot that has already been booked: ",
-        bookings
+        bookings,
       );
       throw new BadRequestError(
-        "Cannot update a time slot that has already been booked"
+        "Cannot update a time slot that has already been booked",
       );
     }
 
@@ -204,7 +204,7 @@ export const modifyTimeSlot = async (input: UpdateTimeSlotInput) => {
 export const addBookingToTimeSlot = async (
   serviceId: string,
   startDateTime: string,
-  bookingId: string
+  bookingId: string,
 ) => {
   try {
     if (!serviceId) {
@@ -270,7 +270,7 @@ export const addBookingToTimeSlot = async (
 export const removeBookingFromTimeSlot = async (
   serviceId: string,
   startDateTime: string,
-  bookingId: string
+  bookingId: string,
 ) => {
   try {
     if (!serviceId) {
@@ -302,7 +302,7 @@ export const removeBookingFromTimeSlot = async (
     const bookingIds = timeSlot.bookingIds || [];
     if (!bookingIds?.includes(bookingId)) {
       logger.warn(
-        `Booking id=${bookingId} does not exist in time slot id=${timeSlot.id}`
+        `Booking id=${bookingId} does not exist in time slot id=${timeSlot.id}`,
       );
       return timeSlot;
     }
@@ -327,7 +327,7 @@ export const removeBookingFromTimeSlot = async (
       },
     });
     logger.info(
-      "Called updateTimeSlot mutation to remove booking from time slot"
+      "Called updateTimeSlot mutation to remove booking from time slot",
     );
     return result.data.updateTimeSlot;
   } catch (error) {
@@ -340,7 +340,7 @@ export const removeBookingFromTimeSlot = async (
 // Delete
 export const removeTimeSlot = async (
   serviceId: string,
-  startDateTime: string
+  startDateTime: string,
 ) => {
   try {
     if (!serviceId) {
@@ -368,10 +368,10 @@ export const removeTimeSlot = async (
     if (bookings?.length && bookings.length > 0) {
       logger.error(
         "Cannot remove a time slot that has already been booked: ",
-        bookings
+        bookings,
       );
       throw new BadRequestError(
-        "Cannot remove a time slot that has already been booked"
+        "Cannot remove a time slot that has already been booked",
       );
     }
 

@@ -238,6 +238,17 @@
     },
     "pawkitPostConfirmation": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ],
+          "category": "api",
+          "resourceName": "pawkit"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -293,12 +304,7 @@
       "service": "Lambda"
     }
   },
-  "hosting": {
-    "amplifyhosting": {
-      "service": "amplifyhosting",
-      "type": "cicd"
-    }
-  },
+  "hosting": {},
   "parameters": {
     "AMPLIFY_function_AdminQueries2bb3090c_deploymentBucketName": {
       "usedBy": [
@@ -481,22 +487,6 @@
         {
           "category": "function",
           "resourceName": "paymentRequests"
-        }
-      ]
-    },
-    "AMPLIFY_hosting_amplifyhosting_appId": {
-      "usedBy": [
-        {
-          "category": "hosting",
-          "resourceName": "amplifyhosting"
-        }
-      ]
-    },
-    "AMPLIFY_hosting_amplifyhosting_type": {
-      "usedBy": [
-        {
-          "category": "hosting",
-          "resourceName": "amplifyhosting"
         }
       ]
     }

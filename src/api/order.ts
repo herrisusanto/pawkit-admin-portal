@@ -17,7 +17,7 @@ const logger = new ConsoleLogger("api/order.ts");
 export const addOrder = async (
   customerId: string,
   currency: Currency,
-  initAmount: number
+  initAmount: number,
 ) => {
   try {
     if (!customerId) {
@@ -74,7 +74,7 @@ export const addBookingToOrder = async (
   orderId: string,
   bookingId: string,
   currency: Currency,
-  amount: number
+  amount: number,
 ) => {
   try {
     if (!orderId) {
@@ -96,7 +96,7 @@ export const addBookingToOrder = async (
     const orderCurrency = order.currency;
     if (orderCurrency !== currency) {
       logger.error(
-        `Order currency=${orderCurrency} does not match booking currency=${currency}`
+        `Order currency=${orderCurrency} does not match booking currency=${currency}`,
       );
       throw new ConflictError("Currency mismatch");
     }
@@ -104,7 +104,7 @@ export const addBookingToOrder = async (
 
     if (bookingIds.includes(bookingId)) {
       logger.warn(
-        `Booking id=${bookingId} already exists in order id=${orderId}`
+        `Booking id=${bookingId} already exists in order id=${orderId}`,
       );
       return order;
     }
@@ -124,7 +124,7 @@ export const addBookingToOrder = async (
   } catch (error) {
     logger.error(
       `Error adding booking id=${bookingId} to order id=${orderId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error adding booking to order");
@@ -135,7 +135,7 @@ export const updateBookingCancellationInOrder = async (
   orderId: string,
   bookingId: string,
   amount: number,
-  toRefund: boolean
+  toRefund: boolean,
 ) => {
   try {
     if (!orderId) {
@@ -157,7 +157,7 @@ export const updateBookingCancellationInOrder = async (
     const bookingIds = order.bookingIds;
     if (!bookingIds?.includes(bookingId)) {
       logger.error(
-        `Booking id=${bookingId} does not belong to order id=${orderId}`
+        `Booking id=${bookingId} does not belong to order id=${orderId}`,
       );
       throw new ConflictError("Booking does not belong to order");
     }
@@ -174,24 +174,24 @@ export const updateBookingCancellationInOrder = async (
       },
     });
     logger.info(
-      "Called updateOrder mutation to update order with booking cancellation"
+      "Called updateOrder mutation to update order with booking cancellation",
     );
     return result.data.updateOrder;
   } catch (error) {
     logger.error(
       `Error updating booking id=${bookingId} cancellation in order id=${orderId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError(
-      "Error updating order with booking cancellation"
+      "Error updating order with booking cancellation",
     );
   }
 };
 
 export const updateOrderRefund = async (
   orderId: string,
-  refundAmount: number
+  refundAmount: number,
 ) => {
   try {
     if (!orderId) {
@@ -213,7 +213,7 @@ export const updateOrderRefund = async (
     if (refundAmount > order.totalAmount) {
       logger.error("Refund amount must be less than or equal to total amount");
       throw new BadRequestError(
-        "Refund amount must be less than or equal to total amount"
+        "Refund amount must be less than or equal to total amount",
       );
     }
 
@@ -238,7 +238,7 @@ export const updateOrderRefund = async (
 
 export const updateOrderPayment = async (
   orderId: string,
-  paymentRequestId: string
+  paymentRequestId: string,
 ) => {
   try {
     if (!orderId) {
@@ -271,7 +271,7 @@ export const updateOrderPayment = async (
   } catch (error) {
     logger.error(
       `Error updating order payment to ${paymentRequestId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error updating order payment");

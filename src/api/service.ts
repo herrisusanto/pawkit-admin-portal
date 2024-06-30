@@ -77,7 +77,7 @@ export const fetchServices = async (variables: ListServicesQueryVariables) => {
       variables,
     });
     logger.info(
-      `Called customListServices query with variables: ${JSON.stringify(variables)}`
+      `Called customListServices query with variables: ${JSON.stringify(variables)}`,
     );
     return result.data.listServices.items;
   } catch (error) {
@@ -87,7 +87,7 @@ export const fetchServices = async (variables: ListServicesQueryVariables) => {
 };
 
 export const fetchServicesByServiceProvider = async (
-  serviceProviderName: string
+  serviceProviderName: string,
 ) => {
   try {
     if (!serviceProviderName) {
@@ -106,7 +106,7 @@ export const fetchServicesByServiceProvider = async (
   } catch (error) {
     logger.error(
       `Error fetching services provided by ${serviceProviderName}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching services");
@@ -114,7 +114,7 @@ export const fetchServicesByServiceProvider = async (
 };
 
 export const fetchServicesByCategory = async (
-  serviceCategory: ServiceCategory
+  serviceCategory: ServiceCategory,
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -151,7 +151,7 @@ export const fetchService = async (
   name: string,
   serviceProviderName: string,
   serviceCategory: ServiceCategory,
-  petType: PetType
+  petType: PetType,
 ) => {
   try {
     if (!name) {
@@ -178,7 +178,7 @@ export const fetchService = async (
   } catch (error) {
     logger.error(
       `Error fetching ${serviceCategory} service named ${name} provided by ${serviceProviderName} for ${petType}s: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching service");
@@ -245,7 +245,7 @@ export const fetchQuestionsByService = async (serviceId: string) => {
       } catch (error) {
         logger.error(
           `Error fetching question id=${id} for service id=${serviceId}: `,
-          error
+          error,
         );
         return null;
       }
@@ -255,7 +255,7 @@ export const fetchQuestionsByService = async (serviceId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching questions for service id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching questions");
@@ -281,7 +281,7 @@ export const modifyService = async (input: UpdateServiceInput) => {
 
 export const addServiceRelationship = async (
   parentServiceId: string,
-  childServiceId: string
+  childServiceId: string,
 ) => {
   try {
     if (!parentServiceId || !childServiceId) {
@@ -343,7 +343,7 @@ export const addServiceRelationship = async (
 
 export const removeServiceRelationship = async (
   parentServiceId: string,
-  childServiceId: string
+  childServiceId: string,
 ) => {
   try {
     if (!parentServiceId || !childServiceId) {
@@ -379,7 +379,7 @@ export const removeServiceRelationship = async (
         serviceCategory: parent.serviceCategory,
         petType: parent.petType,
         childServiceIds: childServiceIds.filter(
-          (id: string) => id !== childServiceId
+          (id: string) => id !== childServiceId,
         ),
       });
     }
@@ -392,7 +392,7 @@ export const removeServiceRelationship = async (
         serviceCategory: child.serviceCategory,
         petType: child.petType,
         parentServiceIds: parentServiceIds.filter(
-          (id: string) => id !== parentServiceId
+          (id: string) => id !== parentServiceId,
         ),
       });
     }
@@ -408,7 +408,7 @@ export const removeServiceRelationship = async (
 
 export const addTimeSlotToService = async (
   serviceId: string,
-  timeSlotId: string
+  timeSlotId: string,
 ) => {
   try {
     if (!serviceId) {
@@ -430,7 +430,7 @@ export const addTimeSlotToService = async (
     const timeSlotIds = service.timeSlotIds || [];
     if (timeSlotIds.includes(timeSlotId)) {
       logger.warn(
-        `Time slot id=${timeSlotId} already exists in service id=${serviceId}`
+        `Time slot id=${timeSlotId} already exists in service id=${serviceId}`,
       );
       return service;
     }
@@ -452,7 +452,7 @@ export const addTimeSlotToService = async (
   } catch (error) {
     logger.error(
       `Error adding time slot id=${timeSlotId} to service id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error adding time slot to service");
@@ -461,7 +461,7 @@ export const addTimeSlotToService = async (
 
 export const removeTimeSlotFromService = async (
   serviceId: string,
-  timeSlotId: string
+  timeSlotId: string,
 ) => {
   try {
     if (!serviceId) {
@@ -483,7 +483,7 @@ export const removeTimeSlotFromService = async (
     const timeSlotIds = service.timeSlotIds || [];
     if (!timeSlotIds.includes(timeSlotId)) {
       logger.warn(
-        `Time slot id=${timeSlotId} does not exist in service id=${serviceId}`
+        `Time slot id=${timeSlotId} does not exist in service id=${serviceId}`,
       );
       return service;
     }
@@ -501,13 +501,13 @@ export const removeTimeSlotFromService = async (
       },
     });
     logger.info(
-      "Called updateService mutation to remove time slot from service"
+      "Called updateService mutation to remove time slot from service",
     );
     return updatedService.data.updateService;
   } catch (error) {
     logger.error(
       `Error removing time slot id=${timeSlotId} from service id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error removing time slot from service");
@@ -516,7 +516,7 @@ export const removeTimeSlotFromService = async (
 
 export const addBookingToService = async (
   serviceId: string,
-  bookingId: string
+  bookingId: string,
 ) => {
   try {
     if (!serviceId) {
@@ -538,7 +538,7 @@ export const addBookingToService = async (
     const bookingIds = service.bookingIds || [];
     if (bookingIds.includes(bookingId)) {
       logger.warn(
-        `Booking id=${bookingId} already exists in service id=${serviceId}`
+        `Booking id=${bookingId} already exists in service id=${serviceId}`,
       );
       return service;
     }
@@ -560,7 +560,7 @@ export const addBookingToService = async (
   } catch (error) {
     logger.error(
       `Error adding booking id=${bookingId} to service id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error adding booking to service");
@@ -569,7 +569,7 @@ export const addBookingToService = async (
 
 export const removeBookingFromService = async (
   serviceId: string,
-  bookingId: string
+  bookingId: string,
 ) => {
   try {
     if (!serviceId) {
@@ -591,7 +591,7 @@ export const removeBookingFromService = async (
     const bookingIds = service.bookingIds || [];
     if (!bookingIds.includes(bookingId)) {
       logger.warn(
-        `Booking id=${bookingId} does not exist in service id=${serviceId}`
+        `Booking id=${bookingId} does not exist in service id=${serviceId}`,
       );
       return service;
     }
@@ -613,7 +613,7 @@ export const removeBookingFromService = async (
   } catch (error) {
     logger.error(
       `Error removing booking id=${bookingId} from service id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error removing booking from service");
@@ -622,7 +622,7 @@ export const removeBookingFromService = async (
 
 export const addQuestionToService = async (
   questionId: string,
-  serviceId: string
+  serviceId: string,
 ) => {
   try {
     if (!questionId) {
@@ -644,7 +644,7 @@ export const addQuestionToService = async (
     const questionIds = service.requiredQuestionIds || [];
     if (questionIds.includes(questionId)) {
       logger.warn(
-        `Question id=${questionId} already exists in service id=${serviceId}`
+        `Question id=${questionId} already exists in service id=${serviceId}`,
       );
       return service;
     }
@@ -666,7 +666,7 @@ export const addQuestionToService = async (
   } catch (error) {
     logger.error(
       `Error adding question id=${questionId} to service id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error adding question to service");
@@ -675,7 +675,7 @@ export const addQuestionToService = async (
 
 export const removeQuestionFromService = async (
   questionId: string,
-  serviceId: string
+  serviceId: string,
 ) => {
   try {
     if (!questionId) {
@@ -697,7 +697,7 @@ export const removeQuestionFromService = async (
     const questionIds = service.requiredQuestionIds || [];
     if (!questionIds.includes(questionId)) {
       logger.warn(
-        `Question id=${questionId} does not exist in service id=${serviceId}`
+        `Question id=${questionId} does not exist in service id=${serviceId}`,
       );
       return service;
     }
@@ -711,19 +711,19 @@ export const removeQuestionFromService = async (
           serviceCategory: service.serviceCategory,
           petType: service.petType,
           requiredQuestionIds: questionIds.filter(
-            (id: string) => id !== questionId
+            (id: string) => id !== questionId,
           ),
         },
       },
     });
     logger.info(
-      "Called updateService mutation to remove question from service"
+      "Called updateService mutation to remove question from service",
     );
     return updatedService.data.updateService;
   } catch (error) {
     logger.error(
       `Error removing question id=${questionId} from service id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error removing question from service");
@@ -735,7 +735,7 @@ export const removeService = async (
   name: string,
   serviceProviderName: string,
   category: ServiceCategory,
-  petType: PetType
+  petType: PetType,
 ) => {
   try {
     if (!name) {
@@ -752,12 +752,12 @@ export const removeService = async (
       name,
       serviceProviderName,
       category,
-      petType
+      petType,
     );
 
     if (!service) {
       logger.error(
-        `Service named ${name} provided by ${serviceProviderName} for ${petType}s in ${category} not found`
+        `Service named ${name} provided by ${serviceProviderName} for ${petType}s in ${category} not found`,
       );
       throw new NotFoundError("Service not found");
     }
@@ -770,14 +770,14 @@ export const removeService = async (
         booking.status === BookingStatus.IN_PROGRESS
       ) {
         throw new ConflictError(
-          "Cannot delete service with confirmed bookings"
+          "Cannot delete service with confirmed bookings",
         );
       }
     }
     bookings
       .filter((booking) => booking.status === BookingStatus.PENDING)
       .forEach((booking) =>
-        updateBookingStatus(booking.id, BookingStatus.CANCELLED, true)
+        updateBookingStatus(booking.id, BookingStatus.CANCELLED, true),
       );
 
     // Remove time slots for the service

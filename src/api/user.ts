@@ -6,7 +6,7 @@ export const handleUpdateAttributes = async (
     email?: string;
     phone_number?: string;
   },
-  callback?: (open: any, isError: boolean) => void
+  callback?: (open: any, isError: boolean) => void,
 ) => {
   try {
     const attributes = await updateUserAttributes({

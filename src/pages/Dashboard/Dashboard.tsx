@@ -39,7 +39,7 @@ function getItem(
   label: React.ReactNode,
   key: React.Key,
   icon?: React.ReactNode,
-  children?: MenuItem[]
+  children?: MenuItem[],
 ): MenuItem {
   return {
     key,
@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openedRecord, setOpenedRecord] = useState<any>({});
   const [bookingStatus, setBookingStatus] = useState<BookingStatus | null>(
-    null
+    null,
   );
   const navigate = useNavigate();
 
@@ -85,9 +85,14 @@ const Dashboard: React.FC = () => {
         key: "id",
       },
       {
-        title: "Owner Name",
+        title: "Customer ID",
         dataIndex: "customerUsername",
         key: "customerUsername",
+      },
+      {
+        title: "Time Slot ID",
+        dataIndex: "timeSlotId",
+        key: "timeSlotId",
       },
       {
         title: "Service",
@@ -148,7 +153,7 @@ const Dashboard: React.FC = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [bookingList, openedRecord]
+    [bookingList, openedRecord],
   );
 
   const handleCancel = () => {
@@ -175,7 +180,7 @@ const Dashboard: React.FC = () => {
 
     const getBookings = async () => {
       try {
-        const result = await fetchBookings();
+        const result = await fetchBookings({});
         if (result) {
           setBookingList(result);
         }
@@ -188,10 +193,16 @@ const Dashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleUpdateBooking = async (id: string) => {
+  const handleUpdateBooking = async (id: string, timeSlotId: string) => {
+    console.log(id, timeSlotId, bookingStatus);
     try {
       if (bookingStatus) {
-        const result = await updateBookingStatus(id, bookingStatus, false);
+        const result = await updateBookingStatus(
+          id,
+          timeSlotId,
+          bookingStatus,
+          false,
+        );
         if (result) {
           setIsModalOpen(false);
           setOpenedRecord({});
@@ -310,7 +321,9 @@ const Dashboard: React.FC = () => {
             title="Booking Detail"
             open={isModalOpen}
             // footer={null}
-            onOk={() => handleUpdateBooking(openedRecord?.id)}
+            onOk={() =>
+              handleUpdateBooking(openedRecord?.id, openedRecord?.timeSlotId)
+            }
             okText="Update Booking Status"
             onCancel={handleCancel}
           >
@@ -328,7 +341,7 @@ const Dashboard: React.FC = () => {
                     {openedRecord?.startDateTime
                       ? format(
                           new Date(openedRecord?.startDateTime),
-                          "yyyy/MM/dd hh:mm aa"
+                          "yyyy/MM/dd hh:mm aa",
                         )
                       : "-"}
                   </Typography.Text>

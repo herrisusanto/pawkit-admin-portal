@@ -72,7 +72,7 @@ export const handleSignUpConfirmation = async ({
 
 export const handleSignIn = async (
   username: string,
-  challengeResponse: string
+  challengeResponse: string,
 ) => {
   try {
     const { nextStep } = await signIn({

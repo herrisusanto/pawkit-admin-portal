@@ -77,7 +77,7 @@ export const addBooking = async (input: CreateBookingInput) => {
     const timeSlot = await fetchTimeSlot(input.serviceId, input.startDateTime);
     if (!timeSlot) {
       logger.error(
-        `Time slot not found for service with id=${input.serviceId} at ${input.startDateTime}`
+        `Time slot not found for service with id=${input.serviceId} at ${input.startDateTime}`,
       );
       throw new NotFoundError("Time slot not found");
     }
@@ -108,19 +108,19 @@ export const addBooking = async (input: CreateBookingInput) => {
         addBookingToTimeSlot(
           booking.serviceId,
           booking.startDateTime,
-          booking.id
+          booking.id,
         ),
         addBookingToService(booking.serviceId, booking.id),
         addBookingToOrder(
           orderId,
           booking.id,
           booking.currency,
-          booking.amount
+          booking.amount,
         ),
         addPetBookingRelationships(
           booking.customerUsername,
           input.petNames,
-          timeSlot.id
+          timeSlot.id,
         ),
       ]);
 
@@ -141,14 +141,14 @@ export const addBooking = async (input: CreateBookingInput) => {
 export const addPetBookingRelationships = (
   customerUsername: string,
   petNames: string[],
-  timeSlotId: string
+  timeSlotId: string,
 ) => {
   try {
     const petBookingPromises: any[] = [];
     petNames.forEach((petName) =>
       petBookingPromises.push(
-        addPetBookingRelationship(customerUsername, petName, timeSlotId)
-      )
+        addPetBookingRelationship(customerUsername, petName, timeSlotId),
+      ),
     );
     return Promise.all(petBookingPromises);
   } catch (error) {
@@ -161,7 +161,7 @@ export const addPetBookingRelationships = (
 export const addPetBookingRelationship = async (
   customerUsername: string,
   petName: string,
-  timeSlotId: string
+  timeSlotId: string,
 ) => {
   try {
     if (!customerUsername) {
@@ -228,7 +228,7 @@ export const fetchBookingsByCustomer = async (customerId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching bookings by customer id=${customerId}: `,
-      error
+      error,
     );
     throw new InternalServerError("Error fetching bookings");
   }
@@ -252,7 +252,7 @@ export const fetchBookingsByOrder = async (orderId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching bookings for order with id=${orderId}: `,
-      error
+      error,
     );
     throw new InternalServerError("Error fetching bookings");
   }
@@ -260,7 +260,7 @@ export const fetchBookingsByOrder = async (orderId: string) => {
 
 export const fetchBookingsByPet = async (
   petName: string,
-  customerUsername: string
+  customerUsername: string,
 ) => {
   try {
     if (!petName) {
@@ -287,7 +287,7 @@ export const fetchBookingsByPet = async (
   } catch (error) {
     logger.error(
       `Error fetching bookings for pet named ${petName} owned by ${customerUsername}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching bookings");
@@ -329,7 +329,7 @@ export const fetchBookingsByService = async (serviceId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching bookings for service with id=${serviceId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching bookings");
@@ -354,7 +354,7 @@ export const fetchBookingsByTimeSlot = async (timeSlotId: string) => {
   } catch (error) {
     logger.error(
       `Error fetching bookings by timeslot with id=${timeSlotId}: `,
-      error
+      error,
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching bookings");
@@ -364,7 +364,7 @@ export const fetchBookingsByTimeSlot = async (timeSlotId: string) => {
 // This is preferred over fetchBookingById as it uses the GSI
 export const fetchBooking = async (
   customerUsername: string,
-  timeSlotId: string
+  timeSlotId: string,
 ) => {
   try {
     if (!customerUsername) {
@@ -432,7 +432,7 @@ export const updateBookingStatus = async (
   customerUsername: string,
   timeSlotId: string,
   status: BookingStatus,
-  toRefund: boolean
+  toRefund: boolean,
 ) => {
   try {
     if (!customerUsername) {
@@ -448,14 +448,14 @@ export const updateBookingStatus = async (
     const { booking } = await fetchBooking(customerUsername, timeSlotId);
     if (!booking) {
       logger.error(
-        `Booking not found for customer=${customerUsername} and time slot=${timeSlotId}`
+        `Booking not found for customer=${customerUsername} and time slot=${timeSlotId}`,
       );
       throw new NotFoundError("Booking not found");
     }
 
     if (!isValidBookingStatusTransition(booking.status, status)) {
       logger.error(
-        `Booking status cannot transition from ${booking.status} to ${status}`
+        `Booking status cannot transition from ${booking.status} to ${status}`,
       );
       throw new BadRequestError("Invalid booking status transition");
     }
@@ -468,12 +468,12 @@ export const updateBookingStatus = async (
         booking.orderId,
         booking.id,
         booking.amount,
-        toRefund
+        toRefund,
       );
       timeSlot = await removeBookingFromTimeSlot(
         booking.serviceId,
         booking.startDateTime,
-        booking.id
+        booking.id,
       );
     }
 
