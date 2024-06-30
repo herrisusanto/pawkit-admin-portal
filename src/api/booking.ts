@@ -15,7 +15,9 @@ import {
 } from "./graphql/queries";
 import {
   BookingStatus,
+  BookingType,
   CreateBookingInput,
+  Currency,
   GetBookingQueryVariables,
   ListBookingsQueryVariables,
   ModelPetBookingsFilterInput,
@@ -24,7 +26,6 @@ import {
 } from "./graphql/API";
 import {
   addBookingToOrder,
-  addOrder,
   fetchOrder,
   updateBookingCancellationInOrder,
 } from "./order";
@@ -33,7 +34,7 @@ import {
   fetchTimeSlot,
   removeBookingFromTimeSlot,
 } from "./time-slot";
-import { addBookingToService } from "./service";
+import { addBookingToService, fetchServiceById } from "./service";
 import {
   BadRequestError,
   ConflictError,
@@ -55,23 +56,33 @@ const generateBookingId = async (customerId: string, timeSlotId: string) => {
   return await generateCustomerSpecificShortId(customerId, timeSlotId, 7);
 };
 
+export type AddBookingInput = {
+  orderId: string;
+  customerId: string;
+  serviceId: string;
+  startDateTime: string;
+  petNames: string[];
+  addOns: string[];
+  bookingType: BookingType;
+  amount: number;
+  currency: Currency;
+};
+
 // Create
 // Make sure there is an order before adding a booking
 // Check that disclaimer was accepted before creating booking
-export const addBooking = async (input: CreateBookingInput) => {
+export const addBooking = async (input: AddBookingInput) => {
   try {
-    let order;
-    let orderId = input.orderId;
-    if (!orderId) {
-      logger.warn("No order id provided, creating new order");
-      order = await addOrder(input.customerId, input.currency, input.amount);
-      orderId = order.id;
-    } else {
-      order = await fetchOrder(orderId);
-      if (!order) {
-        logger.error(`Order with id=${orderId} not found`);
-        throw new NotFoundError("Order not found");
-      }
+    const order = await fetchOrder(input.orderId);
+    if (!order) {
+      logger.error(`Order with id=${input.orderId} not found`);
+      throw new NotFoundError("Order not found");
+    }
+
+    const service = await fetchServiceById(input.serviceId);
+    if (!service) {
+      logger.error(`Service with id=${input.serviceId} not found`);
+      throw new NotFoundError("Service not found");
     }
 
     const timeSlot = await fetchTimeSlot(input.serviceId, input.startDateTime);
@@ -93,11 +104,24 @@ export const addBooking = async (input: CreateBookingInput) => {
       variables: {
         input: {
           id,
-          ...input,
-          owners: [input.customerId, input.serviceProviderName],
+          orderId: input.orderId,
+          customerUsername: input.customerId,
+          owners: [input.customerId, service.serviceProviderName],
+          customerId: input.customerId,
+          serviceName: service.name,
+          serviceProviderName: service.serviceProviderName,
+          serviceCategory: service.serviceCategory,
+          petType: service.petType,
+          serviceId: input.serviceId,
+          startDateTime: input.startDateTime,
           timeSlotId: timeSlot.id,
+          petNames: input.petNames,
+          addOns: input.addOns,
+          bookingType: input.bookingType,
+          amount: input.amount,
+          currency: input.currency,
           status: BookingStatus.PENDING,
-        },
+        } as CreateBookingInput,
       },
     });
     const booking = bookingResult.data.createBooking;
@@ -112,7 +136,7 @@ export const addBooking = async (input: CreateBookingInput) => {
         ),
         addBookingToService(booking.serviceId, booking.id),
         addBookingToOrder(
-          orderId,
+          input.orderId,
           booking.id,
           booking.currency,
           booking.amount,
