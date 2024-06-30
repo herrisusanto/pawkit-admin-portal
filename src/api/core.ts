@@ -5,7 +5,7 @@ export const graphqlClient = generateClient();
 const BASE62_CHARSET =
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-function hashToBase62(hash: Uint8Array): string {
+function hashToBase62(hash: Uint8Array, length: number): string {
   let bigint = BigInt(
     "0x" +
       Array.from(hash)
@@ -19,18 +19,19 @@ function hashToBase62(hash: Uint8Array): string {
     bigint /= 62n;
   }
 
-  // Ensure the base-62 string is exactly 8 characters long
-  return base62.padStart(8, "0").substring(0, 8);
+  // Ensure the base-62 string is the specified length
+  return base62.padStart(length, "0").substring(0, length);
 }
 
 export async function generateCustomerSpecificShortId(
   customerId: string,
   uuid: string,
+  length: number,
 ): Promise<string> {
   const combinedString = customerId + uuid;
   const encoder = new TextEncoder();
   const data = encoder.encode(combinedString);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = new Uint8Array(hashBuffer);
-  return hashToBase62(hashArray);
+  return hashToBase62(hashArray, length);
 }

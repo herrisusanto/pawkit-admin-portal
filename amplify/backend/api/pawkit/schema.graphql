@@ -29,7 +29,7 @@ type Booking
     @index(name: "byStartDateTime", queryField: "bookingsByStartDateTime")
   timeSlot: TimeSlot! @belongsTo(fields: ["serviceId", "startDateTime"])
   timeSlotId: ID! @index(name: "byTimeSlot", queryField: "bookingsByTimeSlot")
-  petNames: [String!]
+  petNames: [String!]!
   pets: [Pet!] @manyToMany(relationName: "PetBookings")
   addOns: [ID!] # Add-on services
   bookingType: BookingType!
