@@ -193,12 +193,15 @@ const Dashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleUpdateBooking = async (id: string, timeSlotId: string) => {
-    console.log(id, timeSlotId, bookingStatus);
+  const handleUpdateBooking = async (
+    customerUsername: string,
+    timeSlotId: string,
+  ) => {
+    console.log(customerUsername, timeSlotId, bookingStatus);
     try {
       if (bookingStatus) {
         const result = await updateBookingStatus(
-          id,
+          customerUsername,
           timeSlotId,
           bookingStatus,
           false,
@@ -322,7 +325,10 @@ const Dashboard: React.FC = () => {
             open={isModalOpen}
             // footer={null}
             onOk={() =>
-              handleUpdateBooking(openedRecord?.id, openedRecord?.timeSlotId)
+              handleUpdateBooking(
+                openedRecord?.customerUsername,
+                openedRecord?.timeSlotId,
+              )
             }
             okText="Update Booking Status"
             onCancel={handleCancel}
