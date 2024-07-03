@@ -26,7 +26,7 @@ import {
 import PawkitLogo from "../../assets/pawkit_logo.png";
 import { fetchAuthSession, signOut } from "aws-amplify/auth";
 import { useNavigate } from "react-router-dom";
-import { fetchBookings, updateBookingStatus } from "../../api/booking";
+import { fetchBookings, updateBookingStatus } from "../../api/service-booking";
 import { BookingStatus, ListBookingsQuery } from "../../api/graphql/API";
 import { format } from "date-fns";
 
