@@ -1,3 +1,9 @@
+import * as APITypes from "./API";
+type GeneratedQuery<InputType, OutputType> = string & {
+  __generatedQueryInput: InputType;
+  __generatedQueryOutput: OutputType;
+};
+
 export const customListServices = `query CustomListServices(
   $name: String
   $serviceProviderNameServiceCategoryPetType: ModelServicePrimaryCompositeKeyConditionInput
@@ -80,7 +86,10 @@ export const customListServices = `query CustomListServices(
     __typename
   }
 }
-`;
+` as GeneratedQuery<
+  APITypes.ListServicesQueryVariables,
+  APITypes.ListServicesQuery
+>;
 
 export const customGetBooking = `query CustomGetBooking(
   $customerUsername: String!
@@ -184,7 +193,10 @@ export const customGetBooking = `query CustomGetBooking(
     timeSlotBookingsStartDateTime
     __typename
   }
- }`;
+ }` as GeneratedQuery<
+  APITypes.GetBookingQueryVariables,
+  APITypes.GetBookingQuery
+>;
 
 export const customBookingById = `query CustomBookingById(
  $id: ID!
