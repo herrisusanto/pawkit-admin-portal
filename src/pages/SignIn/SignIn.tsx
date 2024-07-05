@@ -4,7 +4,6 @@ import LoginIllustration from "../../assets/login_illustration.png";
 import { signIn, confirmSignIn } from "aws-amplify/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ErrorType } from "aws-amplify/datastore";
 type FieldType = {
   phone_number: string;
   confirmation_code: string;

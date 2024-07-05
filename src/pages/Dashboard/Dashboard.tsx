@@ -8,7 +8,6 @@ import {
 import {
   MenuProps,
   TableProps,
-  DatePicker,
   Select,
   Flex,
   Avatar,
@@ -32,7 +31,6 @@ import { BookingStatus, ListBookingsQuery } from "../../api/graphql/API";
 import { format } from "date-fns";
 
 const { Header, Content, Footer, Sider } = Layout;
-const { RangePicker } = DatePicker;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
