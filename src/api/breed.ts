@@ -40,7 +40,7 @@ export const fetchBreeds = async (variables: ListBreedsQueryVariables) => {
     });
     logger.info("Called breedsByPetType query");
     return result.data.listBreeds.items.filter(
-      (breed) => !breed.name.includes("Unknown"),
+      (breed) => !breed.name.includes("Unknown")
     );
   } catch (error) {
     logger.error("Error fetching breeds: ", error);
@@ -58,7 +58,7 @@ export const fetchBreedsByPetType = async (petType: PetType) => {
     });
     logger.info("Called breedsByPetType query");
     return result.data.breedsByPetType.items.filter(
-      (breed) => !breed.name.includes("Unknown"),
+      (breed) => !breed.name.includes("Unknown")
     );
   } catch (error) {
     logger.error(`Error fetching breeds for ${petType}: `, error);
@@ -91,7 +91,7 @@ export const fetchBreed = async (name: string) => {
 // Update
 export const modifyBreed = async (
   input: UpdateBreedInput,
-  condition: ModelBreedConditionInput,
+  condition: ModelBreedConditionInput
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -112,7 +112,7 @@ export const modifyBreed = async (
 // Delete
 export const removeBreed = async (
   input: DeleteBreedInput,
-  condition: ModelBreedConditionInput,
+  condition: ModelBreedConditionInput
 ) => {
   try {
     const result = await graphqlClient.graphql({

@@ -27,7 +27,7 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (
   value: T,
-  validationResponse: ValidationResponse,
+  validationResponse: ValidationResponse
 ) => ValidationResponse | Promise<ValidationResponse>;
 export declare type BreedCreateFormInputValues = {
   name?: string;
@@ -65,19 +65,19 @@ export declare type BreedCreateFormProps = React.PropsWithChildren<
   } & {
     clearOnSuccess?: boolean;
     onSubmit?: (
-      fields: BreedCreateFormInputValues,
+      fields: BreedCreateFormInputValues
     ) => BreedCreateFormInputValues;
     onSuccess?: (fields: BreedCreateFormInputValues) => void;
     onError?: (
       fields: BreedCreateFormInputValues,
-      errorMessage: string,
+      errorMessage: string
     ) => void;
     onChange?: (
-      fields: BreedCreateFormInputValues,
+      fields: BreedCreateFormInputValues
     ) => BreedCreateFormInputValues;
     onValidate?: BreedCreateFormValidationValues;
   } & React.CSSProperties
 >;
 export default function BreedCreateForm(
-  props: BreedCreateFormProps,
+  props: BreedCreateFormProps
 ): React.ReactElement;

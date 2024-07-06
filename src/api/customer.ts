@@ -36,7 +36,7 @@ export const addCustomer = async (input: CreateCustomerInput) => {
 };
 
 export const addDisclaimerAcceptance = async (
-  input: CreateDisclaimerAcceptanceInput,
+  input: CreateDisclaimerAcceptanceInput
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -45,7 +45,7 @@ export const addDisclaimerAcceptance = async (
     });
     logger.info(
       "Called createDisclaimerAcceptance mutation with input: ",
-      input,
+      input
     );
     return result.data.createDisclaimerAcceptance;
   } catch (error) {
@@ -56,7 +56,7 @@ export const addDisclaimerAcceptance = async (
 
 // Read
 export const fetchCustomers = async (
-  variables: ListCustomersQueryVariables,
+  variables: ListCustomersQueryVariables
 ) => {
   try {
     const result = await graphqlClient.graphql({
@@ -93,7 +93,7 @@ export const fetchCustomer = async (userId: string) => {
 
 export const hasCustomerAcceptedServiceDisclaimer = async (
   userId: string,
-  disclaimerName: string,
+  disclaimerName: string
 ): Promise<boolean> => {
   try {
     if (!userId) {
@@ -117,7 +117,7 @@ export const hasCustomerAcceptedServiceDisclaimer = async (
       });
     return (
       acceptedDisclaimers.find(
-        (acceptance: any) => acceptance.disclaimerName === disclaimerName,
+        (acceptance: any) => acceptance.disclaimerName === disclaimerName
       ) !== undefined
     );
   } catch (error) {
