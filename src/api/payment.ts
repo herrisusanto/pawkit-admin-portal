@@ -121,7 +121,7 @@ export const createPaymentRequest = async ({
     }
 
     logger.debug(
-      `Creating payment request with input: ${JSON.stringify(input)}`,
+      `Creating payment request with input: ${JSON.stringify(input)}`
     );
     const paymentRequest: HitPayRequest = {
       amount: input.amount,

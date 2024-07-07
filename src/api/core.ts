@@ -10,7 +10,7 @@ function hashToBase62(hash: Uint8Array, length: number): string {
     "0x" +
       Array.from(hash)
         .map((b) => b.toString(16).padStart(2, "0"))
-        .join(""),
+        .join("")
   );
 
   let base62 = "";
@@ -26,7 +26,7 @@ function hashToBase62(hash: Uint8Array, length: number): string {
 export async function generateCustomerSpecificShortId(
   customerId: string,
   uuid: string,
-  length: number,
+  length: number
 ): Promise<string> {
   const combinedString = customerId + uuid;
   const encoder = new TextEncoder();

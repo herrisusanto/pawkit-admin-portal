@@ -79,7 +79,7 @@ export const fetchPetsByCustomer = async (customerId: string) => {
 
 export const fetchPetsByBooking = async (
   customerUsername: string,
-  timeSlotId: string,
+  timeSlotId: string
 ) => {
   try {
     if (!customerUsername) {
@@ -100,7 +100,7 @@ export const fetchPetsByBooking = async (
       },
     });
     logger.info(
-      "Called petBookingsByBookingCustomerUsernameAndBookingtimeSlotId query",
+      "Called petBookingsByBookingCustomerUsernameAndBookingtimeSlotId query"
     );
     const petBookings =
       result.data.petBookingsByBookingCustomerUsernameAndBookingtimeSlotId
@@ -125,7 +125,7 @@ export const fetchPetsByBooking = async (
   } catch (error) {
     logger.error(
       `Error fetching bookings for customer ${customerUsername} at time slot ${timeSlotId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching bookings");
@@ -161,7 +161,7 @@ export const fetchPet = async (customerUsername: string, name: string) => {
 
     if (pet.isDeleted) {
       logger.error(
-        `Pet named ${name} owned by ${customerUsername} is already deleted`,
+        `Pet named ${name} owned by ${customerUsername} is already deleted`
       );
       throw new NotFoundError("Pet is deleted");
     }
@@ -176,7 +176,7 @@ export const fetchPet = async (customerUsername: string, name: string) => {
 export const fetchPetQuestionAnswersForService = async (
   customerUsername: string,
   petName: string,
-  serviceId: string,
+  serviceId: string
 ) => {
   try {
     if (!customerUsername) {
@@ -232,7 +232,7 @@ export const fetchPetQuestionAnswersForService = async (
       } catch (error) {
         logger.error(
           `Error fetching answer for question with id=${questionId}: `,
-          error,
+          error
         );
         return null;
       }
@@ -241,7 +241,7 @@ export const fetchPetQuestionAnswersForService = async (
   } catch (error) {
     logger.error(
       `Error fetching question answers for pet ${petName} for service id=${serviceId}: `,
-      error,
+      error
     );
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching question answers");
@@ -254,14 +254,14 @@ export const modifyPet = async (input: UpdatePetInput) => {
     const pet = await fetchPet(input.customerUsername, input.name);
     if (!pet) {
       logger.error(
-        `Pet named ${input.name} owned by ${input.customerUsername} not found`,
+        `Pet named ${input.name} owned by ${input.customerUsername} not found`
       );
       throw new NotFoundError("Pet not found");
     }
 
     if (pet.isDeleted) {
       logger.error(
-        `Pet named ${input.name} owned by ${input.customerUsername} is already deleted`,
+        `Pet named ${input.name} owned by ${input.customerUsername} is already deleted`
       );
       throw new ConflictError("Pet is already deleted");
     }
@@ -298,14 +298,14 @@ export const removePet = async (customerUsername: string, name: string) => {
       petBookings.map(async (petBooking) => {
         const { booking } = await fetchBooking(
           petBooking.bookingCustomerUsername,
-          petBooking.bookingtimeSlotId,
+          petBooking.bookingtimeSlotId
         );
         if (
           booking?.status !== BookingStatus.COMPLETED &&
           booking?.status !== BookingStatus.CANCELLED
         ) {
           logger.error(
-            `Pet named ${name} owned by ${customerUsername} has an active booking`,
+            `Pet named ${name} owned by ${customerUsername} has an active booking`
           );
           throw new ConflictError("Pet has a booking that is not cancelled");
         }
@@ -313,7 +313,7 @@ export const removePet = async (customerUsername: string, name: string) => {
     }
 
     logger.info(
-      `Initiating soft deletion of pet named ${name} owned by ${customerUsername}`,
+      `Initiating soft deletion of pet named ${name} owned by ${customerUsername}`
     );
     return await graphqlClient.graphql({
       query: updatePet,

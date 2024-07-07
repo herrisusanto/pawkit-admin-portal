@@ -28,7 +28,7 @@ export declare type ValidationResponse = {
 };
 export declare type ValidationFunction<T> = (
   value: T,
-  validationResponse: ValidationResponse,
+  validationResponse: ValidationResponse
 ) => ValidationResponse | Promise<ValidationResponse>;
 export declare type BreedUpdateFormInputValues = {
   name?: string;
@@ -67,19 +67,19 @@ export declare type BreedUpdateFormProps = React.PropsWithChildren<
     name?: string;
     breed?: Breed;
     onSubmit?: (
-      fields: BreedUpdateFormInputValues,
+      fields: BreedUpdateFormInputValues
     ) => BreedUpdateFormInputValues;
     onSuccess?: (fields: BreedUpdateFormInputValues) => void;
     onError?: (
       fields: BreedUpdateFormInputValues,
-      errorMessage: string,
+      errorMessage: string
     ) => void;
     onChange?: (
-      fields: BreedUpdateFormInputValues,
+      fields: BreedUpdateFormInputValues
     ) => BreedUpdateFormInputValues;
     onValidate?: BreedUpdateFormValidationValues;
   } & React.CSSProperties
 >;
 export default function BreedUpdateForm(
-  props: BreedUpdateFormProps,
+  props: BreedUpdateFormProps
 ): React.ReactElement;
