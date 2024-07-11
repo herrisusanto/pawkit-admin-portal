@@ -1623,6 +1623,51 @@ export const removeService = async (
   }
 };
 
+// Cosmetic change for startDateTime, doesn't change actual time slot
+export const updateBookingTime = async (
+  customerUsername: string,
+  timeSlotId: string,
+  startDateTime: string
+) => {
+  try {
+    if (!customerUsername) {
+      logger.error("Customer username is required");
+      throw new BadRequestError("Customer username is required");
+    }
+
+    if (!timeSlotId) {
+      logger.error("Time slot id is required");
+      throw new BadRequestError("Time slot id is required");
+    }
+
+    if (!startDateTime) {
+      logger.error("New start datetime is required");
+      throw new BadRequestError("New start datetime is required");
+    }
+
+    if (!isValidDateTime(startDateTime)) {
+      logger.error("Invalid new start datetime format");
+      throw new BadRequestError("Invalid new start datetime format");
+    }
+
+    const result = await graphqlClient.graphql({
+      query: updateBooking,
+      variables: {
+        input: {
+          customerUsername,
+          timeSlotId,
+          startDateTime,
+        } as UpdateBookingInput,
+      },
+    });
+    return result.data.updateBooking;
+  } catch (error) {
+    logger.error("Error updating booking time: ", error);
+    if (error instanceof CustomError) throw error;
+    throw new InternalServerError("Error updating booking time");
+  }
+};
+
 export const updateBookingStatus = async (
   customerUsername: string,
   timeSlotId: string,
