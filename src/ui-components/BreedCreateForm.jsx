@@ -22,7 +22,7 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { createBreed } from "../graphql/mutations";
+import { createBreed } from "../api/graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],

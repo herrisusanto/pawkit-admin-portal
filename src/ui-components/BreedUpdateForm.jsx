@@ -22,8 +22,8 @@ import {
 } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getBreed } from "../graphql/queries";
-import { updateBreed } from "../graphql/mutations";
+import { getBreed } from "../api/graphql/queries";
+import { updateBreed } from "../api/graphql/mutations";
 const client = generateClient();
 function ArrayField({
   items = [],

@@ -6,4 +6,6 @@
 
 export { default as BreedCreateForm } from "./BreedCreateForm";
 export { default as BreedUpdateForm } from "./BreedUpdateForm";
+export { default as QuestionCreateForm } from "./QuestionCreateForm";
+export { default as QuestionUpdateForm } from "./QuestionUpdateForm";
 export { default as studioTheme } from "./studioTheme";
