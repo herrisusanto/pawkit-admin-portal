@@ -187,6 +187,42 @@ function Bookings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const bookingStatusOptions = (status: BookingStatus | null) => {
+    switch (status) {
+      case BookingStatus.PENDING:
+        return [
+          {
+            value: BookingStatus.CONFIRMED,
+            label: BookingStatus.CONFIRMED,
+          },
+          {
+            value: BookingStatus.CANCELLED,
+            label: BookingStatus.CANCELLED,
+          },
+        ];
+      case BookingStatus.CONFIRMED:
+        return [
+          {
+            value: BookingStatus.IN_PROGRESS,
+            label: BookingStatus.IN_PROGRESS,
+          },
+          {
+            value: BookingStatus.CANCELLED,
+            label: BookingStatus.CANCELLED,
+          },
+        ];
+      case BookingStatus.IN_PROGRESS:
+        return [
+          {
+            value: BookingStatus.COMPLETED,
+            label: BookingStatus.COMPLETED,
+          },
+        ];
+      default:
+        return [];
+    }
+  };
+
   return (
     <>
       {contextHolder}
@@ -296,28 +332,7 @@ function Bookings() {
                 placeholder="Status"
                 style={{ width: 180 }}
                 onChange={handleChangeStatus}
-                options={[
-                  {
-                    value: BookingStatus.COMPLETED,
-                    label: BookingStatus.COMPLETED,
-                  },
-                  {
-                    value: BookingStatus.CONFIRMED,
-                    label: BookingStatus.CONFIRMED,
-                  },
-                  {
-                    value: BookingStatus.PENDING,
-                    label: BookingStatus.PENDING,
-                  },
-                  {
-                    value: BookingStatus.IN_PROGRESS,
-                    label: BookingStatus.IN_PROGRESS,
-                  },
-                  {
-                    value: BookingStatus.CANCELLED,
-                    label: BookingStatus.CANCELLED,
-                  },
-                ]}
+                options={bookingStatusOptions(openedRecord.status)}
               />
             </Col>
           </Row>
