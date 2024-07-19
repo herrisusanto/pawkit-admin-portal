@@ -1,9 +1,3 @@
-import * as APITypes from "./API";
-type GeneratedQuery<InputType, OutputType> = string & {
-  __generatedQueryInput: InputType;
-  __generatedQueryOutput: OutputType;
-};
-
 export const customListServices = `query CustomListServices(
   $name: String
   $serviceProviderNameServiceCategoryPetType: ModelServicePrimaryCompositeKeyConditionInput
@@ -86,10 +80,7 @@ export const customListServices = `query CustomListServices(
     __typename
   }
 }
-` as GeneratedQuery<
-  APITypes.ListServicesQueryVariables,
-  APITypes.ListServicesQuery
->;
+`;
 
 export const customGetBooking = `query CustomGetBooking(
   $customerUsername: String!
@@ -154,7 +145,7 @@ export const customGetBooking = `query CustomGetBooking(
       __typename
     }
     timeSlotId
-    petNames
+    petIds
     pets {
       items {
         pet {
@@ -193,10 +184,7 @@ export const customGetBooking = `query CustomGetBooking(
     timeSlotBookingsStartDateTime
     __typename
   }
- }` as GeneratedQuery<
-  APITypes.GetBookingQueryVariables,
-  APITypes.GetBookingQuery
->;
+ }`;
 
 export const customBookingById = `query CustomBookingById(
  $id: ID!
@@ -227,10 +215,11 @@ export const customBookingById = `query CustomBookingById(
      serviceProviderBookingsName
      timeSlotBookingsServiceId
      timeSlotBookingsStartDateTime
-     petNames
+     petIds
      pets {
        items {
          pet {
+           petType
            birthdate
            imageUrl
            name
@@ -288,7 +277,7 @@ export const customBookingsByCustomer = `query CustomBookingsByCustomer(
      updatedAt
      timeSlotBookingsServiceId
      timeSlotBookingsStartDateTime
-     petNames
+     petIds
      pets {
        items {
          pet {

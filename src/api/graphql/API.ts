@@ -307,7 +307,8 @@ export type Booking = {
   startDateTime: string,
   timeSlot: TimeSlot,
   timeSlotId: string,
-  petNames: Array< string >,
+  address: string,
+  petIds: Array< string >,
   pets?: ModelPetBookingsConnection | null,
   addOns?: Array< string > | null,
   bookingType: BookingType,
@@ -396,8 +397,8 @@ export type ModelPetConnection = {
 
 export type Pet = {
   __typename: "Pet",
+  id: string,
   name: string,
-  customerUsername: string,
   customerId: string,
   customer: Customer,
   gender: Gender,
@@ -456,8 +457,7 @@ export type PetBookings = {
   id: string,
   bookingCustomerUsername: string,
   bookingtimeSlotId: string,
-  petName: string,
-  petcustomerUsername: string,
+  petId: string,
   booking: Booking,
   pet: Pet,
   createdAt: string,
@@ -590,7 +590,8 @@ export type CreateBookingInput = {
   serviceId: string,
   startDateTime: string,
   timeSlotId: string,
-  petNames: Array< string >,
+  address: string,
+  petIds: Array< string >,
   addOns?: Array< string > | null,
   bookingType: BookingType,
   amount: number,
@@ -611,7 +612,8 @@ export type ModelBookingConditionInput = {
   petType?: ModelPetTypeInput | null,
   serviceId?: ModelIDInput | null,
   startDateTime?: ModelStringInput | null,
-  petNames?: ModelStringInput | null,
+  address?: ModelStringInput | null,
+  petIds?: ModelIDInput | null,
   addOns?: ModelIDInput | null,
   bookingType?: ModelBookingTypeInput | null,
   amount?: ModelFloatInput | null,
@@ -650,7 +652,8 @@ export type UpdateBookingInput = {
   serviceId?: string | null,
   startDateTime?: string | null,
   timeSlotId: string,
-  petNames?: Array< string > | null,
+  address?: string | null,
+  petIds?: Array< string > | null,
   addOns?: Array< string > | null,
   bookingType?: BookingType | null,
   amount?: number | null,
@@ -989,8 +992,8 @@ export type DeletePaymentInput = {
 };
 
 export type CreatePetInput = {
+  id?: string | null,
   name: string,
-  customerUsername: string,
   customerId: string,
   gender: Gender,
   petType: PetType,
@@ -1012,6 +1015,7 @@ export type CreatePetInput = {
 };
 
 export type ModelPetConditionInput = {
+  name?: ModelStringInput | null,
   customerId?: ModelIDInput | null,
   gender?: ModelGenderInput | null,
   petType?: ModelPetTypeInput | null,
@@ -1055,8 +1059,8 @@ export type ModelPredefinedBehaviorListInput = {
 };
 
 export type UpdatePetInput = {
-  name: string,
-  customerUsername: string,
+  id: string,
+  name?: string | null,
   customerId?: string | null,
   gender?: Gender | null,
   petType?: PetType | null,
@@ -1078,19 +1082,31 @@ export type UpdatePetInput = {
 };
 
 export type DeletePetInput = {
-  name: string,
-  customerUsername: string,
+  id: string,
 };
 
 export type CreateQuestionInput = {
   id?: string | null,
   serviceCategory: ServiceCategory,
   questionString: string,
+  questionType: QuestionType,
+  followUpQuestionIds?: Array< string > | null,
+  isRequired: boolean,
 };
+
+export enum QuestionType {
+  TEXT = "TEXT",
+  YES_NO = "YES_NO",
+  DATE = "DATE",
+}
+
 
 export type ModelQuestionConditionInput = {
   serviceCategory?: ModelServiceCategoryInput | null,
   questionString?: ModelStringInput | null,
+  questionType?: ModelQuestionTypeInput | null,
+  followUpQuestionIds?: ModelIDInput | null,
+  isRequired?: ModelBooleanInput | null,
   and?: Array< ModelQuestionConditionInput | null > | null,
   or?: Array< ModelQuestionConditionInput | null > | null,
   not?: ModelQuestionConditionInput | null,
@@ -1098,11 +1114,19 @@ export type ModelQuestionConditionInput = {
   updatedAt?: ModelStringInput | null,
 };
 
+export type ModelQuestionTypeInput = {
+  eq?: QuestionType | null,
+  ne?: QuestionType | null,
+};
+
 export type Question = {
   __typename: "Question",
   id: string,
   serviceCategory: ServiceCategory,
   questionString: string,
+  questionType: QuestionType,
+  followUpQuestionIds?: Array< string > | null,
+  isRequired: boolean,
   createdAt: string,
   updatedAt: string,
 };
@@ -1111,6 +1135,9 @@ export type UpdateQuestionInput = {
   id: string,
   serviceCategory?: ServiceCategory | null,
   questionString?: string | null,
+  questionType?: QuestionType | null,
+  followUpQuestionIds?: Array< string > | null,
+  isRequired?: boolean | null,
 };
 
 export type DeleteQuestionInput = {
@@ -1118,48 +1145,46 @@ export type DeleteQuestionInput = {
 };
 
 export type CreateQuestionAnswerInput = {
-  petName: string,
-  customerUsername: string,
-  customerId: string,
+  petId: string,
   questionId: string,
   answer: string,
+  id?: string | null,
 };
 
 export type ModelQuestionAnswerConditionInput = {
-  customerId?: ModelIDInput | null,
+  petId?: ModelIDInput | null,
+  questionId?: ModelIDInput | null,
   answer?: ModelStringInput | null,
   and?: Array< ModelQuestionAnswerConditionInput | null > | null,
   or?: Array< ModelQuestionAnswerConditionInput | null > | null,
   not?: ModelQuestionAnswerConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
+  customerId?: ModelStringInput | null,
 };
 
 export type QuestionAnswer = {
   __typename: "QuestionAnswer",
-  petName: string,
-  customerUsername: string,
+  petId: string,
   pet: Pet,
-  customerId: string,
   questionId: string,
   question: Question,
   answer: string,
+  id: string,
   createdAt: string,
   updatedAt: string,
+  customerId?: string | null,
 };
 
 export type UpdateQuestionAnswerInput = {
-  petName: string,
-  customerUsername: string,
-  customerId?: string | null,
-  questionId: string,
+  petId?: string | null,
+  questionId?: string | null,
   answer?: string | null,
+  id: string,
 };
 
 export type DeleteQuestionAnswerInput = {
-  petName: string,
-  customerUsername: string,
-  questionId: string,
+  id: string,
 };
 
 export type CreateServiceInput = {
@@ -1384,15 +1409,13 @@ export type CreatePetBookingsInput = {
   id?: string | null,
   bookingCustomerUsername: string,
   bookingtimeSlotId: string,
-  petName: string,
-  petcustomerUsername: string,
+  petId: string,
 };
 
 export type ModelPetBookingsConditionInput = {
   bookingCustomerUsername?: ModelStringInput | null,
   bookingtimeSlotId?: ModelIDInput | null,
-  petName?: ModelStringInput | null,
-  petcustomerUsername?: ModelStringInput | null,
+  petId?: ModelIDInput | null,
   and?: Array< ModelPetBookingsConditionInput | null > | null,
   or?: Array< ModelPetBookingsConditionInput | null > | null,
   not?: ModelPetBookingsConditionInput | null,
@@ -1406,8 +1429,7 @@ export type UpdatePetBookingsInput = {
   id: string,
   bookingCustomerUsername?: string | null,
   bookingtimeSlotId?: string | null,
-  petName?: string | null,
-  petcustomerUsername?: string | null,
+  petId?: string | null,
 };
 
 export type DeletePetBookingsInput = {
@@ -1437,7 +1459,8 @@ export type ModelBookingFilterInput = {
   serviceId?: ModelIDInput | null,
   startDateTime?: ModelStringInput | null,
   timeSlotId?: ModelIDInput | null,
-  petNames?: ModelStringInput | null,
+  address?: ModelStringInput | null,
+  petIds?: ModelIDInput | null,
   addOns?: ModelIDInput | null,
   bookingType?: ModelBookingTypeInput | null,
   amount?: ModelFloatInput | null,
@@ -1578,19 +1601,9 @@ export type ModelPaymentFilterInput = {
   not?: ModelPaymentFilterInput | null,
 };
 
-export type ModelStringKeyConditionInput = {
-  eq?: string | null,
-  le?: string | null,
-  lt?: string | null,
-  ge?: string | null,
-  gt?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
-};
-
 export type ModelPetFilterInput = {
+  id?: ModelIDInput | null,
   name?: ModelStringInput | null,
-  customerUsername?: ModelStringInput | null,
   customerId?: ModelIDInput | null,
   gender?: ModelGenderInput | null,
   petType?: ModelPetTypeInput | null,
@@ -1609,7 +1622,6 @@ export type ModelPetFilterInput = {
   hasMedicalCondition?: ModelBooleanInput | null,
   additionalCareInstructions?: ModelStringInput | null,
   questionAnswerIds?: ModelIDInput | null,
-  id?: ModelIDInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelPetFilterInput | null > | null,
@@ -1621,6 +1633,9 @@ export type ModelQuestionFilterInput = {
   id?: ModelIDInput | null,
   serviceCategory?: ModelServiceCategoryInput | null,
   questionString?: ModelStringInput | null,
+  questionType?: ModelQuestionTypeInput | null,
+  followUpQuestionIds?: ModelIDInput | null,
+  isRequired?: ModelBooleanInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelQuestionFilterInput | null > | null,
@@ -1634,25 +1649,8 @@ export type ModelQuestionConnection = {
   nextToken?: string | null,
 };
 
-export type ModelQuestionAnswerPrimaryCompositeKeyConditionInput = {
-  eq?: ModelQuestionAnswerPrimaryCompositeKeyInput | null,
-  le?: ModelQuestionAnswerPrimaryCompositeKeyInput | null,
-  lt?: ModelQuestionAnswerPrimaryCompositeKeyInput | null,
-  ge?: ModelQuestionAnswerPrimaryCompositeKeyInput | null,
-  gt?: ModelQuestionAnswerPrimaryCompositeKeyInput | null,
-  between?: Array< ModelQuestionAnswerPrimaryCompositeKeyInput | null > | null,
-  beginsWith?: ModelQuestionAnswerPrimaryCompositeKeyInput | null,
-};
-
-export type ModelQuestionAnswerPrimaryCompositeKeyInput = {
-  customerUsername?: string | null,
-  questionId?: string | null,
-};
-
 export type ModelQuestionAnswerFilterInput = {
-  petName?: ModelStringInput | null,
-  customerUsername?: ModelStringInput | null,
-  customerId?: ModelIDInput | null,
+  petId?: ModelIDInput | null,
   questionId?: ModelIDInput | null,
   answer?: ModelStringInput | null,
   id?: ModelIDInput | null,
@@ -1661,6 +1659,7 @@ export type ModelQuestionAnswerFilterInput = {
   and?: Array< ModelQuestionAnswerFilterInput | null > | null,
   or?: Array< ModelQuestionAnswerFilterInput | null > | null,
   not?: ModelQuestionAnswerFilterInput | null,
+  customerId?: ModelStringInput | null,
 };
 
 export type ModelQuestionAnswerConnection = {
@@ -1693,6 +1692,16 @@ export type ModelServiceProviderConnection = {
   nextToken?: string | null,
 };
 
+export type ModelStringKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
 export type ModelTimeSlotFilterInput = {
   id?: ModelIDInput | null,
   serviceId?: ModelIDInput | null,
@@ -1720,8 +1729,7 @@ export type ModelPetBookingsFilterInput = {
   id?: ModelIDInput | null,
   bookingCustomerUsername?: ModelStringInput | null,
   bookingtimeSlotId?: ModelIDInput | null,
-  petName?: ModelStringInput | null,
-  petcustomerUsername?: ModelStringInput | null,
+  petId?: ModelIDInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   and?: Array< ModelPetBookingsFilterInput | null > | null,
@@ -1743,7 +1751,8 @@ export type ModelSubscriptionBookingFilterInput = {
   serviceId?: ModelSubscriptionIDInput | null,
   startDateTime?: ModelSubscriptionStringInput | null,
   timeSlotId?: ModelSubscriptionIDInput | null,
-  petNames?: ModelSubscriptionStringInput | null,
+  address?: ModelSubscriptionStringInput | null,
+  petIds?: ModelSubscriptionIDInput | null,
   addOns?: ModelSubscriptionIDInput | null,
   bookingType?: ModelSubscriptionStringInput | null,
   amount?: ModelSubscriptionFloatInput | null,
@@ -1917,8 +1926,8 @@ export type ModelSubscriptionPaymentFilterInput = {
 };
 
 export type ModelSubscriptionPetFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
   name?: ModelSubscriptionStringInput | null,
-  customerUsername?: ModelSubscriptionStringInput | null,
   gender?: ModelSubscriptionStringInput | null,
   petType?: ModelSubscriptionStringInput | null,
   isDeleted?: ModelSubscriptionBooleanInput | null,
@@ -1936,7 +1945,6 @@ export type ModelSubscriptionPetFilterInput = {
   hasMedicalCondition?: ModelSubscriptionBooleanInput | null,
   additionalCareInstructions?: ModelSubscriptionStringInput | null,
   questionAnswerIds?: ModelSubscriptionIDInput | null,
-  id?: ModelSubscriptionIDInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPetFilterInput | null > | null,
@@ -1948,6 +1956,9 @@ export type ModelSubscriptionQuestionFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   serviceCategory?: ModelSubscriptionStringInput | null,
   questionString?: ModelSubscriptionStringInput | null,
+  questionType?: ModelSubscriptionStringInput | null,
+  followUpQuestionIds?: ModelSubscriptionIDInput | null,
+  isRequired?: ModelSubscriptionBooleanInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionQuestionFilterInput | null > | null,
@@ -1955,8 +1966,7 @@ export type ModelSubscriptionQuestionFilterInput = {
 };
 
 export type ModelSubscriptionQuestionAnswerFilterInput = {
-  petName?: ModelSubscriptionStringInput | null,
-  customerUsername?: ModelSubscriptionStringInput | null,
+  petId?: ModelSubscriptionIDInput | null,
   questionId?: ModelSubscriptionIDInput | null,
   answer?: ModelSubscriptionStringInput | null,
   id?: ModelSubscriptionIDInput | null,
@@ -2041,8 +2051,7 @@ export type ModelSubscriptionPetBookingsFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   bookingCustomerUsername?: ModelSubscriptionStringInput | null,
   bookingtimeSlotId?: ModelSubscriptionIDInput | null,
-  petName?: ModelSubscriptionStringInput | null,
-  petcustomerUsername?: ModelSubscriptionStringInput | null,
+  petId?: ModelSubscriptionIDInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPetBookingsFilterInput | null > | null,
@@ -2199,7 +2208,7 @@ export type CustomGetBookingQuery = {
       serviceProviderId?: string | null,
     },
     timeSlotId: string,
-    petNames: Array< string >,
+    petIds: Array< string >,
     pets?:  {
       __typename: "ModelPetBookingsConnection",
       items:  Array< {
@@ -2272,7 +2281,7 @@ export type CustomBookingByIdQuery = {
       serviceProviderBookingsName?: string | null,
       timeSlotBookingsServiceId?: string | null,
       timeSlotBookingsStartDateTime?: string | null,
-      petNames: Array< string >,
+      petIds: Array< string >,
       pets?:  {
         __typename: "ModelPetBookingsConnection",
         items:  Array< {
@@ -2339,7 +2348,7 @@ export type CustomBookingsByCustomerQuery = {
       updatedAt: string,
       timeSlotBookingsServiceId?: string | null,
       timeSlotBookingsStartDateTime?: string | null,
-      petNames: Array< string >,
+      petIds: Array< string >,
       pets?:  {
         __typename: "ModelPetBookingsConnection",
         items:  Array< {
@@ -2428,7 +2437,8 @@ export type CreateBookingMutation = {
       serviceProviderId?: string | null,
     },
     timeSlotId: string,
-    petNames: Array< string >,
+    address: string,
+    petIds: Array< string >,
     pets?:  {
       __typename: "ModelPetBookingsConnection",
       nextToken?: string | null,
@@ -2518,7 +2528,8 @@ export type UpdateBookingMutation = {
       serviceProviderId?: string | null,
     },
     timeSlotId: string,
-    petNames: Array< string >,
+    address: string,
+    petIds: Array< string >,
     pets?:  {
       __typename: "ModelPetBookingsConnection",
       nextToken?: string | null,
@@ -2608,7 +2619,8 @@ export type DeleteBookingMutation = {
       serviceProviderId?: string | null,
     },
     timeSlotId: string,
-    petNames: Array< string >,
+    address: string,
+    petIds: Array< string >,
     pets?:  {
       __typename: "ModelPetBookingsConnection",
       nextToken?: string | null,
@@ -3438,8 +3450,8 @@ export type CreatePetMutationVariables = {
 export type CreatePetMutation = {
   createPet?:  {
     __typename: "Pet",
+    id: string,
     name: string,
-    customerUsername: string,
     customerId: string,
     customer:  {
       __typename: "Customer",
@@ -3484,8 +3496,8 @@ export type UpdatePetMutationVariables = {
 export type UpdatePetMutation = {
   updatePet?:  {
     __typename: "Pet",
+    id: string,
     name: string,
-    customerUsername: string,
     customerId: string,
     customer:  {
       __typename: "Customer",
@@ -3530,8 +3542,8 @@ export type DeletePetMutationVariables = {
 export type DeletePetMutation = {
   deletePet?:  {
     __typename: "Pet",
+    id: string,
     name: string,
-    customerUsername: string,
     customerId: string,
     customer:  {
       __typename: "Customer",
@@ -3579,6 +3591,9 @@ export type CreateQuestionMutation = {
     id: string,
     serviceCategory: ServiceCategory,
     questionString: string,
+    questionType: QuestionType,
+    followUpQuestionIds?: Array< string > | null,
+    isRequired: boolean,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -3595,6 +3610,9 @@ export type UpdateQuestionMutation = {
     id: string,
     serviceCategory: ServiceCategory,
     questionString: string,
+    questionType: QuestionType,
+    followUpQuestionIds?: Array< string > | null,
+    isRequired: boolean,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -3611,6 +3629,9 @@ export type DeleteQuestionMutation = {
     id: string,
     serviceCategory: ServiceCategory,
     questionString: string,
+    questionType: QuestionType,
+    followUpQuestionIds?: Array< string > | null,
+    isRequired: boolean,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -3624,12 +3645,11 @@ export type CreateQuestionAnswerMutationVariables = {
 export type CreateQuestionAnswerMutation = {
   createQuestionAnswer?:  {
     __typename: "QuestionAnswer",
-    petName: string,
-    customerUsername: string,
+    petId: string,
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -3651,19 +3671,23 @@ export type CreateQuestionAnswerMutation = {
       createdAt: string,
       updatedAt: string,
     },
-    customerId: string,
     questionId: string,
     question:  {
       __typename: "Question",
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     },
     answer: string,
+    id: string,
     createdAt: string,
     updatedAt: string,
+    customerId?: string | null,
   } | null,
 };
 
@@ -3675,12 +3699,11 @@ export type UpdateQuestionAnswerMutationVariables = {
 export type UpdateQuestionAnswerMutation = {
   updateQuestionAnswer?:  {
     __typename: "QuestionAnswer",
-    petName: string,
-    customerUsername: string,
+    petId: string,
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -3702,19 +3725,23 @@ export type UpdateQuestionAnswerMutation = {
       createdAt: string,
       updatedAt: string,
     },
-    customerId: string,
     questionId: string,
     question:  {
       __typename: "Question",
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     },
     answer: string,
+    id: string,
     createdAt: string,
     updatedAt: string,
+    customerId?: string | null,
   } | null,
 };
 
@@ -3726,12 +3753,11 @@ export type DeleteQuestionAnswerMutationVariables = {
 export type DeleteQuestionAnswerMutation = {
   deleteQuestionAnswer?:  {
     __typename: "QuestionAnswer",
-    petName: string,
-    customerUsername: string,
+    petId: string,
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -3753,19 +3779,23 @@ export type DeleteQuestionAnswerMutation = {
       createdAt: string,
       updatedAt: string,
     },
-    customerId: string,
     questionId: string,
     question:  {
       __typename: "Question",
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     },
     answer: string,
+    id: string,
     createdAt: string,
     updatedAt: string,
+    customerId?: string | null,
   } | null,
 };
 
@@ -4428,8 +4458,7 @@ export type CreatePetBookingsMutation = {
     id: string,
     bookingCustomerUsername: string,
     bookingtimeSlotId: string,
-    petName: string,
-    petcustomerUsername: string,
+    petId: string,
     booking:  {
       __typename: "Booking",
       id: string,
@@ -4444,7 +4473,8 @@ export type CreatePetBookingsMutation = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4458,8 +4488,8 @@ export type CreatePetBookingsMutation = {
     },
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -4499,8 +4529,7 @@ export type UpdatePetBookingsMutation = {
     id: string,
     bookingCustomerUsername: string,
     bookingtimeSlotId: string,
-    petName: string,
-    petcustomerUsername: string,
+    petId: string,
     booking:  {
       __typename: "Booking",
       id: string,
@@ -4515,7 +4544,8 @@ export type UpdatePetBookingsMutation = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4529,8 +4559,8 @@ export type UpdatePetBookingsMutation = {
     },
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -4570,8 +4600,7 @@ export type DeletePetBookingsMutation = {
     id: string,
     bookingCustomerUsername: string,
     bookingtimeSlotId: string,
-    petName: string,
-    petcustomerUsername: string,
+    petId: string,
     booking:  {
       __typename: "Booking",
       id: string,
@@ -4586,7 +4615,8 @@ export type DeletePetBookingsMutation = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4600,8 +4630,8 @@ export type DeletePetBookingsMutation = {
     },
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -4702,7 +4732,8 @@ export type GetBookingQuery = {
       serviceProviderId?: string | null,
     },
     timeSlotId: string,
-    petNames: Array< string >,
+    address: string,
+    petIds: Array< string >,
     pets?:  {
       __typename: "ModelPetBookingsConnection",
       nextToken?: string | null,
@@ -4746,7 +4777,8 @@ export type ListBookingsQuery = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4787,7 +4819,8 @@ export type BookingByIdQuery = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4828,7 +4861,8 @@ export type BookingsByOrderQuery = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4869,7 +4903,8 @@ export type BookingsByCustomerQuery = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4910,7 +4945,8 @@ export type BookingsByServiceQuery = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4951,7 +4987,8 @@ export type BookingsByStartDateTimeQuery = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -4992,7 +5029,8 @@ export type BookingsByTimeSlotQuery = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -5798,15 +5836,14 @@ export type PaymentsByPaymentMethodQuery = {
 };
 
 export type GetPetQueryVariables = {
-  name: string,
-  customerUsername: string,
+  id: string,
 };
 
 export type GetPetQuery = {
   getPet?:  {
     __typename: "Pet",
+    id: string,
     name: string,
-    customerUsername: string,
     customerId: string,
     customer:  {
       __typename: "Customer",
@@ -5844,12 +5881,9 @@ export type GetPetQuery = {
 };
 
 export type ListPetsQueryVariables = {
-  name?: string | null,
-  customerUsername?: ModelStringKeyConditionInput | null,
   filter?: ModelPetFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
-  sortDirection?: ModelSortDirection | null,
 };
 
 export type ListPetsQuery = {
@@ -5857,8 +5891,8 @@ export type ListPetsQuery = {
     __typename: "ModelPetConnection",
     items:  Array< {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -5897,8 +5931,8 @@ export type PetsByCustomerQuery = {
     __typename: "ModelPetConnection",
     items:  Array< {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -5937,8 +5971,8 @@ export type PetsByBreedQuery = {
     __typename: "ModelPetConnection",
     items:  Array< {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -5974,6 +6008,9 @@ export type GetQuestionQuery = {
     id: string,
     serviceCategory: ServiceCategory,
     questionString: string,
+    questionType: QuestionType,
+    followUpQuestionIds?: Array< string > | null,
+    isRequired: boolean,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -5993,6 +6030,9 @@ export type ListQuestionsQuery = {
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -6016,6 +6056,9 @@ export type QuestionsByCategoryQuery = {
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -6024,20 +6067,17 @@ export type QuestionsByCategoryQuery = {
 };
 
 export type GetQuestionAnswerQueryVariables = {
-  petName: string,
-  customerUsername: string,
-  questionId: string,
+  id: string,
 };
 
 export type GetQuestionAnswerQuery = {
   getQuestionAnswer?:  {
     __typename: "QuestionAnswer",
-    petName: string,
-    customerUsername: string,
+    petId: string,
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -6059,29 +6099,30 @@ export type GetQuestionAnswerQuery = {
       createdAt: string,
       updatedAt: string,
     },
-    customerId: string,
     questionId: string,
     question:  {
       __typename: "Question",
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     },
     answer: string,
+    id: string,
     createdAt: string,
     updatedAt: string,
+    customerId?: string | null,
   } | null,
 };
 
 export type ListQuestionAnswersQueryVariables = {
-  petName?: string | null,
-  customerUsernameQuestionId?: ModelQuestionAnswerPrimaryCompositeKeyConditionInput | null,
   filter?: ModelQuestionAnswerFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
-  sortDirection?: ModelSortDirection | null,
 };
 
 export type ListQuestionAnswersQuery = {
@@ -6089,20 +6130,20 @@ export type ListQuestionAnswersQuery = {
     __typename: "ModelQuestionAnswerConnection",
     items:  Array< {
       __typename: "QuestionAnswer",
-      petName: string,
-      customerUsername: string,
-      customerId: string,
+      petId: string,
       questionId: string,
       answer: string,
+      id: string,
       createdAt: string,
       updatedAt: string,
+      customerId?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
 };
 
 export type AnswersByPetQueryVariables = {
-  petName: string,
+  petId: string,
   sortDirection?: ModelSortDirection | null,
   filter?: ModelQuestionAnswerFilterInput | null,
   limit?: number | null,
@@ -6114,38 +6155,13 @@ export type AnswersByPetQuery = {
     __typename: "ModelQuestionAnswerConnection",
     items:  Array< {
       __typename: "QuestionAnswer",
-      petName: string,
-      customerUsername: string,
-      customerId: string,
+      petId: string,
       questionId: string,
       answer: string,
+      id: string,
       createdAt: string,
       updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type AnswersByCustomerQueryVariables = {
-  customerId: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelQuestionAnswerFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type AnswersByCustomerQuery = {
-  answersByCustomer?:  {
-    __typename: "ModelQuestionAnswerConnection",
-    items:  Array< {
-      __typename: "QuestionAnswer",
-      petName: string,
-      customerUsername: string,
-      customerId: string,
-      questionId: string,
-      answer: string,
-      createdAt: string,
-      updatedAt: string,
+      customerId?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -6164,13 +6180,13 @@ export type AnswersByQuestionQuery = {
     __typename: "ModelQuestionAnswerConnection",
     items:  Array< {
       __typename: "QuestionAnswer",
-      petName: string,
-      customerUsername: string,
-      customerId: string,
+      petId: string,
       questionId: string,
       answer: string,
+      id: string,
       createdAt: string,
       updatedAt: string,
+      customerId?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -6968,8 +6984,7 @@ export type GetPetBookingsQuery = {
     id: string,
     bookingCustomerUsername: string,
     bookingtimeSlotId: string,
-    petName: string,
-    petcustomerUsername: string,
+    petId: string,
     booking:  {
       __typename: "Booking",
       id: string,
@@ -6984,7 +6999,8 @@ export type GetPetBookingsQuery = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -6998,8 +7014,8 @@ export type GetPetBookingsQuery = {
     },
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -7042,8 +7058,7 @@ export type ListPetBookingsQuery = {
       id: string,
       bookingCustomerUsername: string,
       bookingtimeSlotId: string,
-      petName: string,
-      petcustomerUsername: string,
+      petId: string,
       createdAt: string,
       updatedAt: string,
       owners?: string | null,
@@ -7070,8 +7085,7 @@ export type PetBookingsByBookingCustomerUsernameAndBookingtimeSlotIdQuery = {
       id: string,
       bookingCustomerUsername: string,
       bookingtimeSlotId: string,
-      petName: string,
-      petcustomerUsername: string,
+      petId: string,
       createdAt: string,
       updatedAt: string,
       owners?: string | null,
@@ -7081,25 +7095,23 @@ export type PetBookingsByBookingCustomerUsernameAndBookingtimeSlotIdQuery = {
   } | null,
 };
 
-export type PetBookingsByPetNameAndPetcustomerUsernameQueryVariables = {
-  petName: string,
-  petcustomerUsername?: ModelStringKeyConditionInput | null,
+export type PetBookingsByPetIdQueryVariables = {
+  petId: string,
   sortDirection?: ModelSortDirection | null,
   filter?: ModelPetBookingsFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type PetBookingsByPetNameAndPetcustomerUsernameQuery = {
-  petBookingsByPetNameAndPetcustomerUsername?:  {
+export type PetBookingsByPetIdQuery = {
+  petBookingsByPetId?:  {
     __typename: "ModelPetBookingsConnection",
     items:  Array< {
       __typename: "PetBookings",
       id: string,
       bookingCustomerUsername: string,
       bookingtimeSlotId: string,
-      petName: string,
-      petcustomerUsername: string,
+      petId: string,
       createdAt: string,
       updatedAt: string,
       owners?: string | null,
@@ -7180,7 +7192,8 @@ export type OnCreateBookingSubscription = {
       serviceProviderId?: string | null,
     },
     timeSlotId: string,
-    petNames: Array< string >,
+    address: string,
+    petIds: Array< string >,
     pets?:  {
       __typename: "ModelPetBookingsConnection",
       nextToken?: string | null,
@@ -7269,7 +7282,8 @@ export type OnUpdateBookingSubscription = {
       serviceProviderId?: string | null,
     },
     timeSlotId: string,
-    petNames: Array< string >,
+    address: string,
+    petIds: Array< string >,
     pets?:  {
       __typename: "ModelPetBookingsConnection",
       nextToken?: string | null,
@@ -7358,7 +7372,8 @@ export type OnDeleteBookingSubscription = {
       serviceProviderId?: string | null,
     },
     timeSlotId: string,
-    petNames: Array< string >,
+    address: string,
+    petIds: Array< string >,
     pets?:  {
       __typename: "ModelPetBookingsConnection",
       nextToken?: string | null,
@@ -8182,8 +8197,8 @@ export type OnCreatePetSubscriptionVariables = {
 export type OnCreatePetSubscription = {
   onCreatePet?:  {
     __typename: "Pet",
+    id: string,
     name: string,
-    customerUsername: string,
     customerId: string,
     customer:  {
       __typename: "Customer",
@@ -8228,8 +8243,8 @@ export type OnUpdatePetSubscriptionVariables = {
 export type OnUpdatePetSubscription = {
   onUpdatePet?:  {
     __typename: "Pet",
+    id: string,
     name: string,
-    customerUsername: string,
     customerId: string,
     customer:  {
       __typename: "Customer",
@@ -8274,8 +8289,8 @@ export type OnDeletePetSubscriptionVariables = {
 export type OnDeletePetSubscription = {
   onDeletePet?:  {
     __typename: "Pet",
+    id: string,
     name: string,
-    customerUsername: string,
     customerId: string,
     customer:  {
       __typename: "Customer",
@@ -8322,6 +8337,9 @@ export type OnCreateQuestionSubscription = {
     id: string,
     serviceCategory: ServiceCategory,
     questionString: string,
+    questionType: QuestionType,
+    followUpQuestionIds?: Array< string > | null,
+    isRequired: boolean,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -8337,6 +8355,9 @@ export type OnUpdateQuestionSubscription = {
     id: string,
     serviceCategory: ServiceCategory,
     questionString: string,
+    questionType: QuestionType,
+    followUpQuestionIds?: Array< string > | null,
+    isRequired: boolean,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -8352,6 +8373,9 @@ export type OnDeleteQuestionSubscription = {
     id: string,
     serviceCategory: ServiceCategory,
     questionString: string,
+    questionType: QuestionType,
+    followUpQuestionIds?: Array< string > | null,
+    isRequired: boolean,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -8365,12 +8389,11 @@ export type OnCreateQuestionAnswerSubscriptionVariables = {
 export type OnCreateQuestionAnswerSubscription = {
   onCreateQuestionAnswer?:  {
     __typename: "QuestionAnswer",
-    petName: string,
-    customerUsername: string,
+    petId: string,
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -8392,19 +8415,23 @@ export type OnCreateQuestionAnswerSubscription = {
       createdAt: string,
       updatedAt: string,
     },
-    customerId: string,
     questionId: string,
     question:  {
       __typename: "Question",
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     },
     answer: string,
+    id: string,
     createdAt: string,
     updatedAt: string,
+    customerId?: string | null,
   } | null,
 };
 
@@ -8416,12 +8443,11 @@ export type OnUpdateQuestionAnswerSubscriptionVariables = {
 export type OnUpdateQuestionAnswerSubscription = {
   onUpdateQuestionAnswer?:  {
     __typename: "QuestionAnswer",
-    petName: string,
-    customerUsername: string,
+    petId: string,
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -8443,19 +8469,23 @@ export type OnUpdateQuestionAnswerSubscription = {
       createdAt: string,
       updatedAt: string,
     },
-    customerId: string,
     questionId: string,
     question:  {
       __typename: "Question",
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     },
     answer: string,
+    id: string,
     createdAt: string,
     updatedAt: string,
+    customerId?: string | null,
   } | null,
 };
 
@@ -8467,12 +8497,11 @@ export type OnDeleteQuestionAnswerSubscriptionVariables = {
 export type OnDeleteQuestionAnswerSubscription = {
   onDeleteQuestionAnswer?:  {
     __typename: "QuestionAnswer",
-    petName: string,
-    customerUsername: string,
+    petId: string,
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -8494,19 +8523,23 @@ export type OnDeleteQuestionAnswerSubscription = {
       createdAt: string,
       updatedAt: string,
     },
-    customerId: string,
     questionId: string,
     question:  {
       __typename: "Question",
       id: string,
       serviceCategory: ServiceCategory,
       questionString: string,
+      questionType: QuestionType,
+      followUpQuestionIds?: Array< string > | null,
+      isRequired: boolean,
       createdAt: string,
       updatedAt: string,
     },
     answer: string,
+    id: string,
     createdAt: string,
     updatedAt: string,
+    customerId?: string | null,
   } | null,
 };
 
@@ -9170,8 +9203,7 @@ export type OnCreatePetBookingsSubscription = {
     id: string,
     bookingCustomerUsername: string,
     bookingtimeSlotId: string,
-    petName: string,
-    petcustomerUsername: string,
+    petId: string,
     booking:  {
       __typename: "Booking",
       id: string,
@@ -9186,7 +9218,8 @@ export type OnCreatePetBookingsSubscription = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -9200,8 +9233,8 @@ export type OnCreatePetBookingsSubscription = {
     },
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -9242,8 +9275,7 @@ export type OnUpdatePetBookingsSubscription = {
     id: string,
     bookingCustomerUsername: string,
     bookingtimeSlotId: string,
-    petName: string,
-    petcustomerUsername: string,
+    petId: string,
     booking:  {
       __typename: "Booking",
       id: string,
@@ -9258,7 +9290,8 @@ export type OnUpdatePetBookingsSubscription = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -9272,8 +9305,8 @@ export type OnUpdatePetBookingsSubscription = {
     },
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,
@@ -9314,8 +9347,7 @@ export type OnDeletePetBookingsSubscription = {
     id: string,
     bookingCustomerUsername: string,
     bookingtimeSlotId: string,
-    petName: string,
-    petcustomerUsername: string,
+    petId: string,
     booking:  {
       __typename: "Booking",
       id: string,
@@ -9330,7 +9362,8 @@ export type OnDeletePetBookingsSubscription = {
       serviceId: string,
       startDateTime: string,
       timeSlotId: string,
-      petNames: Array< string >,
+      address: string,
+      petIds: Array< string >,
       addOns?: Array< string > | null,
       bookingType: BookingType,
       amount: number,
@@ -9344,8 +9377,8 @@ export type OnDeletePetBookingsSubscription = {
     },
     pet:  {
       __typename: "Pet",
+      id: string,
       name: string,
-      customerUsername: string,
       customerId: string,
       gender: Gender,
       petType: PetType,

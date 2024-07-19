@@ -434,22 +434,6 @@
         }
       ]
     },
-    "AMPLIFY_function_paymentRequestsLambda_hitpayBaseUrl": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "paymentRequestsLambda"
-        }
-      ]
-    },
-    "AMPLIFY_function_paymentRequestsLambda_secretsPathAmplifyAppId": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "paymentRequestsLambda"
-        }
-      ]
-    },
     "AMPLIFY_function_paymentRequests_deploymentBucketName": {
       "usedBy": [
         {

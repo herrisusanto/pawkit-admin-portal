@@ -29,7 +29,8 @@ type Booking
     @index(name: "byStartDateTime", queryField: "bookingsByStartDateTime")
   timeSlot: TimeSlot! @belongsTo(fields: ["serviceId", "startDateTime"])
   timeSlotId: ID! @index(name: "byTimeSlot", queryField: "bookingsByTimeSlot")
-  petNames: [String!]!
+  address: String!
+  petIds: [ID!]!
   pets: [Pet!] @manyToMany(relationName: "PetBookings")
   addOns: [ID!] # Add-on services
   bookingType: BookingType!
@@ -200,8 +201,8 @@ type Pet
       { allow: groups, groups: ["Admin"] }
     ]
   ) {
-  name: String! @primaryKey(sortKeyFields: ["customerUsername"])
-  customerUsername: String!
+  id: ID!
+  name: String!
   customerId: ID! @index(name: "byCustomer", queryField: "petsByCustomer")
   customer: Customer! @belongsTo(fields: ["customerId"])
   gender: Gender!
@@ -249,10 +250,8 @@ type QuestionAnswer
       { allow: groups, groups:["Admin", "ServicePersonnel"], operations: [read] }
     ]
   ) {
-  petName: String! @primaryKey(sortKeyFields: ["customerUsername", "questionId"]) @index(name: "byPet", queryField: "answersByPet")
-  customerUsername: String!
-  pet: Pet! @hasOne(fields: ["petName", "customerUsername"])
-  customerId: ID! @index(name: "byCustomer", queryField: "answersByCustomer")
+  petId: ID! @index(name: "byPet", queryField: "answersByPet")
+  pet: Pet! @hasOne(fields: ["petId"])
   questionId: ID! @index(name: "byQuestion", queryField: "answersByQuestion")
   question: Question! @hasOne(fields: ["questionId"])
   answer: String!

@@ -74,7 +74,8 @@ export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filt
       __typename
     }
     timeSlotId
-    petNames
+    address
+    petIds
     pets {
       nextToken
       __typename
@@ -162,7 +163,8 @@ export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filt
       __typename
     }
     timeSlotId
-    petNames
+    address
+    petIds
     pets {
       nextToken
       __typename
@@ -250,7 +252,8 @@ export const onDeleteBooking = /* GraphQL */ `subscription OnDeleteBooking($filt
       __typename
     }
     timeSlotId
-    petNames
+    address
+    petIds
     pets {
       nextToken
       __typename
@@ -1087,8 +1090,8 @@ export const onCreatePet = /* GraphQL */ `subscription OnCreatePet(
   $customerId: String
 ) {
   onCreatePet(filter: $filter, customerId: $customerId) {
+    id
     name
-    customerUsername
     customerId
     customer {
       id
@@ -1134,8 +1137,8 @@ export const onUpdatePet = /* GraphQL */ `subscription OnUpdatePet(
   $customerId: String
 ) {
   onUpdatePet(filter: $filter, customerId: $customerId) {
+    id
     name
-    customerUsername
     customerId
     customer {
       id
@@ -1181,8 +1184,8 @@ export const onDeletePet = /* GraphQL */ `subscription OnDeletePet(
   $customerId: String
 ) {
   onDeletePet(filter: $filter, customerId: $customerId) {
+    id
     name
-    customerUsername
     customerId
     customer {
       id
@@ -1228,6 +1231,9 @@ export const onCreateQuestion = /* GraphQL */ `subscription OnCreateQuestion($fi
     id
     serviceCategory
     questionString
+    questionType
+    followUpQuestionIds
+    isRequired
     createdAt
     updatedAt
     __typename
@@ -1242,6 +1248,9 @@ export const onUpdateQuestion = /* GraphQL */ `subscription OnUpdateQuestion($fi
     id
     serviceCategory
     questionString
+    questionType
+    followUpQuestionIds
+    isRequired
     createdAt
     updatedAt
     __typename
@@ -1256,6 +1265,9 @@ export const onDeleteQuestion = /* GraphQL */ `subscription OnDeleteQuestion($fi
     id
     serviceCategory
     questionString
+    questionType
+    followUpQuestionIds
+    isRequired
     createdAt
     updatedAt
     __typename
@@ -1270,11 +1282,10 @@ export const onCreateQuestionAnswer = /* GraphQL */ `subscription OnCreateQuesti
   $customerId: String
 ) {
   onCreateQuestionAnswer(filter: $filter, customerId: $customerId) {
-    petName
-    customerUsername
+    petId
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -1297,19 +1308,23 @@ export const onCreateQuestionAnswer = /* GraphQL */ `subscription OnCreateQuesti
       updatedAt
       __typename
     }
-    customerId
     questionId
     question {
       id
       serviceCategory
       questionString
+      questionType
+      followUpQuestionIds
+      isRequired
       createdAt
       updatedAt
       __typename
     }
     answer
+    id
     createdAt
     updatedAt
+    customerId
     __typename
   }
 }
@@ -1322,11 +1337,10 @@ export const onUpdateQuestionAnswer = /* GraphQL */ `subscription OnUpdateQuesti
   $customerId: String
 ) {
   onUpdateQuestionAnswer(filter: $filter, customerId: $customerId) {
-    petName
-    customerUsername
+    petId
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -1349,19 +1363,23 @@ export const onUpdateQuestionAnswer = /* GraphQL */ `subscription OnUpdateQuesti
       updatedAt
       __typename
     }
-    customerId
     questionId
     question {
       id
       serviceCategory
       questionString
+      questionType
+      followUpQuestionIds
+      isRequired
       createdAt
       updatedAt
       __typename
     }
     answer
+    id
     createdAt
     updatedAt
+    customerId
     __typename
   }
 }
@@ -1374,11 +1392,10 @@ export const onDeleteQuestionAnswer = /* GraphQL */ `subscription OnDeleteQuesti
   $customerId: String
 ) {
   onDeleteQuestionAnswer(filter: $filter, customerId: $customerId) {
-    petName
-    customerUsername
+    petId
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -1401,19 +1418,23 @@ export const onDeleteQuestionAnswer = /* GraphQL */ `subscription OnDeleteQuesti
       updatedAt
       __typename
     }
-    customerId
     questionId
     question {
       id
       serviceCategory
       questionString
+      questionType
+      followUpQuestionIds
+      isRequired
       createdAt
       updatedAt
       __typename
     }
     answer
+    id
     createdAt
     updatedAt
+    customerId
     __typename
   }
 }
@@ -2091,8 +2112,7 @@ export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookin
     id
     bookingCustomerUsername
     bookingtimeSlotId
-    petName
-    petcustomerUsername
+    petId
     booking {
       id
       orderId
@@ -2106,7 +2126,8 @@ export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookin
       serviceId
       startDateTime
       timeSlotId
-      petNames
+      address
+      petIds
       addOns
       bookingType
       amount
@@ -2120,8 +2141,8 @@ export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookin
       __typename
     }
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -2168,8 +2189,7 @@ export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookin
     id
     bookingCustomerUsername
     bookingtimeSlotId
-    petName
-    petcustomerUsername
+    petId
     booking {
       id
       orderId
@@ -2183,7 +2203,8 @@ export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookin
       serviceId
       startDateTime
       timeSlotId
-      petNames
+      address
+      petIds
       addOns
       bookingType
       amount
@@ -2197,8 +2218,8 @@ export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookin
       __typename
     }
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -2245,8 +2266,7 @@ export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookin
     id
     bookingCustomerUsername
     bookingtimeSlotId
-    petName
-    petcustomerUsername
+    petId
     booking {
       id
       orderId
@@ -2260,7 +2280,8 @@ export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookin
       serviceId
       startDateTime
       timeSlotId
-      petNames
+      address
+      petIds
       addOns
       bookingType
       amount
@@ -2274,8 +2295,8 @@ export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookin
       __typename
     }
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType

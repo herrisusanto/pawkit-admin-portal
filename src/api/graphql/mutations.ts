@@ -77,7 +77,8 @@ export const createBooking = /* GraphQL */ `mutation CreateBooking(
       __typename
     }
     timeSlotId
-    petNames
+    address
+    petIds
     pets {
       nextToken
       __typename
@@ -168,7 +169,8 @@ export const updateBooking = /* GraphQL */ `mutation UpdateBooking(
       __typename
     }
     timeSlotId
-    petNames
+    address
+    petIds
     pets {
       nextToken
       __typename
@@ -259,7 +261,8 @@ export const deleteBooking = /* GraphQL */ `mutation DeleteBooking(
       __typename
     }
     timeSlotId
-    petNames
+    address
+    petIds
     pets {
       nextToken
       __typename
@@ -1108,8 +1111,8 @@ export const createPet = /* GraphQL */ `mutation CreatePet(
   $condition: ModelPetConditionInput
 ) {
   createPet(input: $input, condition: $condition) {
+    id
     name
-    customerUsername
     customerId
     customer {
       id
@@ -1155,8 +1158,8 @@ export const updatePet = /* GraphQL */ `mutation UpdatePet(
   $condition: ModelPetConditionInput
 ) {
   updatePet(input: $input, condition: $condition) {
+    id
     name
-    customerUsername
     customerId
     customer {
       id
@@ -1202,8 +1205,8 @@ export const deletePet = /* GraphQL */ `mutation DeletePet(
   $condition: ModelPetConditionInput
 ) {
   deletePet(input: $input, condition: $condition) {
+    id
     name
-    customerUsername
     customerId
     customer {
       id
@@ -1252,6 +1255,9 @@ export const createQuestion = /* GraphQL */ `mutation CreateQuestion(
     id
     serviceCategory
     questionString
+    questionType
+    followUpQuestionIds
+    isRequired
     createdAt
     updatedAt
     __typename
@@ -1269,6 +1275,9 @@ export const updateQuestion = /* GraphQL */ `mutation UpdateQuestion(
     id
     serviceCategory
     questionString
+    questionType
+    followUpQuestionIds
+    isRequired
     createdAt
     updatedAt
     __typename
@@ -1286,6 +1295,9 @@ export const deleteQuestion = /* GraphQL */ `mutation DeleteQuestion(
     id
     serviceCategory
     questionString
+    questionType
+    followUpQuestionIds
+    isRequired
     createdAt
     updatedAt
     __typename
@@ -1300,11 +1312,10 @@ export const createQuestionAnswer = /* GraphQL */ `mutation CreateQuestionAnswer
   $condition: ModelQuestionAnswerConditionInput
 ) {
   createQuestionAnswer(input: $input, condition: $condition) {
-    petName
-    customerUsername
+    petId
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -1327,19 +1338,23 @@ export const createQuestionAnswer = /* GraphQL */ `mutation CreateQuestionAnswer
       updatedAt
       __typename
     }
-    customerId
     questionId
     question {
       id
       serviceCategory
       questionString
+      questionType
+      followUpQuestionIds
+      isRequired
       createdAt
       updatedAt
       __typename
     }
     answer
+    id
     createdAt
     updatedAt
+    customerId
     __typename
   }
 }
@@ -1352,11 +1367,10 @@ export const updateQuestionAnswer = /* GraphQL */ `mutation UpdateQuestionAnswer
   $condition: ModelQuestionAnswerConditionInput
 ) {
   updateQuestionAnswer(input: $input, condition: $condition) {
-    petName
-    customerUsername
+    petId
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -1379,19 +1393,23 @@ export const updateQuestionAnswer = /* GraphQL */ `mutation UpdateQuestionAnswer
       updatedAt
       __typename
     }
-    customerId
     questionId
     question {
       id
       serviceCategory
       questionString
+      questionType
+      followUpQuestionIds
+      isRequired
       createdAt
       updatedAt
       __typename
     }
     answer
+    id
     createdAt
     updatedAt
+    customerId
     __typename
   }
 }
@@ -1404,11 +1422,10 @@ export const deleteQuestionAnswer = /* GraphQL */ `mutation DeleteQuestionAnswer
   $condition: ModelQuestionAnswerConditionInput
 ) {
   deleteQuestionAnswer(input: $input, condition: $condition) {
-    petName
-    customerUsername
+    petId
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -1431,19 +1448,23 @@ export const deleteQuestionAnswer = /* GraphQL */ `mutation DeleteQuestionAnswer
       updatedAt
       __typename
     }
-    customerId
     questionId
     question {
       id
       serviceCategory
       questionString
+      questionType
+      followUpQuestionIds
+      isRequired
       createdAt
       updatedAt
       __typename
     }
     answer
+    id
     createdAt
     updatedAt
+    customerId
     __typename
   }
 }
@@ -2116,8 +2137,7 @@ export const createPetBookings = /* GraphQL */ `mutation CreatePetBookings(
     id
     bookingCustomerUsername
     bookingtimeSlotId
-    petName
-    petcustomerUsername
+    petId
     booking {
       id
       orderId
@@ -2131,7 +2151,8 @@ export const createPetBookings = /* GraphQL */ `mutation CreatePetBookings(
       serviceId
       startDateTime
       timeSlotId
-      petNames
+      address
+      petIds
       addOns
       bookingType
       amount
@@ -2145,8 +2166,8 @@ export const createPetBookings = /* GraphQL */ `mutation CreatePetBookings(
       __typename
     }
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -2188,8 +2209,7 @@ export const updatePetBookings = /* GraphQL */ `mutation UpdatePetBookings(
     id
     bookingCustomerUsername
     bookingtimeSlotId
-    petName
-    petcustomerUsername
+    petId
     booking {
       id
       orderId
@@ -2203,7 +2223,8 @@ export const updatePetBookings = /* GraphQL */ `mutation UpdatePetBookings(
       serviceId
       startDateTime
       timeSlotId
-      petNames
+      address
+      petIds
       addOns
       bookingType
       amount
@@ -2217,8 +2238,8 @@ export const updatePetBookings = /* GraphQL */ `mutation UpdatePetBookings(
       __typename
     }
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
@@ -2260,8 +2281,7 @@ export const deletePetBookings = /* GraphQL */ `mutation DeletePetBookings(
     id
     bookingCustomerUsername
     bookingtimeSlotId
-    petName
-    petcustomerUsername
+    petId
     booking {
       id
       orderId
@@ -2275,7 +2295,8 @@ export const deletePetBookings = /* GraphQL */ `mutation DeletePetBookings(
       serviceId
       startDateTime
       timeSlotId
-      petNames
+      address
+      petIds
       addOns
       bookingType
       amount
@@ -2289,8 +2310,8 @@ export const deletePetBookings = /* GraphQL */ `mutation DeletePetBookings(
       __typename
     }
     pet {
+      id
       name
-      customerUsername
       customerId
       gender
       petType
