@@ -16,8 +16,13 @@ import {
   message,
 } from "antd";
 import PawkitLogo from "../../assets/pawkit_logo.png";
-import { fetchAuthSession, signOut } from "aws-amplify/auth";
+import {
+  fetchAuthSession,
+  GetCurrentUserOutput,
+  signOut,
+} from "aws-amplify/auth";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { currentAuthenticatedUser } from "../../api/auth";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -45,6 +50,7 @@ const items: MenuItem[] = [
 
 const HomeLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [user, setUser] = useState<GetCurrentUserOutput | null>();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -72,6 +78,15 @@ const HomeLayout: React.FC = () => {
       message.error(`Error sign out: ${err?.message}`, 2.5);
     }
   };
+
+  const getUser = async () => {
+    const user = await currentAuthenticatedUser();
+    setUser(user);
+  };
+
+  React.useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <>
@@ -108,7 +123,7 @@ const HomeLayout: React.FC = () => {
               style={{ height: "100%", padding: 24 }}
             >
               <Avatar icon={<UserOutlined />} />
-              <Typography>Admin</Typography>
+              <Typography>{user?.signInDetails?.loginId}</Typography>
 
               <Button type="text" danger onClick={handleSignOut}>
                 Sign Out
