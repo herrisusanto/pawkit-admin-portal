@@ -69,7 +69,7 @@ type Customer
   id: ID! @primaryKey
   username: String! @index(name: "byUsername", queryField: "customerByUsername")
   isDeactivated: Boolean! @default(value: "false")
-  imageUrl: AWSURL
+  s3ImageKey: String
   address: Address
   acceptedDisclaimers: [DisclaimerAcceptance!]
     @hasMany(indexName: "byCustomer", fields: ["id"])
@@ -209,7 +209,7 @@ type Pet
   petType: PetType!
   isDeleted: Boolean! @default(value: "false")
   breedName: String @index(name: "byBreed", queryField: "petsByBreed")
-  imageUrl: AWSURL
+  s3ImageKey: String
   birthdate: AWSDate
   weightValue: Float
   weightUnit: WeightUnit
@@ -281,6 +281,7 @@ type Service
   petType: PetType! @index(name: "byPetType", queryField: "servicesByPetType")
   defaultDisplay: Boolean! @default(value: "false") # If false, service is hidden from initial view as it is an add-on to a base service.
   displayPriority: Int
+  s3ImageKey: String
   onlinePaymentAccepted: Boolean! @default(value: "true")
   currency: Currency! @default(value: "SGD")
   basePrice: Float! @index(name: "byPrice", queryField: "servicesByPrice")
@@ -296,7 +297,6 @@ type Service
   xxlWeightPrice: CustomPrice
   shortDescription: String
   longDescription: String
-  imageUrl: AWSURL
   serviceBreakdown: String
   additionalInfo: String
   faq: String
@@ -324,7 +324,7 @@ type ServiceProvider
   name: String! @primaryKey
   displayName: String
   description: String
-  imageUrl: AWSURL
+  s3ImageKey: String
   address: Address
   website: AWSURL
   email: AWSEmail

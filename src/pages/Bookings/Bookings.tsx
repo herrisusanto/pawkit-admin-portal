@@ -13,9 +13,12 @@ import {
   message,
   theme,
 } from "antd";
-import { BookingStatus, ListBookingsQuery } from "../../api/graphql/API";
+import { BookingStatus, ListBookingsQuery } from "../../api.backup/graphql/API";
 import { format } from "date-fns";
-import { fetchBookings, updateBookingStatus } from "../../api/service-booking";
+import {
+  fetchBookings,
+  updateBookingStatus,
+} from "../../api.backup/service-booking";
 import { EditOutlined } from "@ant-design/icons";
 
 function Bookings() {

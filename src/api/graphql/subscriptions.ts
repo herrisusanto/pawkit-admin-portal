@@ -33,7 +33,7 @@ export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filt
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -45,7 +45,7 @@ export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filt
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -122,7 +122,7 @@ export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filt
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -134,7 +134,7 @@ export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filt
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -211,7 +211,7 @@ export const onDeleteBooking = /* GraphQL */ `subscription OnDeleteBooking($filt
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -223,7 +223,7 @@ export const onDeleteBooking = /* GraphQL */ `subscription OnDeleteBooking($filt
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -337,7 +337,7 @@ export const onCreateCustomer = /* GraphQL */ `subscription OnCreateCustomer(
     id
     username
     isDeactivated
-    imageUrl
+    s3ImageKey
     address {
       blockNumber
       streetName
@@ -382,7 +382,7 @@ export const onUpdateCustomer = /* GraphQL */ `subscription OnUpdateCustomer(
     id
     username
     isDeactivated
-    imageUrl
+    s3ImageKey
     address {
       blockNumber
       streetName
@@ -427,7 +427,7 @@ export const onDeleteCustomer = /* GraphQL */ `subscription OnDeleteCustomer(
     id
     username
     isDeactivated
-    imageUrl
+    s3ImageKey
     address {
       blockNumber
       streetName
@@ -482,6 +482,7 @@ export const onCreateDisclaimer = /* GraphQL */ `subscription OnCreateDisclaimer
       petType
       defaultDisplay
       displayPriority
+      s3ImageKey
       onlinePaymentAccepted
       currency
       basePrice
@@ -490,7 +491,6 @@ export const onCreateDisclaimer = /* GraphQL */ `subscription OnCreateDisclaimer
       additionalPetPrice
       shortDescription
       longDescription
-      imageUrl
       serviceBreakdown
       additionalInfo
       faq
@@ -552,6 +552,7 @@ export const onUpdateDisclaimer = /* GraphQL */ `subscription OnUpdateDisclaimer
       petType
       defaultDisplay
       displayPriority
+      s3ImageKey
       onlinePaymentAccepted
       currency
       basePrice
@@ -560,7 +561,6 @@ export const onUpdateDisclaimer = /* GraphQL */ `subscription OnUpdateDisclaimer
       additionalPetPrice
       shortDescription
       longDescription
-      imageUrl
       serviceBreakdown
       additionalInfo
       faq
@@ -622,6 +622,7 @@ export const onDeleteDisclaimer = /* GraphQL */ `subscription OnDeleteDisclaimer
       petType
       defaultDisplay
       displayPriority
+      s3ImageKey
       onlinePaymentAccepted
       currency
       basePrice
@@ -630,7 +631,6 @@ export const onDeleteDisclaimer = /* GraphQL */ `subscription OnDeleteDisclaimer
       additionalPetPrice
       shortDescription
       longDescription
-      imageUrl
       serviceBreakdown
       additionalInfo
       faq
@@ -685,7 +685,7 @@ export const onCreateDisclaimerAcceptance = /* GraphQL */ `subscription OnCreate
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -724,7 +724,7 @@ export const onUpdateDisclaimerAcceptance = /* GraphQL */ `subscription OnUpdate
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -763,7 +763,7 @@ export const onDeleteDisclaimerAcceptance = /* GraphQL */ `subscription OnDelete
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -802,7 +802,7 @@ export const onCreateOrder = /* GraphQL */ `subscription OnCreateOrder(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -838,7 +838,7 @@ export const onUpdateOrder = /* GraphQL */ `subscription OnUpdateOrder(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -874,7 +874,7 @@ export const onDeleteOrder = /* GraphQL */ `subscription OnDeleteOrder(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -925,7 +925,7 @@ export const onCreatePayment = /* GraphQL */ `subscription OnCreatePayment(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -987,7 +987,7 @@ export const onUpdatePayment = /* GraphQL */ `subscription OnUpdatePayment(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -1049,7 +1049,7 @@ export const onDeletePayment = /* GraphQL */ `subscription OnDeletePayment(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -1097,7 +1097,7 @@ export const onCreatePet = /* GraphQL */ `subscription OnCreatePet(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -1106,7 +1106,7 @@ export const onCreatePet = /* GraphQL */ `subscription OnCreatePet(
     petType
     isDeleted
     breedName
-    imageUrl
+    s3ImageKey
     birthdate
     weightValue
     weightUnit
@@ -1144,7 +1144,7 @@ export const onUpdatePet = /* GraphQL */ `subscription OnUpdatePet(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -1153,7 +1153,7 @@ export const onUpdatePet = /* GraphQL */ `subscription OnUpdatePet(
     petType
     isDeleted
     breedName
-    imageUrl
+    s3ImageKey
     birthdate
     weightValue
     weightUnit
@@ -1191,7 +1191,7 @@ export const onDeletePet = /* GraphQL */ `subscription OnDeletePet(
       id
       username
       isDeactivated
-      imageUrl
+      s3ImageKey
       createdAt
       updatedAt
       __typename
@@ -1200,7 +1200,7 @@ export const onDeletePet = /* GraphQL */ `subscription OnDeletePet(
     petType
     isDeleted
     breedName
-    imageUrl
+    s3ImageKey
     birthdate
     weightValue
     weightUnit
@@ -1291,7 +1291,7 @@ export const onCreateQuestionAnswer = /* GraphQL */ `subscription OnCreateQuesti
       petType
       isDeleted
       breedName
-      imageUrl
+      s3ImageKey
       birthdate
       weightValue
       weightUnit
@@ -1346,7 +1346,7 @@ export const onUpdateQuestionAnswer = /* GraphQL */ `subscription OnUpdateQuesti
       petType
       isDeleted
       breedName
-      imageUrl
+      s3ImageKey
       birthdate
       weightValue
       weightUnit
@@ -1401,7 +1401,7 @@ export const onDeleteQuestionAnswer = /* GraphQL */ `subscription OnDeleteQuesti
       petType
       isDeleted
       breedName
-      imageUrl
+      s3ImageKey
       birthdate
       weightValue
       weightUnit
@@ -1456,7 +1456,7 @@ export const onCreateService = /* GraphQL */ `subscription OnCreateService(
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -1470,6 +1470,7 @@ export const onCreateService = /* GraphQL */ `subscription OnCreateService(
     petType
     defaultDisplay
     displayPriority
+    s3ImageKey
     onlinePaymentAccepted
     currency
     basePrice
@@ -1541,7 +1542,6 @@ export const onCreateService = /* GraphQL */ `subscription OnCreateService(
     }
     shortDescription
     longDescription
-    imageUrl
     serviceBreakdown
     additionalInfo
     faq
@@ -1588,7 +1588,7 @@ export const onUpdateService = /* GraphQL */ `subscription OnUpdateService(
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -1602,6 +1602,7 @@ export const onUpdateService = /* GraphQL */ `subscription OnUpdateService(
     petType
     defaultDisplay
     displayPriority
+    s3ImageKey
     onlinePaymentAccepted
     currency
     basePrice
@@ -1673,7 +1674,6 @@ export const onUpdateService = /* GraphQL */ `subscription OnUpdateService(
     }
     shortDescription
     longDescription
-    imageUrl
     serviceBreakdown
     additionalInfo
     faq
@@ -1720,7 +1720,7 @@ export const onDeleteService = /* GraphQL */ `subscription OnDeleteService(
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -1734,6 +1734,7 @@ export const onDeleteService = /* GraphQL */ `subscription OnDeleteService(
     petType
     defaultDisplay
     displayPriority
+    s3ImageKey
     onlinePaymentAccepted
     currency
     basePrice
@@ -1805,7 +1806,6 @@ export const onDeleteService = /* GraphQL */ `subscription OnDeleteService(
     }
     shortDescription
     longDescription
-    imageUrl
     serviceBreakdown
     additionalInfo
     faq
@@ -1847,7 +1847,7 @@ export const onCreateServiceProvider = /* GraphQL */ `subscription OnCreateServi
     name
     displayName
     description
-    imageUrl
+    s3ImageKey
     address {
       blockNumber
       streetName
@@ -1870,7 +1870,7 @@ export const onCreateServiceProvider = /* GraphQL */ `subscription OnCreateServi
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -1907,7 +1907,7 @@ export const onUpdateServiceProvider = /* GraphQL */ `subscription OnUpdateServi
     name
     displayName
     description
-    imageUrl
+    s3ImageKey
     address {
       blockNumber
       streetName
@@ -1930,7 +1930,7 @@ export const onUpdateServiceProvider = /* GraphQL */ `subscription OnUpdateServi
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -1967,7 +1967,7 @@ export const onDeleteServiceProvider = /* GraphQL */ `subscription OnDeleteServi
     name
     displayName
     description
-    imageUrl
+    s3ImageKey
     address {
       blockNumber
       streetName
@@ -1990,7 +1990,7 @@ export const onDeleteServiceProvider = /* GraphQL */ `subscription OnDeleteServi
       name
       displayName
       description
-      imageUrl
+      s3ImageKey
       website
       email
       phone
@@ -2148,7 +2148,7 @@ export const onCreatePetBookings = /* GraphQL */ `subscription OnCreatePetBookin
       petType
       isDeleted
       breedName
-      imageUrl
+      s3ImageKey
       birthdate
       weightValue
       weightUnit
@@ -2225,7 +2225,7 @@ export const onUpdatePetBookings = /* GraphQL */ `subscription OnUpdatePetBookin
       petType
       isDeleted
       breedName
-      imageUrl
+      s3ImageKey
       birthdate
       weightValue
       weightUnit
@@ -2302,7 +2302,7 @@ export const onDeletePetBookings = /* GraphQL */ `subscription OnDeletePetBookin
       petType
       isDeleted
       breedName
-      imageUrl
+      s3ImageKey
       birthdate
       weightValue
       weightUnit

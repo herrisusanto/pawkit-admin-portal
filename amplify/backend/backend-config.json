@@ -486,34 +486,6 @@
           ],
           "category": "function",
           "resourceName": "dataLoader"
-        },
-        {
-          "attributes": [
-            "UserPoolId"
-          ],
-          "category": "auth",
-          "resourceName": "pawkit"
-        },
-        {
-          "attributes": [
-            "PetOwnersGroupRole"
-          ],
-          "category": "auth",
-          "resourceName": "userPoolGroups"
-        },
-        {
-          "attributes": [
-            "ServicePersonnelGroupRole"
-          ],
-          "category": "auth",
-          "resourceName": "userPoolGroups"
-        },
-        {
-          "attributes": [
-            "AdminGroupRole"
-          ],
-          "category": "auth",
-          "resourceName": "userPoolGroups"
         }
       ],
       "providerPlugin": "awscloudformation",
