@@ -15,6 +15,8 @@ import {
   listTimeSlots,
   timeSlotById,
   petBookingsByPetId,
+  listServices,
+  getBooking,
 } from "./graphql/queries";
 import {
   BookingStatus,
@@ -56,12 +58,7 @@ import {
   InternalServerError,
   NotFoundError,
 } from "./errors";
-import {
-  customBookingById,
-  customBookingsByCustomer,
-  customGetBooking,
-  customListServices,
-} from "./graphql/custom";
+import { customBookingById, customBookingsByCustomer } from "./graphql/custom";
 import {
   fetchOrder,
   addBookingToOrder,
@@ -316,7 +313,7 @@ export const addPetBookingRelationship = async (
 export const fetchServices = async (variables: ListServicesQueryVariables) => {
   try {
     const result = await graphqlClient.graphql({
-      query: customListServices,
+      query: listServices,
       variables,
     });
     logger.info(
@@ -772,7 +769,7 @@ export const fetchBooking = async (
     }
 
     const result = await graphqlClient.graphql({
-      query: customGetBooking,
+      query: getBooking,
       variables: {
         customerUsername,
         timeSlotId,
@@ -781,7 +778,7 @@ export const fetchBooking = async (
 
     logger.info("Called getBooking query");
     const booking = result.data.getBooking;
-    const payments = await fetchPaymentsByOrderId(booking.orderId);
+    const payments = await fetchPaymentsByOrderId(booking?.orderId as string);
     return { booking, payments };
   } catch (error) {
     logger.error(`Error fetching booking: `, error);

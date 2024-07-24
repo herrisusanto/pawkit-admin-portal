@@ -22,10 +22,14 @@
   },
   "terminal.integrated.automationProfile.linux": {
     "path": "bash",
-    "args": ["-l"]
+    "args": [
+      "-l"
+    ]
   },
   "terminal.integrated.automationProfile.osx": {
     "path": "bash",
-    "args": ["-l"]
+    "args": [
+      "-l"
+    ]
   }
 }

@@ -22,7 +22,7 @@ import {
   signOut,
 } from "aws-amplify/auth";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { currentAuthenticatedUser } from "../../api/auth";
+import { currentAuthenticatedUser } from "../../api.backup/auth";
 
 const { Header, Content, Footer, Sider } = Layout;
 

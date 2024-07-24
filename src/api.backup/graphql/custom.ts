@@ -60,7 +60,7 @@ export const customListServices = `query CustomListServices(
       }
       shortDescription
       longDescription
-      s3ImageKey
+      imageUrl
       serviceBreakdown
       additionalInfo
       faq
@@ -98,7 +98,7 @@ export const customGetBooking = `query CustomGetBooking(
       id
       username
       isDeactivated
-      s3ImageKey
+      imageUrl
       createdAt
       updatedAt
       __typename
@@ -116,7 +116,7 @@ export const customGetBooking = `query CustomGetBooking(
         unitNumber
       }
       description
-      s3ImageKey
+      imageUrl
       website
       email
       phone
@@ -150,7 +150,7 @@ export const customGetBooking = `query CustomGetBooking(
       items {
         pet {
           birthdate
-          s3ImageKey
+          imageUrl
           name
         }
       }
@@ -221,7 +221,7 @@ export const customBookingById = `query CustomBookingById(
          pet {
            petType
            birthdate
-           s3ImageKey
+           imageUrl
            name
          }
        }
@@ -283,7 +283,7 @@ export const customBookingsByCustomer = `query CustomBookingsByCustomer(
          pet {
            name
            birthdate
-           s3ImageKey
+           imageUrl
          }
        }
      }
