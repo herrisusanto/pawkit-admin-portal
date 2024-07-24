@@ -17,6 +17,7 @@ import {
   petBookingsByPetId,
 } from "./graphql/queries";
 import {
+  Booking,
   BookingStatus,
   BookingType,
   CreateBookingInput,
@@ -30,6 +31,7 @@ import {
   ListTimeSlotsQueryVariables,
   ModelPetBookingsFilterInput,
   PetType,
+  Service,
   ServiceCategory,
   UpdateBookingInput,
   UpdateServiceInput,
@@ -315,14 +317,14 @@ export const addPetBookingRelationship = async (
 // Read
 export const fetchServices = async (variables: ListServicesQueryVariables) => {
   try {
-    const result = await graphqlClient.graphql({
+    const result: any = await graphqlClient.graphql({
       query: customListServices,
       variables,
     });
     logger.info(
       `Called customListServices query with variables: ${JSON.stringify(variables)}`
     );
-    return result.data.listServices.items;
+    return result.data.listServices.items as Service[];
   } catch (error) {
     logger.error("Error fetching services: ", error);
     throw new InternalServerError("Error fetching services");
@@ -771,7 +773,7 @@ export const fetchBooking = async (
       throw new BadRequestError("Time slot id is required");
     }
 
-    const result = await graphqlClient.graphql({
+    const result: any = await graphqlClient.graphql({
       query: customGetBooking,
       variables: {
         customerUsername,
@@ -780,7 +782,7 @@ export const fetchBooking = async (
     });
 
     logger.info("Called getBooking query");
-    const booking = result.data.getBooking;
+    const booking = result.data.getBooking as Booking;
     const payments = await fetchPaymentsByOrderId(booking.orderId);
     return { booking, payments };
   } catch (error) {

@@ -1,4 +1,4 @@
-import { graphqlClient, uploadFile } from "./core";
+import { graphqlClient } from "./core";
 import {
   getPet,
   getQuestion,
@@ -236,39 +236,6 @@ export const modifyPet = async (input: UpdatePetInput) => {
   } catch (error) {
     logger.error("Error updating pet: ", error);
     throw new InternalServerError("Error updating pet");
-  }
-};
-
-export const uploadPetImage = async (
-  userId: string,
-  petId: string,
-  image: File
-) => {
-  if (!petId) {
-    logger.error("Pet ID is required");
-    throw new BadRequestError("Pet ID is required");
-  }
-
-  if (!image) {
-    logger.error("Image is required");
-    throw new BadRequestError("Image is required");
-  }
-
-  const imageKey = `${userId}/pets/${petId}/profile.jpg`;
-
-  try {
-    // Upload image to s3
-    await uploadFile(imageKey, "protected", image);
-
-    // Update pet with image key
-    const updatedPet = await modifyPet({
-      id: petId,
-      s3ImageKey: imageKey,
-    });
-    logger.info(`Uploaded image for pet id=${petId}`);
-    return updatedPet;
-  } catch (error) {
-    logger.error("Error uploading image: ", error);
   }
 };
 

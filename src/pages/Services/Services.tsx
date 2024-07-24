@@ -318,12 +318,12 @@ function Services() {
           {openedRecord &&
             Object.entries(openedRecord)
               .filter(
-                ([k, v]) =>
+                ([k]) =>
                   k !== "createdAt" && k !== "updatedAt" && k !== "__typename"
               )
               .map(([k, v]: any) => {
                 if (typeof v === "object" && v) {
-                  return Object.entries(v).map(([x, y]) => (
+                  return Object.entries(v).map(([x]) => (
                     <Form.Item
                       key={`${k}-${x}`}
                       name={[k, x]}
@@ -376,7 +376,7 @@ function Services() {
           {defaultServiceValues &&
             Object.entries(defaultServiceValues).map(([k, v]: any) => {
               if (typeof v === "object" && v) {
-                return Object.entries(v).map(([x, y]) => (
+                return Object.entries(v).map(([x]) => (
                   <Form.Item
                     key={`${k}-${x}`}
                     name={[k, x]}
