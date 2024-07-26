@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   Modal,
+  Select,
   Table,
   TableProps,
   message,
@@ -23,6 +24,7 @@ import {
   removeService,
 } from "../../api/service-booking";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 
 const defaultServiceValues = {
   name: "",
@@ -83,12 +85,22 @@ const defaultServiceValues = {
   requiredQuestionIds: null,
 };
 
-function Services() {
+export function Services() {
   const [form] = Form.useForm();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const [, contextHolder] = message.useMessage();
+  const { data: servicesAsOptions } = useQuery({
+    queryKey: ["services"],
+    queryFn: () => fetchServices({}),
+    select(data) {
+      return data.map((service) => ({
+        value: service.id,
+        label: service.name,
+      }));
+    },
+  });
 
   const [serviceList, setServiceList] = useState<any[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -322,6 +334,20 @@ function Services() {
                   k !== "createdAt" && k !== "updatedAt" && k !== "__typename"
               )
               .map(([k, v]: any) => {
+                if (k === "parentServiceIds" || k === "childServiceIds") {
+                  return (
+                    <Form.Item name={k} label={k}>
+                      <Select options={servicesAsOptions} mode="multiple" />
+                    </Form.Item>
+                  );
+                }
+                if (k === "bookingIds") {
+                  return (
+                    <Form.Item name={k} label={k}>
+                      <Select options={[]} mode="multiple" />
+                    </Form.Item>
+                  );
+                }
                 if (typeof v === "object" && v) {
                   return Object.entries(v).map(([x]) => (
                     <Form.Item
@@ -375,6 +401,20 @@ function Services() {
         >
           {defaultServiceValues &&
             Object.entries(defaultServiceValues).map(([k, v]: any) => {
+              if (k === "parentServiceIds" || k === "childServiceIds") {
+                return (
+                  <Form.Item name={k} label={k}>
+                    <Select options={servicesAsOptions} mode="multiple" />
+                  </Form.Item>
+                );
+              }
+              if (k === "bookingIds") {
+                return (
+                  <Form.Item name={k} label={k}>
+                    <Select options={[]} mode="multiple" />
+                  </Form.Item>
+                );
+              }
               if (typeof v === "object" && v) {
                 return Object.entries(v).map(([x]) => (
                   <Form.Item

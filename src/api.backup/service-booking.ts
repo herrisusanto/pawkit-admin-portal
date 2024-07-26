@@ -26,6 +26,8 @@ import {
   CreateServiceInput,
   CreateTimeSlotInput,
   Currency,
+  DeleteBookingInput,
+  DeleteBookingMutation,
   GetBookingQueryVariables,
   ListBookingsQueryVariables,
   ListServicesQueryVariables,
@@ -46,7 +48,6 @@ import {
   createTimeSlot,
   deleteService,
   deleteTimeSlot,
-  updateBooking,
   updateQuestion,
   updateService,
   updateTimeSlot,
@@ -58,7 +59,12 @@ import {
   InternalServerError,
   NotFoundError,
 } from "./errors";
-import { customBookingById, customBookingsByCustomer } from "./graphql/custom";
+import {
+  customBookingById,
+  customBookingsByCustomer,
+  customDeleteBooking,
+  customUpdateBooking,
+} from "./graphql/custom";
 import {
   fetchOrder,
   addBookingToOrder,
@@ -1734,7 +1740,7 @@ export const updateBookingStatus = async (
     }
 
     const updatedBooking = await graphqlClient.graphql({
-      query: updateBooking,
+      query: customUpdateBooking,
       variables: {
         input: {
           customerUsername,
@@ -1750,5 +1756,19 @@ export const updateBookingStatus = async (
     logger.error(`Error updating booking status to ${status}: `, error);
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error updating booking status");
+  }
+};
+
+export const removeBooking = async (input: DeleteBookingInput) => {
+  try {
+    const deletedBooking = (await graphqlClient.graphql({
+      query: customDeleteBooking,
+      variables: { input },
+    })) as { data: DeleteBookingMutation };
+    return deletedBooking.data.deleteBooking;
+  } catch (error) {
+    logger.error(`Error deleting booking: `, error);
+    if (error instanceof CustomError) throw error;
+    throw new InternalServerError("Error deleting booking");
   }
 };

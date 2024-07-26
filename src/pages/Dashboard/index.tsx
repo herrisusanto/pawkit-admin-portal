@@ -4,7 +4,7 @@ import TotalOrderIcon from "../../assets/total_order_icon.svg";
 import TotalSalesIcon from "../../assets/total_sales_icon.svg";
 import TotalUserIcon from "../../assets/total_user_icon.svg";
 
-const Dashboard: React.FC = () => {
+export const Dashboard: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();

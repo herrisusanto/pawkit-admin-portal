@@ -48,7 +48,7 @@ const items: MenuItem[] = [
   getItem(<Link to="services">Services</Link>, "3", <GroupOutlined />),
 ];
 
-const HomeLayout: React.FC = () => {
+export const HomeLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<GetCurrentUserOutput | null>();
   const {
@@ -112,6 +112,7 @@ const HomeLayout: React.FC = () => {
             defaultSelectedKeys={["1"]}
             mode="inline"
             items={items}
+            className="!border-0"
           />
         </Sider>
         <Layout>

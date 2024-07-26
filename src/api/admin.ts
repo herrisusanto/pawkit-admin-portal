@@ -1,4 +1,4 @@
-import { post } from "aws-amplify/api";
+import { get, post } from "aws-amplify/api";
 import { fetchAuthSession } from "@aws-amplify/core";
 import { ConsoleLogger } from "aws-amplify/utils";
 import { deactivateCustomer, reactivateCustomer } from "./customer";
@@ -37,4 +37,30 @@ export const enableUser = async (username: string) => {
   logger.info("Enabling user with username=", username);
   await reactivateCustomer(username);
   return post({ apiName, path, options });
+};
+
+export const listUsers = async () => {
+  const apiName = "AdminQueries";
+  const path = "/listUsers";
+  const options = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${(await fetchAuthSession()).tokens?.accessToken.toString()}`,
+    },
+  };
+  const { body } = await get({ apiName, path, options }).response;
+  return ((await body.json()) as any)["Users"];
+};
+
+export const getUser = async (username: string) => {
+  const apiName = "AdminQueries";
+  const path = `/getUser?username=${username}`;
+  const options = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${(await fetchAuthSession()).tokens?.accessToken.toString()}`,
+    },
+  };
+  const { body } = await get({ apiName, path, options }).response;
+  return await body.json();
 };

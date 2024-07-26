@@ -9,7 +9,7 @@ type FieldType = {
   confirmation_code: string;
 };
 
-function SignIn() {
+export function SignIn() {
   const [form] = Form.useForm<FieldType>();
   const phoneNumberValue = Form.useWatch("phone_number", form);
   const confirmationCodeValue = Form.useWatch("confirmation_code", form);

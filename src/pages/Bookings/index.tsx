@@ -1,39 +1,54 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Col,
   Flex,
   Modal,
+  Popconfirm,
   Row,
   Select,
+  Space,
   Table,
-  TableProps,
+  TableColumnsType,
   Tag,
   Typography,
   message,
   theme,
 } from "antd";
-import { BookingStatus, ListBookingsQuery } from "../../api.backup/graphql/API";
+import { BookingStatus } from "../../api.backup/graphql/API";
 import { format } from "date-fns";
 import {
   fetchBookings,
+  removeBooking,
   updateBookingStatus,
 } from "../../api.backup/service-booking";
-import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Booking } from "../../api/graphql/API";
+import { useNavigate } from "react-router-dom";
 
-function Bookings() {
+export function Bookings() {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
-
-  const [bookingList, setBookingList] = useState<any[]>();
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const [openedRecord, setOpenedRecord] = useState<any>({});
   const [bookingStatus, setBookingStatus] = useState<BookingStatus | null>(
     null
   );
+  const { data: bookings, isPending } = useQuery({
+    queryKey: ["bookings"],
+    queryFn: () => fetchBookings({}),
+    select(data) {
+      return data.sort(
+        (a, b) => dayjs(b.updatedAt).unix() - dayjs(a.updatedAt).unix()
+      ) as Booking[];
+    },
+  });
 
   const handleShowModal = (record: any) => {
     setIsModalOpen(true);
@@ -49,109 +64,6 @@ function Bookings() {
 
   const handleChangeStatus = (value: BookingStatus) => {
     setBookingStatus(value);
-  };
-
-  const columns: TableProps<ListBookingsQuery>["columns"] = useMemo(
-    () => [
-      {
-        title: "Booking Created",
-        dataIndex: "createdAt",
-        key: "createdAt",
-        render: (createdAt) => {
-          return createdAt
-            ? format(new Date(createdAt), "yyyy-MM-dd hh:mm aa")
-            : "";
-        },
-      },
-      {
-        title: "Booking ID",
-        dataIndex: "id",
-        key: "id",
-      },
-      {
-        title: "Customer ID",
-        dataIndex: "customerUsername",
-        key: "customerUsername",
-      },
-      {
-        title: "Time Slot ID",
-        dataIndex: "timeSlotId",
-        key: "timeSlotId",
-      },
-      {
-        title: "Service",
-        dataIndex: "serviceName",
-        key: "serviceName",
-      },
-      {
-        title: "Booking Status",
-        key: "status",
-        dataIndex: "status",
-        render: (status) => {
-          if (status === BookingStatus.PENDING) {
-            return (
-              <Tag color="warning" key={status}>
-                {status.toUpperCase()}
-              </Tag>
-            );
-          } else if (status === BookingStatus.CANCELLED) {
-            return (
-              <Tag color="error" key={status}>
-                {status.toUpperCase()}
-              </Tag>
-            );
-          } else if (
-            status === BookingStatus.CONFIRMED ||
-            status === BookingStatus.COMPLETED
-          ) {
-            return (
-              <Tag color="success" key={status}>
-                {status.toUpperCase()}
-              </Tag>
-            );
-          }
-        },
-      },
-      {
-        title: "Total",
-        dataIndex: "amount",
-        key: "amount",
-        render: (value) => `S$${value}`,
-      },
-      {
-        title: "Action",
-        key: "action",
-        render: (_, record) => {
-          return (
-            <Flex>
-              <Button
-                onClick={() => handleShowModal(record)}
-                type="default"
-                shape="circle"
-                icon={<EditOutlined />}
-                size="small"
-              />
-            </Flex>
-          );
-        },
-      },
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [bookingList, openedRecord]
-  );
-
-  const getBookings = async () => {
-    setLoading(true);
-    try {
-      const result = await fetchBookings({});
-      if (result) {
-        setBookingList(result);
-      }
-    } catch (err: any) {
-      message.error(`error when fetching data: ${err?.message}`, 2.5);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleUpdateBooking = async (
@@ -172,8 +84,7 @@ function Bookings() {
           false
         );
         if (result) {
-          getBookings();
-
+          queryClient.invalidateQueries({ queryKey: ["bookings"] });
           message.success("Update Booking Success", 2.5);
           setIsModalOpen(false);
           setOpenedRecord({});
@@ -185,10 +96,121 @@ function Bookings() {
     }
   };
 
-  useEffect(() => {
-    getBookings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const mutationDeleteBooking = useMutation({
+    mutationFn: removeBooking,
+    onSuccess() {
+      message.success("Booking has been deleted");
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+    },
+  });
+
+  const columns: TableColumnsType<Booking> = [
+    {
+      title: "Booking Created",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => {
+        return createdAt
+          ? format(new Date(createdAt), "yyyy/MM/dd HH:mm:ss")
+          : "";
+      },
+    },
+    {
+      title: "Date of Booking",
+      dataIndex: "startDateTime",
+      key: "startDateTime",
+      render: (startDateTime) => {
+        return startDateTime
+          ? format(new Date(startDateTime), "yyyy/MM/dd HH:mm:ss")
+          : "";
+      },
+    },
+    {
+      title: "Booking ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Customer ID",
+      dataIndex: "customerUsername",
+      key: "customerUsername",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+    },
+    {
+      title: "Service",
+      dataIndex: "serviceName",
+      key: "serviceName",
+    },
+    {
+      title: "Booking Status",
+      key: "status",
+      dataIndex: "status",
+      render: (status) => {
+        if (status === BookingStatus.PENDING) {
+          return (
+            <Tag color="warning" key={status}>
+              {status.toUpperCase()}
+            </Tag>
+          );
+        } else if (status === BookingStatus.CANCELLED) {
+          return (
+            <Tag color="error" key={status}>
+              {status.toUpperCase()}
+            </Tag>
+          );
+        } else if (
+          status === BookingStatus.CONFIRMED ||
+          status === BookingStatus.COMPLETED
+        ) {
+          return (
+            <Tag color="success" key={status}>
+              {status.toUpperCase()}
+            </Tag>
+          );
+        }
+      },
+    },
+    {
+      title: "Total",
+      dataIndex: "amount",
+      key: "amount",
+      render: (value) => `S$${value}`,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => {
+        return (
+          <Space size={8}>
+            <Button
+              onClick={() => handleShowModal(record)}
+              type="default"
+              shape="circle"
+              icon={<EditOutlined />}
+              size="small"
+            />
+            <Popconfirm
+              title="Are you sure to delete this booking?"
+              onConfirm={() => {
+                mutationDeleteBooking.mutate({
+                  customerUsername: record.customerUsername,
+                  timeSlotId: record.timeSlotId,
+                });
+              }}
+            >
+              <Button size="small" shape="circle" danger>
+                <DeleteOutlined />
+              </Button>
+            </Popconfirm>
+          </Space>
+        );
+      },
+    },
+  ];
 
   const bookingStatusOptions = (status: BookingStatus | null) => {
     switch (status) {
@@ -229,43 +251,15 @@ function Bookings() {
   return (
     <>
       {contextHolder}
-      {/* 
-               <div
-              style={{
-                margin: "16px 0",
-                padding: 16,
-                background: colorBgContainer,
-                borderRadius: borderRadiusLG,
-              }}
-            >
-              <Flex gap="middle">
-                <RangePicker />
-                <Select
-                  // defaultValue="all"
-                  placeholder="Service Type"
-                  style={{ width: 180 }}
-                  // onChange={handleChange}
-                  options={[
-                    { value: "all", label: "All" },
-                    { value: "grooming", label: "Grooming" },
-                    { value: "vaccination", label: "Vaccination" },
-                  ]}
-                />
-                <Select
-                  // defaultValue="all"
-                  placeholder="Status"
-                  style={{ width: 180 }}
-                  // onChange={handleChange}
-                  options={[
-                    { value: "all", label: "All" },
-                    { value: "in progress", label: "In Progress" },
-                    { value: "cancelled", label: "Cancelled" },
-                    { value: "confirmed", label: "Confirmed" },
-                  ]}
-                />
-              </Flex>
-            </div>
-           */}
+      <Flex justify="end" className="mt-4">
+        <Button
+          onClick={() => navigate("/bookings/new")}
+          type="primary"
+          icon={<PlusOutlined />}
+        >
+          Create Booking
+        </Button>
+      </Flex>
       <div
         style={{
           margin: "16px 0",
@@ -274,7 +268,7 @@ function Bookings() {
           borderRadius: borderRadiusLG,
         }}
       >
-        <Table columns={columns} dataSource={bookingList} loading={loading} />
+        <Table columns={columns} dataSource={bookings} loading={isPending} />
       </div>
       <Modal
         title="Booking Detail"
@@ -325,10 +319,6 @@ function Bookings() {
             <Col span={12}>
               <Typography.Text type="secondary">Status</Typography.Text>
               <br />
-              {/* <Typography.Text>
-                    {openedRecord?.status ? openedRecord?.status : "-"}
-                  </Typography.Text> */}
-
               <Select
                 // defaultValue="all"
                 value={bookingStatus}
