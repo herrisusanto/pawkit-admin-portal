@@ -8,6 +8,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Table,
   TableColumnsType,
   Tag,
@@ -25,8 +26,10 @@ import {
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Booking } from "../../api/graphql/API";
+import { Booking, Pet } from "../../api/graphql/API";
 import { useNavigate } from "react-router-dom";
+import { getUser } from "../../api/admin";
+import { fetchServiceById } from "../../api/service-booking";
 
 export function Bookings() {
   const {
@@ -106,19 +109,10 @@ export function Bookings() {
 
   const columns: TableColumnsType<Booking> = [
     {
-      title: "Booking Created",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (createdAt) => {
-        return createdAt
-          ? format(new Date(createdAt), "yyyy/MM/dd HH:mm:ss")
-          : "";
-      },
-    },
-    {
       title: "Date of Booking",
       dataIndex: "startDateTime",
       key: "startDateTime",
+      width: 200,
       render: (startDateTime) => {
         return startDateTime
           ? format(new Date(startDateTime), "yyyy/MM/dd HH:mm:ss")
@@ -129,31 +123,105 @@ export function Bookings() {
       title: "Booking ID",
       dataIndex: "id",
       key: "id",
+      width: 150,
     },
     {
-      title: "Customer ID",
+      title: "Customer Name",
       dataIndex: "customerUsername",
       key: "customerUsername",
+      width: 200,
+      render(_, record) {
+        return <CustomerUsername customerId={record.customerId} />;
+      },
     },
     {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      width: 200,
     },
     {
-      title: "Service",
+      title: "Services",
       dataIndex: "serviceName",
       key: "serviceName",
+      width: 250,
+      render(value, record) {
+        return (
+          <Space size={0} direction="vertical">
+            <Typography.Text style={{ fontWeight: 700 }}>
+              Service
+            </Typography.Text>
+            <Typography.Text>{value}</Typography.Text>
+            {(record.addOns?.length || 0) > 0 && (
+              <>
+                <Typography.Text style={{ fontWeight: 700 }}>
+                  Addons
+                </Typography.Text>
+                {record.addOns?.map((id) => (
+                  <ServiceAddon key={id} addonId={id} />
+                ))}
+              </>
+            )}
+          </Space>
+        );
+      },
+    },
+    {
+      title: "Pets",
+      key: "pets",
+      dataIndex: "pets",
+      width: 300,
+      render(value) {
+        const pets: Pet[] = Array.from(value?.["items"] || []).map(
+          (petItem: any) => petItem?.["pet"]
+        );
+        return (
+          <Space size={16} direction="vertical">
+            {pets.map((pet) => (
+              <Space key={pet.id} direction="vertical">
+                <Space>
+                  <Typography.Text style={{ fontWeight: 700 }}>
+                    Name:
+                  </Typography.Text>
+                  <Typography.Text>{pet.name}</Typography.Text>
+                </Space>
+                <Space>
+                  <Typography.Text style={{ fontWeight: 700 }}>
+                    Birthdate:
+                  </Typography.Text>
+                  <Typography.Text>{pet.birthdate}</Typography.Text>
+                </Space>
+                <Space>
+                  <Typography.Text style={{ fontWeight: 700 }}>
+                    Breed:
+                  </Typography.Text>
+                  <Typography.Text>{pet.breedName}</Typography.Text>
+                </Space>
+                <Space>
+                  <Typography.Text style={{ fontWeight: 700 }}>
+                    Weight:
+                  </Typography.Text>
+                  <Typography.Text>{pet.weightValue} KG</Typography.Text>
+                </Space>
+              </Space>
+            ))}
+          </Space>
+        );
+      },
     },
     {
       title: "Booking Status",
       key: "status",
       dataIndex: "status",
+      width: 150,
       render: (status) => {
-        if (status === BookingStatus.PENDING) {
+        if (
+          status === BookingStatus.PENDING ||
+          status === BookingStatus.IN_PROGRESS
+        ) {
           return (
             <Tag color="warning" key={status}>
-              {status.toUpperCase()}
+              {status.toUpperCase().replaceAll("_", " ")}
             </Tag>
           );
         } else if (status === BookingStatus.CANCELLED) {
@@ -178,12 +246,14 @@ export function Bookings() {
       title: "Total",
       dataIndex: "amount",
       key: "amount",
+      width: 100,
       render: (value) => `S$${value}`,
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => {
+        getUser(record.customerUsername);
         return (
           <Space size={8}>
             <Button
@@ -268,7 +338,13 @@ export function Bookings() {
           borderRadius: borderRadiusLG,
         }}
       >
-        <Table columns={columns} dataSource={bookings} loading={isPending} />
+        <Table
+          rowKey="id"
+          virtual
+          columns={columns}
+          dataSource={bookings}
+          loading={isPending}
+        />
       </div>
       <Modal
         title="Booking Detail"
@@ -334,5 +410,37 @@ export function Bookings() {
     </>
   );
 }
+
+const CustomerUsername = ({ customerId }: { customerId: string }) => {
+  const { data: user, isPending } = useQuery({
+    queryKey: ["users", customerId],
+    queryFn: () => getUser(customerId),
+  });
+  const userAttributes: any = Array.from(
+    (user as any)?.["UserAttributes"] || []
+  ).reduce((prev: any, curr: any) => {
+    return { ...prev, [curr["Name"]]: curr["Value"] };
+  }, {});
+  return isPending ? (
+    <Spin />
+  ) : (
+    <Space>
+      <Typography.Text>{userAttributes["name"]}</Typography.Text>
+    </Space>
+  );
+};
+
+const ServiceAddon = ({ addonId }: { addonId: string }) => {
+  const { data: addon } = useQuery({
+    queryKey: ["services", addonId],
+    queryFn: () => fetchServiceById(addonId),
+  });
+  return (
+    <Space align="start">
+      <span>-</span>
+      <Typography.Text>{addon?.name}</Typography.Text>
+    </Space>
+  );
+};
 
 export default Bookings;

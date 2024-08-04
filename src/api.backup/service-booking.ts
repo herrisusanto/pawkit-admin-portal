@@ -10,7 +10,6 @@ import {
   bookingsByService,
   bookingsByTimeSlot,
   getTimeSlot,
-  listBookings,
   listPetBookings,
   listTimeSlots,
   timeSlotById,
@@ -19,6 +18,7 @@ import {
   getBooking,
 } from "./graphql/queries";
 import {
+  Booking,
   BookingStatus,
   BookingType,
   CreateBookingInput,
@@ -63,6 +63,7 @@ import {
   customBookingById,
   customBookingsByCustomer,
   customDeleteBooking,
+  customListBookings,
   customUpdateBooking,
 } from "./graphql/custom";
 import {
@@ -614,12 +615,12 @@ export const fetchTimeSlot = async (
 
 export const fetchBookings = async (variables: ListBookingsQueryVariables) => {
   try {
-    const result = await graphqlClient.graphql({
-      query: listBookings,
+    const result: any = await graphqlClient.graphql({
+      query: customListBookings,
       variables,
     });
     logger.info("Called listBookings query");
-    return result.data.listBookings.items;
+    return result.data?.listBookings.items as Booking[];
   } catch (error) {
     logger.error("Error fetching all bookings: ", error);
     throw new InternalServerError("Error fetching bookings");

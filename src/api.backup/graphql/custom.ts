@@ -468,3 +468,70 @@ export const customDeleteBooking = /* GraphQL */ `
     }
   }
 `;
+
+export const customListBookings = /* GraphQL */ `
+  query ListBookings(
+    $customerUsername: String
+    $timeSlotId: ModelIDKeyConditionInput
+    $filter: ModelBookingFilterInput
+    $limit: Int
+    $nextToken: String
+    $sortDirection: ModelSortDirection
+  ) {
+    listBookings(
+      customerUsername: $customerUsername
+      timeSlotId: $timeSlotId
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
+      items {
+        id
+        orderId
+        customerUsername
+        owners
+        customerId
+        customer {
+          username
+        }
+        serviceName
+        serviceProviderName
+        serviceCategory
+        petType
+        serviceId
+        startDateTime
+        timeSlotId
+        address
+        petIds
+        pets {
+          items {
+            id
+            pet {
+              name
+              gender
+              birthdate
+              petType
+              breedName
+              weightValue
+              weightUnit
+            }
+          }
+        }
+        addOns
+        bookingType
+        amount
+        currency
+        status
+        createdAt
+        updatedAt
+        serviceProviderBookingsName
+        timeSlotBookingsServiceId
+        timeSlotBookingsStartDateTime
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
