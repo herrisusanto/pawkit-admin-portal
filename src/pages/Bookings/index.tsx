@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Col,
+  DatePicker,
   Flex,
+  Form,
+  FormProps,
   Modal,
   Popconfirm,
   Row,
@@ -16,30 +19,29 @@ import {
   message,
   theme,
 } from "antd";
-import { BookingStatus } from "../../api.backup/graphql/API";
-import { format } from "date-fns";
 import {
+  fetchServiceById,
   fetchBookings,
   removeBooking,
   updateBookingStatus,
-} from "../../api.backup/service-booking";
+} from "../../api/service-booking";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Booking, Pet } from "../../api/graphql/API";
+import { Booking, Pet, BookingStatus } from "../../api/graphql/API";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../api/admin";
-import { fetchServiceById } from "../../api/service-booking";
 
 export function Bookings() {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const navigate = useNavigate();
+  const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [openedRecord, setOpenedRecord] = useState<any>({});
+  const [openedRecord, setOpenedRecord] = useState<Booking | null>();
   const [bookingStatus, setBookingStatus] = useState<BookingStatus | null>(
     null
   );
@@ -56,23 +58,18 @@ export function Bookings() {
   const handleShowModal = (record: any) => {
     setIsModalOpen(true);
     setOpenedRecord(record);
-    setBookingStatus(record.status);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setOpenedRecord({});
-    setBookingStatus(null);
+    setOpenedRecord(null);
+    form.resetFields();
   };
 
-  const handleChangeStatus = (value: BookingStatus) => {
-    setBookingStatus(value);
-  };
-
-  const handleUpdateBooking = async (
-    customerUsername: string,
-    timeSlotId: string
-  ) => {
+  const handleFinish: FormProps["onFinish"] = async (values) => {
+    const { bookingStatus, startDateTime } = values;
+    const customerUsername = openedRecord?.customerUsername as string;
+    const formattedStartDateTime = dayjs(startDateTime).toISOString();
     try {
       messageApi.open({
         type: "loading",
@@ -82,7 +79,8 @@ export function Bookings() {
       if (bookingStatus) {
         const result = await updateBookingStatus(
           customerUsername,
-          timeSlotId,
+          openedRecord?.timeSlotId as string,
+          formattedStartDateTime,
           bookingStatus,
           false
         );
@@ -90,7 +88,7 @@ export function Bookings() {
           queryClient.invalidateQueries({ queryKey: ["bookings"] });
           message.success("Update Booking Success", 2.5);
           setIsModalOpen(false);
-          setOpenedRecord({});
+          setOpenedRecord(null);
           setBookingStatus(null);
         }
       }
@@ -107,15 +105,25 @@ export function Bookings() {
     },
   });
 
+  useEffect(() => {
+    if (openedRecord) {
+      form.setFieldsValue({
+        startDateTime: dayjs(openedRecord.startDateTime),
+        bookingStatus: openedRecord.status,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openedRecord]);
+
   const columns: TableColumnsType<Booking> = [
     {
-      title: "Date of Booking",
+      title: "Booking Datetime",
       dataIndex: "startDateTime",
       key: "startDateTime",
       width: 200,
       render: (startDateTime) => {
         return startDateTime
-          ? format(new Date(startDateTime), "yyyy/MM/dd HH:mm:ss")
+          ? dayjs(startDateTime).format("DD/MM/YYYY HH:mm")
           : "";
       },
     },
@@ -215,16 +223,7 @@ export function Bookings() {
       dataIndex: "status",
       width: 150,
       render: (status) => {
-        if (
-          status === BookingStatus.PENDING ||
-          status === BookingStatus.IN_PROGRESS
-        ) {
-          return (
-            <Tag color="warning" key={status}>
-              {status.toUpperCase().replaceAll("_", " ")}
-            </Tag>
-          );
-        } else if (status === BookingStatus.CANCELLED) {
+        if (status === BookingStatus.CANCELLED) {
           return (
             <Tag color="error" key={status}>
               {status.toUpperCase()}
@@ -237,6 +236,12 @@ export function Bookings() {
           return (
             <Tag color="success" key={status}>
               {status.toUpperCase()}
+            </Tag>
+          );
+        } else {
+          return (
+            <Tag color="warning" key={status}>
+              {status.toUpperCase().replaceAll("_", " ")}
             </Tag>
           );
         }
@@ -282,7 +287,7 @@ export function Bookings() {
     },
   ];
 
-  const bookingStatusOptions = (status: BookingStatus | null) => {
+  const bookingStatusOptions = (status?: BookingStatus) => {
     switch (status) {
       case BookingStatus.PENDING:
         return [
@@ -349,63 +354,52 @@ export function Bookings() {
       <Modal
         title="Booking Detail"
         open={isModalOpen}
-        // footer={null}
-        onOk={() =>
-          handleUpdateBooking(
-            openedRecord?.customerUsername,
-            openedRecord?.timeSlotId
-          )
-        }
+        onOk={form.submit}
         okText="Update Booking Status"
         onCancel={handleCancel}
       >
         <Typography.Title level={3}>ID: {openedRecord?.id}</Typography.Title>
-        <Flex vertical gap={24} style={{ marginBottom: 30 }}>
-          <Row>
-            <Col span={12}>
-              <Typography.Text type="secondary">Date Created</Typography.Text>
-              <br />
-              <Typography.Text>
-                {openedRecord?.startDateTime
-                  ? format(
-                      new Date(openedRecord?.startDateTime),
-                      "yyyy/MM/dd hh:mm aa"
-                    )
-                  : "-"}
-              </Typography.Text>
-            </Col>
-            <Col span={12}>
-              <Typography.Text type="secondary">Booking ID</Typography.Text>
-              <br />
-              <Typography.Text>
-                {openedRecord?.id ? openedRecord?.id : "-"}
-              </Typography.Text>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
-              <Typography.Text type="secondary">Owner Name</Typography.Text>
-              <br />
-              <Typography.Text>
-                {openedRecord?.customerUsername
-                  ? openedRecord?.customerUsername
-                  : "-"}
-              </Typography.Text>
-            </Col>
-            <Col span={12}>
-              <Typography.Text type="secondary">Status</Typography.Text>
-              <br />
-              <Select
-                // defaultValue="all"
-                value={bookingStatus}
-                placeholder="Status"
-                style={{ width: 180 }}
-                onChange={handleChangeStatus}
-                options={bookingStatusOptions(openedRecord.status)}
-              />
-            </Col>
-          </Row>
-        </Flex>
+        <Form layout="vertical" form={form} onFinish={handleFinish}>
+          <Flex vertical gap={24} style={{ marginBottom: 30 }}>
+            <Row>
+              <Col span={12}>
+                <Form.Item name="startDateTime" label="Date">
+                  <DatePicker showTime={{ showSecond: false }} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Typography.Text type="secondary">Booking ID</Typography.Text>
+                <br />
+                <Typography.Text>
+                  {openedRecord?.id ? openedRecord?.id : "-"}
+                </Typography.Text>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <Typography.Text type="secondary">Owner Name</Typography.Text>
+                <br />
+                <Typography.Text>
+                  {openedRecord?.customerUsername
+                    ? openedRecord?.customerUsername
+                    : "-"}
+                </Typography.Text>
+              </Col>
+              <Col span={12}>
+                <Typography.Text type="secondary">Status</Typography.Text>
+                <br />
+                <Form.Item name="bookingStatus">
+                  <Select
+                    value={bookingStatus}
+                    placeholder="Status"
+                    style={{ width: 180 }}
+                    options={bookingStatusOptions(openedRecord?.status)}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Flex>
+        </Form>
       </Modal>
     </>
   );

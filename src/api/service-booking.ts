@@ -25,6 +25,8 @@ import {
   CreateServiceInput,
   CreateTimeSlotInput,
   Currency,
+  DeleteBookingInput,
+  DeleteBookingMutation,
   GetBookingQueryVariables,
   ListBookingsQueryVariables,
   ListServicesQueryVariables,
@@ -71,6 +73,7 @@ import {
 } from "./order";
 import { fetchPaymentsByOrderId } from "./payment";
 import { isValidDateTime, isValidBookingStatusTransition } from "./validation";
+import { customDeleteBooking } from "../api.backup/graphql/custom";
 
 const logger = new ConsoleLogger("api/service-booking.ts");
 
@@ -1646,6 +1649,7 @@ export const removeService = async (
         updateBookingStatus(
           booking.customerUsername,
           booking.timeSlotId,
+          booking.startDateTime,
           BookingStatus.CANCELLED,
           true
         )
@@ -1692,6 +1696,7 @@ export const removeService = async (
 export const updateBookingStatus = async (
   customerUsername: string,
   timeSlotId: string,
+  newStartDateTime: string,
   status: BookingStatus,
   toRefund: boolean
 ) => {
@@ -1744,6 +1749,7 @@ export const updateBookingStatus = async (
         input: {
           customerUsername,
           timeSlotId,
+          startDateTime: newStartDateTime || booking.startDateTime,
           status,
         } as UpdateBookingInput,
       },
@@ -1755,5 +1761,19 @@ export const updateBookingStatus = async (
     logger.error(`Error updating booking status to ${status}: `, error);
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error updating booking status");
+  }
+};
+
+export const removeBooking = async (input: DeleteBookingInput) => {
+  try {
+    const deletedBooking = (await graphqlClient.graphql({
+      query: customDeleteBooking,
+      variables: { input },
+    })) as { data: DeleteBookingMutation };
+    return deletedBooking.data.deleteBooking;
+  } catch (error) {
+    logger.error(`Error deleting booking: `, error);
+    if (error instanceof CustomError) throw error;
+    throw new InternalServerError("Error deleting booking");
   }
 };

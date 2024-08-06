@@ -104,7 +104,7 @@ export const CreateBooking = () => {
         filter: {
           serviceId: { eq: serviceId },
           startDateTime: {
-            ge: startDateTime.format("YYYY-MM-DDTHH:mm:ssZ[Z]"),
+            ge: startDateTime.format("YYYY-MM-DDTHH:mm:ss[Z]"),
           },
         },
       }),

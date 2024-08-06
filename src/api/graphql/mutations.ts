@@ -37,6 +37,8 @@ export const createBooking = /* GraphQL */ `mutation CreateBooking(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -129,6 +131,8 @@ export const updateBooking = /* GraphQL */ `mutation UpdateBooking(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -221,6 +225,8 @@ export const deleteBooking = /* GraphQL */ `mutation DeleteBooking(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -356,6 +362,8 @@ export const createCustomer = /* GraphQL */ `mutation CreateCustomer(
     username
     isDeactivated
     s3ImageKey
+    email
+    phone
     address {
       blockNumber
       streetName
@@ -401,6 +409,8 @@ export const updateCustomer = /* GraphQL */ `mutation UpdateCustomer(
     username
     isDeactivated
     s3ImageKey
+    email
+    phone
     address {
       blockNumber
       streetName
@@ -446,6 +456,8 @@ export const deleteCustomer = /* GraphQL */ `mutation DeleteCustomer(
     username
     isDeactivated
     s3ImageKey
+    email
+    phone
     address {
       blockNumber
       streetName
@@ -520,6 +532,7 @@ export const createDisclaimer = /* GraphQL */ `mutation CreateDisclaimer(
       timeSlotIds
       bookingIds
       requiredQuestionIds
+      active
       createdAt
       updatedAt
       __typename
@@ -591,6 +604,7 @@ export const updateDisclaimer = /* GraphQL */ `mutation UpdateDisclaimer(
       timeSlotIds
       bookingIds
       requiredQuestionIds
+      active
       createdAt
       updatedAt
       __typename
@@ -662,6 +676,7 @@ export const deleteDisclaimer = /* GraphQL */ `mutation DeleteDisclaimer(
       timeSlotIds
       bookingIds
       requiredQuestionIds
+      active
       createdAt
       updatedAt
       __typename
@@ -707,6 +722,8 @@ export const createDisclaimerAcceptance = /* GraphQL */ `mutation CreateDisclaim
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -746,6 +763,8 @@ export const updateDisclaimerAcceptance = /* GraphQL */ `mutation UpdateDisclaim
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -785,6 +804,8 @@ export const deleteDisclaimerAcceptance = /* GraphQL */ `mutation DeleteDisclaim
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -824,6 +845,8 @@ export const createOrder = /* GraphQL */ `mutation CreateOrder(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -860,6 +883,8 @@ export const updateOrder = /* GraphQL */ `mutation UpdateOrder(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -896,6 +921,8 @@ export const deleteOrder = /* GraphQL */ `mutation DeleteOrder(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -947,6 +974,8 @@ export const createPayment = /* GraphQL */ `mutation CreatePayment(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -1009,6 +1038,8 @@ export const updatePayment = /* GraphQL */ `mutation UpdatePayment(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -1071,6 +1102,8 @@ export const deletePayment = /* GraphQL */ `mutation DeletePayment(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -1119,6 +1152,8 @@ export const createPet = /* GraphQL */ `mutation CreatePet(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -1166,6 +1201,8 @@ export const updatePet = /* GraphQL */ `mutation UpdatePet(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -1213,6 +1250,8 @@ export const deletePet = /* GraphQL */ `mutation DeletePet(
       username
       isDeactivated
       s3ImageKey
+      email
+      phone
       createdAt
       updatedAt
       __typename
@@ -1351,7 +1390,6 @@ export const createQuestionAnswer = /* GraphQL */ `mutation CreateQuestionAnswer
       __typename
     }
     answer
-    id
     createdAt
     updatedAt
     customerId
@@ -1406,7 +1444,6 @@ export const updateQuestionAnswer = /* GraphQL */ `mutation UpdateQuestionAnswer
       __typename
     }
     answer
-    id
     createdAt
     updatedAt
     customerId
@@ -1461,7 +1498,6 @@ export const deleteQuestionAnswer = /* GraphQL */ `mutation DeleteQuestionAnswer
       __typename
     }
     answer
-    id
     createdAt
     updatedAt
     customerId
@@ -1595,6 +1631,7 @@ export const createService = /* GraphQL */ `mutation CreateService(
     timeSlotIds
     bookingIds
     requiredQuestionIds
+    active
     createdAt
     updatedAt
     __typename
@@ -1727,6 +1764,7 @@ export const updateService = /* GraphQL */ `mutation UpdateService(
     timeSlotIds
     bookingIds
     requiredQuestionIds
+    active
     createdAt
     updatedAt
     __typename
@@ -1859,6 +1897,7 @@ export const deleteService = /* GraphQL */ `mutation DeleteService(
     timeSlotIds
     bookingIds
     requiredQuestionIds
+    active
     createdAt
     updatedAt
     __typename

@@ -70,6 +70,8 @@ type Customer
   username: String! @index(name: "byUsername", queryField: "customerByUsername")
   isDeactivated: Boolean! @default(value: "false")
   s3ImageKey: String
+  email: AWSEmail
+  phone: AWSPhone
   address: Address
   acceptedDisclaimers: [DisclaimerAcceptance!]
     @hasMany(indexName: "byCustomer", fields: ["id"])
@@ -250,7 +252,7 @@ type QuestionAnswer
       { allow: groups, groups:["Admin", "ServicePersonnel"], operations: [read] }
     ]
   ) {
-  petId: ID! @index(name: "byPet", queryField: "answersByPet")
+  petId: ID! @primaryKey(sortKeyFields: ["questionId"]) @index(name: "byPet", queryField: "answersByPet")
   pet: Pet! @hasOne(fields: ["petId"])
   questionId: ID! @index(name: "byQuestion", queryField: "answersByQuestion")
   question: Question! @hasOne(fields: ["questionId"])
@@ -308,6 +310,7 @@ type Service
   timeSlotIds: [ID!] # Add-on services will refer to the base service's time slots
   bookingIds: [ID!]
   requiredQuestionIds: [ID!]
+  active: Boolean! @default(value: "true")
 }
 
 type ServiceProvider
@@ -381,11 +384,13 @@ type TimeInterval {
 }
 
 enum BookingStatus {
-  PENDING # The booking is pending Service Provider confirmation.
-  IN_PROGRESS # The booking is in progress.
-  CONFIRMED # Service Provider confirmed the booking.
-  CANCELLED # The booking was cancelled.
-  COMPLETED # The booking was successfully completed.
+  PENDING              # Deprecated; The booking is pending Service Provider confirmation.
+  PENDING_PAYMENT      # The booking is pending payment.
+  PENDING_CONFIRMATION # The booking is pending Service Provider confirmation.
+  IN_PROGRESS          # The booking is in progress.
+  CONFIRMED            # Service Provider confirmed the booking.
+  CANCELLED            # The booking was cancelled.
+  COMPLETED            # The booking was successfully completed.
 }
 
 enum BookingType {
