@@ -126,12 +126,12 @@ export function Bookings() {
       width: 150,
     },
     {
-      title: "Customer Name",
-      dataIndex: "customerUsername",
-      key: "customerUsername",
-      width: 200,
-      render(_, record) {
-        return <CustomerUsername customerId={record.customerId} />;
+      title: "Customer",
+      dataIndex: "customerId",
+      key: "customer",
+      width: 280,
+      render(value) {
+        return <CustomerDetails customerId={value} />;
       },
     },
     {
@@ -411,7 +411,7 @@ export function Bookings() {
   );
 }
 
-const CustomerUsername = ({ customerId }: { customerId: string }) => {
+const CustomerDetails = ({ customerId }: { customerId: string }) => {
   const { data: user, isPending } = useQuery({
     queryKey: ["users", customerId],
     queryFn: () => getUser(customerId),
@@ -421,11 +421,23 @@ const CustomerUsername = ({ customerId }: { customerId: string }) => {
   ).reduce((prev: any, curr: any) => {
     return { ...prev, [curr["Name"]]: curr["Value"] };
   }, {});
+  console.log(customerId);
   return isPending ? (
     <Spin />
   ) : (
-    <Space>
-      <Typography.Text>{userAttributes["name"]}</Typography.Text>
+    <Space size={0} direction="vertical">
+      <Space>
+        <Typography.Text style={{ fontWeight: 700 }}>Name:</Typography.Text>
+        <Typography.Text>{userAttributes["name"]}</Typography.Text>
+      </Space>
+      <Space>
+        <Typography.Text style={{ fontWeight: 700 }}>Phone:</Typography.Text>
+        <Typography.Text>{userAttributes["phone_number"]}</Typography.Text>
+      </Space>
+      <Space>
+        <Typography.Text style={{ fontWeight: 700 }}>Email:</Typography.Text>
+        <Typography.Text>{userAttributes["email"]}</Typography.Text>
+      </Space>
     </Space>
   );
 };
