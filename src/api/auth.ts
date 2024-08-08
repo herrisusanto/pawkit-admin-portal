@@ -10,14 +10,6 @@ import {
   fetchAuthSession,
 } from "aws-amplify/auth";
 import { ConsoleLogger } from "aws-amplify/utils";
-import { graphqlClient } from "./core";
-import {
-  createCustomer,
-  deleteCustomer,
-  updateCustomer,
-} from "./graphql/mutations";
-import { UpdateCustomerInput } from "./graphql/API";
-import { getCustomer } from "./graphql/queries";
 
 const logger = new ConsoleLogger("api/auth.ts");
 

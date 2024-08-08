@@ -178,6 +178,7 @@ export const CreateBooking = () => {
       updateBookingStatus(
         customerUsername,
         timeSlotId,
+        undefined,
         BookingStatus.CONFIRMED,
         false
       ),

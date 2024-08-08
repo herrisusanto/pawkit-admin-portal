@@ -1,8 +1,6 @@
 import { graphqlClient } from "./core";
 import {
   getPet,
-  getQuestion,
-  getQuestionAnswer,
   petBookingsByBookingCustomerUsernameAndBookingtimeSlotId,
   petsByCustomer,
 } from "./graphql/queries";
@@ -22,11 +20,7 @@ import {
   InternalServerError,
   NotFoundError,
 } from "./errors";
-import {
-  fetchBooking,
-  fetchBookingsByPet,
-  fetchServiceById,
-} from "./service-booking";
+import { fetchBooking, fetchBookingsByPet } from "./service-booking";
 import { customListQuestionAnswers } from "./graphql/custom";
 
 const logger = new ConsoleLogger("api/pets.ts");
@@ -143,73 +137,6 @@ export const fetchPet = async (id: string) => {
     logger.error(`Error fetching pet id=${id}: `, error);
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching pet");
-  }
-};
-
-export const fetchPetQuestionAnswersForService = async (
-  serviceId: string,
-  petId: string
-) => {
-  if (!serviceId) {
-    logger.error("Service ID is required");
-    throw new BadRequestError("Service ID is required");
-  }
-
-  if (!petId) {
-    logger.error("Pet ID is required");
-    throw new BadRequestError("Pet ID is required");
-  }
-
-  try {
-    const service = await fetchServiceById(serviceId);
-    if (!service) {
-      logger.error(`Service with id=${serviceId} not found`);
-      throw new NotFoundError("Service not found");
-    }
-
-    if (
-      !service.requiredQuestionIds ||
-      service.requiredQuestionIds.length === 0
-    ) {
-      logger.warn(`Service with id=${serviceId} does not have any questions`);
-      return [];
-    }
-
-    const promises = service.requiredQuestionIds.map(async (id) => {
-      try {
-        const questionAnswer = await graphqlClient.graphql({
-          query: getQuestionAnswer,
-          variables: {
-            id,
-          },
-        });
-        const question = await graphqlClient.graphql({
-          query: getQuestion,
-          variables: {
-            id,
-          },
-        });
-        return {
-          id,
-          question: question?.data.getQuestion?.questionString,
-          answer: questionAnswer.data.getQuestionAnswer?.answer,
-        };
-      } catch (error) {
-        logger.error(
-          `Error fetching answer for question with id=${id}: `,
-          error
-        );
-        return null;
-      }
-    });
-    return await Promise.all(promises);
-  } catch (error) {
-    logger.error(
-      `Error fetching question answers for pet id=${petId} for service id=${serviceId}: `,
-      error
-    );
-    if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error fetching question answers");
   }
 };
 

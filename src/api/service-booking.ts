@@ -1696,7 +1696,7 @@ export const removeService = async (
 export const updateBookingStatus = async (
   customerUsername: string,
   timeSlotId: string,
-  newStartDateTime: string,
+  newStartDateTime: string | undefined,
   status: BookingStatus,
   toRefund: boolean
 ) => {
