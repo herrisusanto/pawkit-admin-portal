@@ -10,7 +10,6 @@ import {
   bookingsByService,
   bookingsByTimeSlot,
   getTimeSlot,
-  listBookings,
   listPetBookings,
   listTimeSlots,
   timeSlotById,
@@ -64,6 +63,7 @@ import {
   customBookingById,
   customBookingsByCustomer,
   customGetBooking,
+  customListBookings,
   customListServices,
 } from "./graphql/custom";
 import {
@@ -616,12 +616,12 @@ export const fetchTimeSlot = async (
 
 export const fetchBookings = async (variables: ListBookingsQueryVariables) => {
   try {
-    const result = await graphqlClient.graphql({
-      query: listBookings,
+    const result: any = await graphqlClient.graphql({
+      query: customListBookings,
       variables,
     });
     logger.info("Called listBookings query");
-    return result.data.listBookings.items;
+    return result.data.listBookings.items as Booking[];
   } catch (error) {
     logger.error("Error fetching all bookings: ", error);
     throw new InternalServerError("Error fetching bookings");

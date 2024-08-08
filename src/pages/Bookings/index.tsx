@@ -25,12 +25,19 @@ import {
   removeBooking,
   updateBookingStatus,
 } from "../../api/service-booking";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Booking, Pet, BookingStatus } from "../../api/graphql/API";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../api/admin";
+import { useSetAtom } from "jotai";
+import { petQuestionAnswersAtom } from "../../views/PetQuestionAnswers/state";
 
 export function Bookings() {
   const {
@@ -45,6 +52,7 @@ export function Bookings() {
   const [bookingStatus, setBookingStatus] = useState<BookingStatus | null>(
     null
   );
+  const setPetQuestionAnswers = useSetAtom(petQuestionAnswersAtom);
   const { data: bookings, isPending } = useQuery({
     queryKey: ["bookings"],
     queryFn: () => fetchBookings({}),
@@ -186,31 +194,39 @@ export function Bookings() {
         return (
           <Space size={16} direction="vertical">
             {pets.map((pet) => (
-              <Space key={pet.id} direction="vertical">
-                <Space>
-                  <Typography.Text style={{ fontWeight: 700 }}>
-                    Name:
-                  </Typography.Text>
-                  <Typography.Text>{pet.name}</Typography.Text>
+              <Space align="start">
+                <Space key={pet.id} direction="vertical">
+                  <Space>
+                    <Typography.Text style={{ fontWeight: 700 }}>
+                      Name:
+                    </Typography.Text>
+                    <Typography.Text>{pet.name}</Typography.Text>
+                  </Space>
+                  <Space>
+                    <Typography.Text style={{ fontWeight: 700 }}>
+                      Birthdate:
+                    </Typography.Text>
+                    <Typography.Text>{pet.birthdate}</Typography.Text>
+                  </Space>
+                  <Space>
+                    <Typography.Text style={{ fontWeight: 700 }}>
+                      Breed:
+                    </Typography.Text>
+                    <Typography.Text>{pet.breedName}</Typography.Text>
+                  </Space>
+                  <Space>
+                    <Typography.Text style={{ fontWeight: 700 }}>
+                      Weight:
+                    </Typography.Text>
+                    <Typography.Text>{pet.weightValue} KG</Typography.Text>
+                  </Space>
                 </Space>
-                <Space>
-                  <Typography.Text style={{ fontWeight: 700 }}>
-                    Birthdate:
-                  </Typography.Text>
-                  <Typography.Text>{pet.birthdate}</Typography.Text>
-                </Space>
-                <Space>
-                  <Typography.Text style={{ fontWeight: 700 }}>
-                    Breed:
-                  </Typography.Text>
-                  <Typography.Text>{pet.breedName}</Typography.Text>
-                </Space>
-                <Space>
-                  <Typography.Text style={{ fontWeight: 700 }}>
-                    Weight:
-                  </Typography.Text>
-                  <Typography.Text>{pet.weightValue} KG</Typography.Text>
-                </Space>
+                <ExclamationCircleOutlined
+                  onClick={() =>
+                    setPetQuestionAnswers({ open: true, petId: pet.id })
+                  }
+                  style={{ fontSize: 18 }}
+                />
               </Space>
             ))}
           </Space>
@@ -415,7 +431,7 @@ const CustomerDetails = ({ customerId }: { customerId: string }) => {
   ).reduce((prev: any, curr: any) => {
     return { ...prev, [curr["Name"]]: curr["Value"] };
   }, {});
-  console.log(customerId);
+
   return isPending ? (
     <Spin />
   ) : (

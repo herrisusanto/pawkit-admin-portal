@@ -10,6 +10,7 @@ import {
   BookingStatus,
   CreatePetInput,
   ModelIDKeyConditionInput,
+  QuestionAnswer,
   UpdatePetInput,
 } from "./graphql/API";
 import { createPet, updatePet } from "./graphql/mutations";
@@ -26,6 +27,7 @@ import {
   fetchBookingsByPet,
   fetchServiceById,
 } from "./service-booking";
+import { customListQuestionAnswers } from "./graphql/custom";
 
 const logger = new ConsoleLogger("api/pets.ts");
 
@@ -273,5 +275,22 @@ export const removePet = async (id: string) => {
     logger.error("Error deleting pet: ", error);
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error deleting pet");
+  }
+};
+
+export const fetchPetQuestionAnswers = async ({
+  petId,
+}: {
+  petId: string;
+  serviceId?: string;
+}) => {
+  try {
+    const result: any = await graphqlClient.graphql({
+      query: customListQuestionAnswers,
+      variables: { petId },
+    });
+    return result.data.listQuestionAnswers.items as QuestionAnswer[];
+  } catch (error) {
+    logger.error("Error fetching pet question answers: ", error);
   }
 };

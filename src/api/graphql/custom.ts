@@ -290,3 +290,103 @@ export const customBookingsByCustomer = `query CustomBookingsByCustomer(
    }
  }
 }`;
+
+export const customListBookings = /* GraphQL */ `
+  query ListBookings(
+    $customerUsername: String
+    $timeSlotId: ModelIDKeyConditionInput
+    $filter: ModelBookingFilterInput
+    $limit: Int
+    $nextToken: String
+    $sortDirection: ModelSortDirection
+  ) {
+    listBookings(
+      customerUsername: $customerUsername
+      timeSlotId: $timeSlotId
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
+      items {
+        id
+        orderId
+        customerUsername
+        owners
+        customerId
+        serviceName
+        serviceProviderName
+        serviceCategory
+        petType
+        serviceId
+        startDateTime
+        timeSlotId
+        address
+        petIds
+        pets {
+          items {
+            id
+            pet {
+              id
+              name
+              gender
+              birthdate
+              petType
+              breedName
+              weightValue
+              weightUnit
+            }
+          }
+        }
+        addOns
+        bookingType
+        amount
+        currency
+        status
+        createdAt
+        updatedAt
+        serviceProviderBookingsName
+        timeSlotBookingsServiceId
+        timeSlotBookingsStartDateTime
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+
+export const customListQuestionAnswers = /* GraphQL */ `
+  query ListQuestionAnswers(
+    $petId: ID
+    $questionId: ModelIDKeyConditionInput
+    $filter: ModelQuestionAnswerFilterInput
+    $limit: Int
+    $nextToken: String
+    $sortDirection: ModelSortDirection
+  ) {
+    listQuestionAnswers(
+      petId: $petId
+      questionId: $questionId
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
+      items {
+        petId
+        questionId
+        question {
+          questionString
+        }
+        answer
+        createdAt
+        updatedAt
+        customerId
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;

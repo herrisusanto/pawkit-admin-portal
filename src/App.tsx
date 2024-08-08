@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
+import SharedModals from "./views/SharedModals";
 
 dayjs.extend(timezone);
 dayjs.tz.setDefault("Asia/Singapore");
@@ -58,6 +59,7 @@ function App() {
     <>
       <QueryClientProvider client={new QueryClient()}>
         <RouterProvider router={router} />
+        <SharedModals />
       </QueryClientProvider>
     </>
   );
