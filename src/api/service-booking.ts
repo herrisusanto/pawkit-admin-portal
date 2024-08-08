@@ -4,7 +4,6 @@ import {
   servicesByCategory,
   servicesByPetType,
   getService,
-  serviceById,
   getQuestion,
   bookingsByOrder,
   bookingsByService,
@@ -65,6 +64,7 @@ import {
   customGetBooking,
   customListBookings,
   customListServices,
+  customServiceById,
 } from "./graphql/custom";
 import {
   fetchOrder,
@@ -440,14 +440,14 @@ export const fetchServiceById = async (id: string) => {
       throw new BadRequestError("Service id is required");
     }
 
-    const result = await graphqlClient.graphql({
-      query: serviceById,
+    const result: any = await graphqlClient.graphql({
+      query: customServiceById,
       variables: {
         id,
       },
     });
     logger.info("Called serviceById query");
-    const serviceItems = result.data.serviceById.items;
+    const serviceItems = result.data.serviceById.items as Service[];
     if (!serviceItems || serviceItems.length === 0) {
       logger.error(`Service with id ${id} not found`);
       throw new NotFoundError("Service not found");

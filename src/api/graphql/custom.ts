@@ -390,3 +390,56 @@ export const customListQuestionAnswers = /* GraphQL */ `
     }
   }
 `;
+
+export const customServiceById = `
+  query ServiceById(
+    $id: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelServiceFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    serviceById(
+      id: $id
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        serviceProviderId
+        name
+        serviceProviderName
+        serviceCategory
+        petType
+        defaultDisplay
+        displayPriority
+        s3ImageKey
+        onlinePaymentAccepted
+        currency
+        basePrice
+        baseDuration
+        baseDurationUnit
+        additionalPetPrice
+        shortDescription
+        longDescription
+        serviceBreakdown
+        additionalInfo
+        faq
+        goodToKnow
+        parentServiceIds
+        childServiceIds
+        disclaimerName
+        timeSlotIds
+        bookingIds
+        requiredQuestionIds
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
