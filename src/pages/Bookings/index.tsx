@@ -37,7 +37,7 @@ import { Booking, Pet, BookingStatus } from "../../api/graphql/API";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../api/admin";
 import { useSetAtom } from "jotai";
-import { petQuestionAnswersAtom } from "../../views/PetQuestionAnswers/state";
+import { petDetailsAtom } from "../../views/PetDetails/state";
 
 export function Bookings() {
   const {
@@ -52,7 +52,7 @@ export function Bookings() {
   const [bookingStatus, setBookingStatus] = useState<BookingStatus | null>(
     null
   );
-  const setPetQuestionAnswers = useSetAtom(petQuestionAnswersAtom);
+  const setPetDetails = useSetAtom(petDetailsAtom);
   const { data: bookings, isPending } = useQuery({
     queryKey: ["bookings"],
     queryFn: () => fetchBookings({}),
@@ -222,9 +222,7 @@ export function Bookings() {
                   </Space>
                 </Space>
                 <ExclamationCircleOutlined
-                  onClick={() =>
-                    setPetQuestionAnswers({ open: true, petId: pet.id })
-                  }
+                  onClick={() => setPetDetails({ open: true, petId: pet.id })}
                   style={{ fontSize: 18 }}
                 />
               </Space>

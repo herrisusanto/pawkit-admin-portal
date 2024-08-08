@@ -1,11 +1,11 @@
 import React from "react";
 
-const PetQuestionAnswers = React.lazy(() => import("../PetQuestionAnswers"));
+const PetDetails = React.lazy(() => import("../PetDetails"));
 
 const SharedModals = () => {
   return (
     <React.Suspense>
-      <PetQuestionAnswers />
+      <PetDetails />
     </React.Suspense>
   );
 };
