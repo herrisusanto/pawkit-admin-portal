@@ -38,6 +38,7 @@ import { useNavigate } from "react-router-dom";
 import { getUser } from "../../api/admin";
 import { useSetAtom } from "jotai";
 import { petDetailsAtom } from "../../views/PetDetails/state";
+import { bookingStatusTransitions } from "../../api/validation";
 
 export function Bookings() {
   const {
@@ -117,7 +118,10 @@ export function Bookings() {
     if (openedRecord) {
       form.setFieldsValue({
         startDateTime: dayjs(openedRecord.startDateTime),
-        bookingStatus: openedRecord.status,
+        bookingStatus: {
+          value: openedRecord.status,
+          label: openedRecord.status.replace("_", " "),
+        },
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -302,39 +306,10 @@ export function Bookings() {
   ];
 
   const bookingStatusOptions = (status?: BookingStatus) => {
-    switch (status) {
-      case BookingStatus.PENDING:
-        return [
-          {
-            value: BookingStatus.CONFIRMED,
-            label: BookingStatus.CONFIRMED,
-          },
-          {
-            value: BookingStatus.CANCELLED,
-            label: BookingStatus.CANCELLED,
-          },
-        ];
-      case BookingStatus.CONFIRMED:
-        return [
-          {
-            value: BookingStatus.IN_PROGRESS,
-            label: BookingStatus.IN_PROGRESS,
-          },
-          {
-            value: BookingStatus.CANCELLED,
-            label: BookingStatus.CANCELLED,
-          },
-        ];
-      case BookingStatus.IN_PROGRESS:
-        return [
-          {
-            value: BookingStatus.COMPLETED,
-            label: BookingStatus.COMPLETED,
-          },
-        ];
-      default:
-        return [];
-    }
+    return bookingStatusTransitions[status as BookingStatus]?.map((status) => ({
+      value: status,
+      label: status.replace("_", " "),
+    }));
   };
 
   return (
