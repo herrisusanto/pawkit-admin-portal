@@ -1,8 +1,8 @@
 # This "input" configures a global authorization rule to enable public access to
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
-input AMPLIFY {
-  globalAuthRule: AuthRule = { allow: public }
-} # FOR TESTING ONLY!
+# input AMPLIFY {
+#   globalAuthRule: AuthRule = { allow: public }
+# } # FOR TESTING ONLY!
 
 type Booking
   @model
@@ -70,8 +70,6 @@ type Customer
   username: String! @index(name: "byUsername", queryField: "customerByUsername")
   isDeactivated: Boolean! @default(value: "false")
   s3ImageKey: String
-  email: AWSEmail
-  phone: AWSPhone
   address: Address
   acceptedDisclaimers: [DisclaimerAcceptance!]
     @hasMany(indexName: "byCustomer", fields: ["id"])

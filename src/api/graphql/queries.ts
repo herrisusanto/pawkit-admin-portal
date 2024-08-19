@@ -34,8 +34,6 @@ export const getBooking = /* GraphQL */ `query GetBooking($customerUsername: Str
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -533,8 +531,6 @@ export const getCustomer = /* GraphQL */ `query GetCustomer($id: ID!) {
     username
     isDeactivated
     s3ImageKey
-    email
-    phone
     address {
       blockNumber
       streetName
@@ -590,8 +586,6 @@ export const listCustomers = /* GraphQL */ `query ListCustomers(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -623,8 +617,6 @@ export const customerByUsername = /* GraphQL */ `query CustomerByUsername(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -750,8 +742,6 @@ export const getDisclaimerAcceptance = /* GraphQL */ `query GetDisclaimerAccepta
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -878,8 +868,6 @@ export const getOrder = /* GraphQL */ `query GetOrder($id: ID!) {
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -997,8 +985,6 @@ export const getPayment = /* GraphQL */ `query GetPayment($paymentRequestId: ID!
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -1356,8 +1342,6 @@ export const getPet = /* GraphQL */ `query GetPet($id: ID!) {
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename

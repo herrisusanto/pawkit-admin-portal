@@ -34,8 +34,6 @@ export const onCreateBooking = /* GraphQL */ `subscription OnCreateBooking($filt
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -125,8 +123,6 @@ export const onUpdateBooking = /* GraphQL */ `subscription OnUpdateBooking($filt
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -216,8 +212,6 @@ export const onDeleteBooking = /* GraphQL */ `subscription OnDeleteBooking($filt
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -344,8 +338,6 @@ export const onCreateCustomer = /* GraphQL */ `subscription OnCreateCustomer(
     username
     isDeactivated
     s3ImageKey
-    email
-    phone
     address {
       blockNumber
       streetName
@@ -391,8 +383,6 @@ export const onUpdateCustomer = /* GraphQL */ `subscription OnUpdateCustomer(
     username
     isDeactivated
     s3ImageKey
-    email
-    phone
     address {
       blockNumber
       streetName
@@ -438,8 +428,6 @@ export const onDeleteCustomer = /* GraphQL */ `subscription OnDeleteCustomer(
     username
     isDeactivated
     s3ImageKey
-    email
-    phone
     address {
       blockNumber
       streetName
@@ -701,8 +689,6 @@ export const onCreateDisclaimerAcceptance = /* GraphQL */ `subscription OnCreate
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -742,8 +728,6 @@ export const onUpdateDisclaimerAcceptance = /* GraphQL */ `subscription OnUpdate
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -783,8 +767,6 @@ export const onDeleteDisclaimerAcceptance = /* GraphQL */ `subscription OnDelete
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -824,8 +806,6 @@ export const onCreateOrder = /* GraphQL */ `subscription OnCreateOrder(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -862,8 +842,6 @@ export const onUpdateOrder = /* GraphQL */ `subscription OnUpdateOrder(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -900,8 +878,6 @@ export const onDeleteOrder = /* GraphQL */ `subscription OnDeleteOrder(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -953,8 +929,6 @@ export const onCreatePayment = /* GraphQL */ `subscription OnCreatePayment(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -1017,8 +991,6 @@ export const onUpdatePayment = /* GraphQL */ `subscription OnUpdatePayment(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -1081,8 +1053,6 @@ export const onDeletePayment = /* GraphQL */ `subscription OnDeletePayment(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -1131,8 +1101,6 @@ export const onCreatePet = /* GraphQL */ `subscription OnCreatePet(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -1180,8 +1148,6 @@ export const onUpdatePet = /* GraphQL */ `subscription OnUpdatePet(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
@@ -1229,8 +1195,6 @@ export const onDeletePet = /* GraphQL */ `subscription OnDeletePet(
       username
       isDeactivated
       s3ImageKey
-      email
-      phone
       createdAt
       updatedAt
       __typename
