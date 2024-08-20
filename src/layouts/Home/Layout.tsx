@@ -18,11 +18,13 @@ import {
 import PawkitLogo from "../../assets/pawkit_logo.png";
 import {
   fetchAuthSession,
+  fetchUserAttributes,
   GetCurrentUserOutput,
   signOut,
 } from "aws-amplify/auth";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { currentAuthenticatedUser } from "../../api.backup/auth";
+import { useQuery } from "@tanstack/react-query";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -50,6 +52,10 @@ const items: MenuItem[] = [
 
 export const HomeLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const { data: userAttributes } = useQuery({
+    queryKey: ["user_attributes"],
+    queryFn: fetchUserAttributes,
+  });
   const [user, setUser] = useState<GetCurrentUserOutput | null>();
   const {
     token: { colorBgContainer },
@@ -123,8 +129,8 @@ export const HomeLayout: React.FC = () => {
               align="center"
               style={{ height: "100%", padding: 24 }}
             >
-              <Avatar icon={<UserOutlined />} />
-              <Typography>{user?.signInDetails?.loginId}</Typography>
+              <Avatar src={userAttributes?.picture} icon={<UserOutlined />} />
+              <Typography>{userAttributes?.name}</Typography>
 
               <Button type="text" danger onClick={handleSignOut}>
                 Sign Out
