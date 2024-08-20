@@ -19,11 +19,9 @@ import PawkitLogo from "../../assets/pawkit_logo.png";
 import {
   fetchAuthSession,
   fetchUserAttributes,
-  GetCurrentUserOutput,
   signOut,
 } from "aws-amplify/auth";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { currentAuthenticatedUser } from "../../api.backup/auth";
 import { useQuery } from "@tanstack/react-query";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -56,7 +54,6 @@ export const HomeLayout: React.FC = () => {
     queryKey: ["user_attributes"],
     queryFn: fetchUserAttributes,
   });
-  const [user, setUser] = useState<GetCurrentUserOutput | null>();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -84,15 +81,6 @@ export const HomeLayout: React.FC = () => {
       message.error(`Error sign out: ${err?.message}`, 2.5);
     }
   };
-
-  const getUser = async () => {
-    const user = await currentAuthenticatedUser();
-    setUser(user);
-  };
-
-  React.useEffect(() => {
-    getUser();
-  }, []);
 
   return (
     <>
