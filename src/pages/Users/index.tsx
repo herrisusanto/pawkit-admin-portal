@@ -1,33 +1,56 @@
-import { Space, Table, TableProps, Tag, theme, Typography } from "antd";
+import {
+  Button,
+  Flex,
+  Space,
+  Table,
+  TableProps,
+  Tag,
+  theme,
+  Typography,
+} from "antd";
 import { listUsers } from "../../api/admin";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export function Users() {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  const { data: users, isPending } = useQuery({
+  const {
+    data: usersData,
+    isPending,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
     queryKey: ["users"],
     queryFn: listUsers,
+    getNextPageParam: (lastPage) => {
+      return lastPage?.["NextToken"];
+    },
+    initialPageParam: null,
     select(data) {
-      return data.map(
-        (user: {
-          Attributes: { Name: string; Value: string }[];
-          Enabled: boolean;
-          UserStatus: string;
-        }) => {
-          return Array.from(user["Attributes"]).reduce((prev, curr) => {
-            return {
-              ...prev,
-              [curr["Name"]]: curr["Value"],
-              enabled: user["Enabled"],
-              user_status: user["UserStatus"],
-            };
-          }, {});
-        }
-      );
+      return data.pages.flatMap((page) => page["Users"]);
     },
   });
+
+  const users = useMemo(() => {
+    return usersData?.map(
+      (user: {
+        Attributes: { Name: string; Value: string }[];
+        Enabled: boolean;
+        UserStatus: string;
+      }) => {
+        return Array.from(user["Attributes"]).reduce((prev, curr) => {
+          return {
+            ...prev,
+            [curr["Name"]]: curr["Value"],
+            enabled: user["Enabled"],
+            user_status: user["UserStatus"],
+          };
+        }, {});
+      }
+    );
+  }, [usersData]);
 
   const columns: TableProps<any>["columns"] = [
     { title: "User ID", dataIndex: "sub", key: "sub" },
@@ -111,6 +134,22 @@ export function Users() {
         columns={columns}
         dataSource={users}
         loading={isPending}
+        pagination={false}
+        footer={() => (
+          <Flex justify="center">
+            <Space size={16}>
+              {hasNextPage && (
+                <Button
+                  onClick={() => {
+                    fetchNextPage();
+                  }}
+                >
+                  Load more
+                </Button>
+              )}
+            </Space>
+          </Flex>
+        )}
       />
     </div>
   );

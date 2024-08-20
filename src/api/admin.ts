@@ -39,17 +39,22 @@ export const enableUser = async (username: string) => {
   return post({ apiName, path, options });
 };
 
-export const listUsers = async () => {
+export const listUsers = async ({ pageParam }: { pageParam?: any }) => {
   const apiName = "AdminQueries";
   const path = "/listUsers";
+  const queryParams: { limit: string; token?: string } = { limit: "60" };
+  if (pageParam) {
+    queryParams["token"] = pageParam;
+  }
   const options = {
+    queryParams,
     headers: {
       "Content-Type": "application/json",
       Authorization: `${(await fetchAuthSession()).tokens?.accessToken.toString()}`,
     },
   };
   const { body } = await get({ apiName, path, options }).response;
-  return ((await body.json()) as any)["Users"];
+  return (await body.json()) as any;
 };
 
 export const getUser = async (username: string) => {

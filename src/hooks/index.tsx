@@ -6,7 +6,8 @@ export const useUsers = () => {
     queryKey: ["users"],
     queryFn: listUsers,
     select(data) {
-      return data
+      const users = data["Users"];
+      return users
         .filter((user: any) => user["UserStatus"] === "CONFIRMED")
         .map((user: any) => {
           const userAttributes = Array.from(user["Attributes"]).reduce(

@@ -338,6 +338,7 @@ export function Bookings() {
           columns={columns}
           dataSource={bookings}
           loading={isPending}
+          pagination={false}
         />
       </div>
       <Modal

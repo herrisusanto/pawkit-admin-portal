@@ -9,6 +9,7 @@ import {
   Row,
   Select,
   Space,
+  Tag,
   Typography,
 } from "antd";
 import { useMemo } from "react";
@@ -41,7 +42,16 @@ export const CreateBooking = () => {
   const users = useUsers();
   const usersAsOptions = useMemo(() => {
     return (
-      users && users.map((user: any) => ({ value: user.sub, label: user.name }))
+      users &&
+      users.map((user: any) => ({
+        value: user.sub,
+        label: (
+          <Space>
+            <Typography.Text>{user.name || user.sub}</Typography.Text>
+            <Tag color="blue">{user.phone_number}</Tag>
+          </Space>
+        ),
+      }))
     );
   }, [users]);
   const { data: userPets } = useQuery({

@@ -294,6 +294,7 @@ export function Services() {
           columns={columns}
           dataSource={services}
           loading={isPending}
+          pagination={false}
         />
       </div>
       <Modal
