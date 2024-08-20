@@ -289,7 +289,12 @@ export function Services() {
           borderRadius: borderRadiusLG,
         }}
       >
-        <Table columns={columns} dataSource={services} loading={isPending} />
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={services}
+          loading={isPending}
+        />
       </div>
       <Modal
         title={`Service Detail: ${openedRecord?.name}`}
@@ -315,14 +320,14 @@ export function Services() {
               .map(([k, v]: any) => {
                 if (k === "parentServiceIds" || k === "childServiceIds") {
                   return (
-                    <Form.Item name={k} label={k}>
+                    <Form.Item key={k} name={k} label={k}>
                       <Select options={servicesAsOptions} mode="multiple" />
                     </Form.Item>
                   );
                 }
                 if (k === "bookingIds") {
                   return (
-                    <Form.Item name={k} label={k}>
+                    <Form.Item key={k} name={k} label={k}>
                       <Select options={[]} mode="multiple" />
                     </Form.Item>
                   );
@@ -382,14 +387,14 @@ export function Services() {
             Object.entries(defaultServiceValues).map(([k, v]: any) => {
               if (k === "parentServiceIds" || k === "childServiceIds") {
                 return (
-                  <Form.Item name={k} label={k}>
+                  <Form.Item key={k} name={k} label={k}>
                     <Select options={servicesAsOptions} mode="multiple" />
                   </Form.Item>
                 );
               }
               if (k === "bookingIds") {
                 return (
-                  <Form.Item name={k} label={k}>
+                  <Form.Item key={k} name={k} label={k}>
                     <Select options={[]} mode="multiple" />
                   </Form.Item>
                 );

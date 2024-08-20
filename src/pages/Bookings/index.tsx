@@ -198,8 +198,8 @@ export function Bookings() {
         return (
           <Space size={16} direction="vertical">
             {pets.map((pet) => (
-              <Space align="start">
-                <Space key={pet.id} direction="vertical">
+              <Space key={pet.id} align="start">
+                <Space direction="vertical">
                   <Space>
                     <Typography.Text style={{ fontWeight: 700 }}>
                       Name:

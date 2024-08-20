@@ -44,8 +44,9 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(<Link to="dashboard">Dashboard</Link>, "1", <DashboardOutlined />),
-  getItem(<Link to="bookings">Bookings</Link>, "2", <DashboardOutlined />),
-  getItem(<Link to="services">Services</Link>, "3", <GroupOutlined />),
+  getItem(<Link to="users">Users</Link>, "2", <UserOutlined />),
+  getItem(<Link to="bookings">Bookings</Link>, "3", <DashboardOutlined />),
+  getItem(<Link to="services">Services</Link>, "4", <GroupOutlined />),
 ];
 
 export const HomeLayout: React.FC = () => {
