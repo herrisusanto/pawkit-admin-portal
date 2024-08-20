@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Button,
   Flex,
@@ -24,7 +24,7 @@ import {
   removeService,
 } from "../../api/service-booking";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const defaultServiceValues = {
   name: "",
@@ -91,21 +91,23 @@ export function Services() {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const [, contextHolder] = message.useMessage();
-  const { data: servicesAsOptions } = useQuery({
+  const queryClient = useQueryClient();
+  const { data: services, isPending } = useQuery({
     queryKey: ["services"],
     queryFn: () => fetchServices({}),
     select(data) {
-      return data.map((service) => ({
-        value: service.id,
-        label: service.name,
-      }));
+      return data.sort((a, b) => Number(a.id) - Number(b.id));
     },
   });
+  const servicesAsOptions = useMemo(() => {
+    return services?.map((service) => ({
+      value: service.id,
+      label: service.name,
+    }));
+  }, [services]);
 
-  const [serviceList, setServiceList] = useState<any[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const [openedRecord, setOpenedRecord] = useState<UpdateServiceInput | null>(
     null
   );
@@ -156,6 +158,11 @@ export function Services() {
         key: "serviceCategory",
       },
       {
+        title: "Pet Type",
+        dataIndex: "petType",
+        key: "petType",
+      },
+      {
         title: "Base Price",
         dataIndex: "basePrice",
         key: "basePrice",
@@ -192,37 +199,20 @@ export function Services() {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [serviceList, openedRecord]
+    [services, openedRecord]
   );
 
-  const getServices = async () => {
-    setLoading(true);
-    try {
-      const result2 = await fetchServices({});
-      if (result2) {
-        setServiceList(result2);
-      }
-    } catch (err: any) {
-      message.error(`error when fetching data: ${err?.message}`, 2.5);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleUpdateService = async (payload: UpdateServiceInput) => {
-    setLoading(true);
     try {
       const result2 = await modifyService(payload);
       if (result2) {
-        getServices();
+        queryClient.invalidateQueries({ queryKey: ["services"] });
         message.success("Update Service Success", 2.5);
         setIsModalOpen(false);
         setOpenedRecord(null);
       }
     } catch (err: any) {
       message.error(`error: ${err?.message}`, 2.5);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -247,7 +237,6 @@ export function Services() {
     category: ServiceCategory;
     petType: PetType;
   }) => {
-    setLoading(true);
     try {
       const result2 = await removeService(
         payload.name,
@@ -256,37 +245,27 @@ export function Services() {
         payload.petType
       );
       if (result2) {
-        getServices();
+        queryClient.invalidateQueries({ queryKey: ["services"] });
         message.success("Delete Service Success", 2.5);
       }
     } catch (err: any) {
       message.error(`error: ${err?.message}`, 2.5);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleCreateService = async (payload: CreateServiceInput) => {
-    setLoading(true);
     try {
       const result2 = await addService(payload);
       if (result2) {
-        getServices();
+        queryClient.invalidateQueries({ queryKey: ["services"] });
         message.success("Create Service Success", 2.5);
         setIsModalCreateOpen(false);
         setOpenedRecord(null);
       }
     } catch (err: any) {
       message.error(`error when fetching data: ${err?.message}`, 2.5);
-    } finally {
-      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getServices();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
@@ -310,7 +289,7 @@ export function Services() {
           borderRadius: borderRadiusLG,
         }}
       >
-        <Table columns={columns} dataSource={serviceList} loading={loading} />
+        <Table columns={columns} dataSource={services} loading={isPending} />
       </div>
       <Modal
         title={`Service Detail: ${openedRecord?.name}`}
