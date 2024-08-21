@@ -83,7 +83,7 @@ export function Users() {
       dataIndex: "email",
       key: "email",
       render(value, record) {
-        const isEmailVerified = record["email_verified"];
+        const isEmailVerified = record["email_verified"] === "true";
         return (
           <Space>
             <Typography.Text>{value ? value : "n/a"}</Typography.Text>
