@@ -67,7 +67,8 @@ export function Users() {
       dataIndex: "phone_number",
       key: "phone_number",
       render(value, record) {
-        const isPhoneNumberVerified = record["phone_number_verified"];
+        const isPhoneNumberVerified =
+          record["phone_number_verified"] === "true";
         return (
           <Space>
             <Typography.Text>{value}</Typography.Text>
