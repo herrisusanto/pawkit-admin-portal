@@ -214,7 +214,10 @@ export const addBooking = async (input: AddBookingInput) => {
           bookingType: input.bookingType,
           amount: input.amount,
           currency: input.currency,
-          status: BookingStatus.PENDING,
+          status:
+            input.bookingType === BookingType.FREE_TRIAL
+              ? BookingStatus.PENDING_CONFIRMATION
+              : BookingStatus.PENDING_PAYMENT,
         } as CreateBookingInput,
       },
     });
@@ -1646,13 +1649,12 @@ export const removeService = async (
     const promises = bookings
       .filter((booking) => booking.status === BookingStatus.PENDING)
       .map((booking) =>
-        updateBookingStatus(
-          booking.customerUsername,
-          booking.timeSlotId,
-          booking.startDateTime,
-          BookingStatus.CANCELLED,
-          true
-        )
+        modifyBooking({
+          customerUsername: booking.customerUsername,
+          timeSlotId: booking.timeSlotId,
+          startDateTime: booking.startDateTime,
+          status: BookingStatus.CANCELLED,
+        })
       );
     await Promise.all(promises);
 
@@ -1693,33 +1695,23 @@ export const removeService = async (
   }
 };
 
-export const updateBookingStatus = async (
-  customerUsername: string,
-  timeSlotId: string,
-  newStartDateTime: string | undefined,
-  status: BookingStatus,
-  toRefund: boolean
-) => {
+export const modifyBooking = async (input: UpdateBookingInput) => {
   try {
-    if (!customerUsername) {
-      logger.error("Customer username is required");
-      throw new BadRequestError("Customer username is required");
-    }
-
-    if (!timeSlotId) {
-      logger.error("Time slot id is required");
-      throw new BadRequestError("Time slot id is required");
-    }
-
-    const { booking } = await fetchBooking(customerUsername, timeSlotId);
+    const { booking } = await fetchBooking(
+      input.customerUsername,
+      input.timeSlotId
+    );
     if (!booking) {
       logger.error(
-        `Booking not found for customer=${customerUsername} and time slot=${timeSlotId}`
+        `Booking not found for customer=${input.customerUsername} and time slot=${input.timeSlotId}`
       );
       throw new NotFoundError("Booking not found");
     }
 
-    if (!isValidBookingStatusTransition(booking.status, status)) {
+    if (
+      input.status &&
+      !isValidBookingStatusTransition(booking.status, input.status)
+    ) {
       logger.error(
         `Booking status cannot transition from ${booking.status} to ${status}`
       );
@@ -1729,12 +1721,10 @@ export const updateBookingStatus = async (
     // If cancelling order, remove booking from order and timeslot
     let order;
     let timeSlot;
-    if (status === BookingStatus.CANCELLED) {
+    if (input.status === BookingStatus.CANCELLED) {
       order = await updateBookingCancellationInOrder(
         booking.orderId,
-        booking.id,
-        booking.amount,
-        toRefund
+        booking.id
       );
       timeSlot = await removeBookingFromTimeSlot(
         booking.serviceId,
@@ -1745,22 +1735,20 @@ export const updateBookingStatus = async (
 
     const updatedBooking = await graphqlClient.graphql({
       query: updateBooking,
-      variables: {
-        input: {
-          customerUsername,
-          timeSlotId,
-          startDateTime: newStartDateTime || booking.startDateTime,
-          status,
-        } as UpdateBookingInput,
-      },
+      variables: { input },
     });
-    logger.info(`Updated booking status from ${booking.status} to ${status}`);
+    logger.info(
+      `Updated booking ${booking.id} for customer ${input.customerUsername}.`
+    );
 
     return { updatedBooking, timeSlot, order };
   } catch (error) {
-    logger.error(`Error updating booking status to ${status}: `, error);
+    logger.error(
+      `Error updating booking for customer=${input.customerUsername}, timeSlotId=${input.timeSlotId}: `,
+      error
+    );
     if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error updating booking status");
+    throw new InternalServerError("Error updating booking.");
   }
 };
 
