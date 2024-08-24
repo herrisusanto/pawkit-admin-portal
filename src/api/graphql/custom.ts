@@ -348,6 +348,93 @@ export const customListBookings = /* GraphQL */ `
   }
 `;
 
+export const customDeleteBooking = /* GraphQL */ `
+  mutation DeleteBooking(
+    $input: DeleteBookingInput!
+    $condition: ModelBookingConditionInput
+  ) {
+    deleteBooking(input: $input, condition: $condition) {
+      id
+      orderId
+      order {
+        id
+        customerId
+        currency
+        totalAmount
+        bookingIds
+        paymentRequestId
+        status
+        createdAt
+        updatedAt
+        __typename
+      }
+      customerUsername
+      owners
+      customerId
+      customer {
+        id
+        username
+        isDeactivated
+        createdAt
+        updatedAt
+        __typename
+      }
+      serviceName
+      serviceProviderName
+      serviceProvider {
+        id
+        name
+        displayName
+        description
+        website
+        email
+        phone
+        isHeadquarters
+        createdAt
+        updatedAt
+        serviceProviderHeadquartersName
+        __typename
+      }
+      serviceCategory
+      petType
+      serviceId
+      startDateTime
+      timeSlot {
+        id
+        serviceId
+        startDateTime
+        endDateTime
+        capacity
+        bookingCount
+        isFull
+        bookingIds
+        createdAt
+        updatedAt
+        serviceProviderId
+        __typename
+      }
+      timeSlotId
+      address
+      petIds
+      pets {
+        nextToken
+        __typename
+      }
+      addOns
+      bookingType
+      amount
+      currency
+      status
+      createdAt
+      updatedAt
+      serviceProviderBookingsName
+      timeSlotBookingsServiceId
+      timeSlotBookingsStartDateTime
+      __typename
+    }
+  }
+`;
+
 export const customListQuestionAnswers = /* GraphQL */ `
   query ListQuestionAnswers(
     $petId: ID

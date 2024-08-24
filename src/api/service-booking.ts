@@ -61,6 +61,7 @@ import {
 import {
   customBookingById,
   customBookingsByCustomer,
+  customDeleteBooking,
   customGetBooking,
   customListBookings,
   customListServices,
@@ -73,7 +74,6 @@ import {
 } from "./order";
 import { fetchPaymentsByOrderId } from "./payment";
 import { isValidDateTime, isValidBookingStatusTransition } from "./validation";
-import { customDeleteBooking } from "../api.backup/graphql/custom";
 
 const logger = new ConsoleLogger("api/service-booking.ts");
 
