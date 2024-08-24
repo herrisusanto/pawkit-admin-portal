@@ -1,3 +1,4 @@
+import { getUrl } from "@aws-amplify/storage";
 import { generateCustomerSpecificShortId, graphqlClient } from "./core";
 import {
   servicesByServiceProvider,
@@ -84,6 +85,7 @@ const generateBookingId = async (customerId: string, timeSlotId: string) => {
 export type AddBookingInput = {
   orderId: string;
   customerId: string;
+  customerUsername: string;
   serviceId: string;
   startDateTime: string;
   address: string;
@@ -198,7 +200,7 @@ export const addBooking = async (input: AddBookingInput) => {
         input: {
           id,
           orderId: input.orderId,
-          customerUsername: input.customerId,
+          customerUsername: input.customerUsername,
           owners: [input.customerId, service.serviceProviderId],
           customerId: input.customerId,
           serviceName: service.name,
@@ -460,6 +462,37 @@ export const fetchServiceById = async (id: string) => {
     logger.error(`Error fetching service with id ${id}: `, error);
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching service");
+  }
+};
+
+export const downloadServiceImage = async (serviceId: string) => {
+  try {
+    const service = await fetchServiceById(serviceId);
+    if (!service) {
+      console.error("Service not found");
+      return;
+    }
+
+    if (!service.s3ImageKey) {
+      console.error("Service image URL not found");
+      return;
+    }
+
+    const getUrlResult = await getUrl({
+      key: service.s3ImageKey,
+      // Alternatively, path: ({identityId}) => `protected/${identityId}/album/2024/1.jpg`
+      options: {
+        validateObjectExistence: false, // Check if object exists before creating a URL
+        expiresIn: 20, // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
+        // useAccelerateEndpoint: true // Whether to use accelerate endpoint
+      },
+    });
+    logger.info("signed URL: ", getUrlResult.url);
+    logger.info("URL expires at: ", getUrlResult.expiresAt);
+    return getUrlResult.url;
+  } catch (error) {
+    logger.error("Error : ", JSON.stringify(error));
+    throw new InternalServerError("Error download service image");
   }
 };
 
@@ -1442,7 +1475,7 @@ export const addBookingToTimeSlot = async (
     }
 
     const bookingIds = timeSlot.bookingIds || [];
-    if (!bookingIds?.includes(bookingId)) {
+    if (bookingIds?.includes(bookingId)) {
       logger.warn("Booking id already exists in time slot");
       return timeSlot;
     }
