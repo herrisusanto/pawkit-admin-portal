@@ -349,7 +349,7 @@ export const customListBookings = /* GraphQL */ `
 `;
 
 export const customDeleteBooking = /* GraphQL */ `
-  mutation DeleteBooking(
+  mutation CustomDeleteBooking(
     $input: DeleteBookingInput!
     $condition: ModelBookingConditionInput
   ) {
@@ -436,7 +436,7 @@ export const customDeleteBooking = /* GraphQL */ `
 `;
 
 export const customListQuestionAnswers = /* GraphQL */ `
-  query ListQuestionAnswers(
+  query CustomListQuestionAnswers(
     $petId: ID
     $questionId: ModelIDKeyConditionInput
     $filter: ModelQuestionAnswerFilterInput
