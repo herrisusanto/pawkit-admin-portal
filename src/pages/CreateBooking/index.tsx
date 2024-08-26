@@ -16,18 +16,9 @@ import {
 import { useEffect, useMemo } from "react";
 import { useUsers } from "../../hooks";
 import { fetchPetsByCustomer } from "../../api/pet";
-import {
-  addBooking,
-  fetchServices,
-  modifyBooking,
-} from "../../api/service-booking";
+import { addBooking, fetchServices } from "../../api/service-booking";
 import dayjs from "dayjs";
-import {
-  BookingStatus,
-  BookingType,
-  Currency,
-  Service,
-} from "../../api/graphql/API";
+import { BookingType, Currency, Service } from "../../api/graphql/API";
 import { getAdditionalPrice } from "../../utils";
 import { addOrder } from "../../api/order";
 
@@ -147,28 +138,10 @@ export const CreateBooking = () => {
   });
   const mutationAddBooking = useMutation({
     mutationFn: addBooking,
-    async onSuccess(data) {
-      await mutationUpdateBooking.mutateAsync({
-        customerUsername: data.booking.customerUsername,
-        timeSlotId: data.booking.timeSlotId,
-      });
+    async onSuccess() {
       message.success("Booking has been created", 3);
       form.resetFields();
     },
-  });
-  const mutationUpdateBooking = useMutation({
-    mutationFn: ({
-      customerUsername,
-      timeSlotId,
-    }: {
-      customerUsername: string;
-      timeSlotId: string;
-    }) =>
-      modifyBooking({
-        customerUsername,
-        timeSlotId,
-        status: BookingStatus.CONFIRMED,
-      }),
   });
 
   const handleFinish: FormProps["onFinish"] = async ({
@@ -184,6 +157,7 @@ export const CreateBooking = () => {
     const formattedStartDateTime = dayjs(startDateTime).toISOString();
     const formattedValues = {
       ...values,
+      customerUsername: customerId,
       orderId: addedOrder.id,
       currency: Currency.SGD,
       bookingType: BookingType.PAID,
