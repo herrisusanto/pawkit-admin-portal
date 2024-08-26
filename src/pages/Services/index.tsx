@@ -45,6 +45,15 @@ type DeleteServicePayload = {
   petType: PetType;
 };
 
+const PRICING_WEIGHTS = [
+  "xsWeightPrice",
+  "sWeightPrice",
+  "mWeightPrice",
+  "lWeightPrice",
+  "xlWeightPrice",
+  "xxlWeightPrice",
+];
+
 export function Services() {
   const [form] = Form.useForm();
   const petType = Form.useWatch("petType", form);
@@ -175,6 +184,11 @@ export function Services() {
 
   const handleFinish: FormProps["onFinish"] = async (values) => {
     const formattedValues = { ...values };
+    PRICING_WEIGHTS.forEach((weight) => {
+      if (!values?.[weight]?.["amount"]) {
+        formattedValues[weight] = null;
+      }
+    });
     if (imageObj) {
       const fileExtension = imageObj?.name.split(".")[1];
       const uploadedFile = await mutationUploadData.mutateAsync({
