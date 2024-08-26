@@ -99,7 +99,11 @@ export function Services() {
   };
   const serviceImageUrl = useQuery({
     queryKey: ["service_image", openedRecord?.s3ImageKey],
-    queryFn: () => getUrl({ path: openedRecord?.s3ImageKey as string }),
+    queryFn: () =>
+      getUrl({
+        key: openedRecord?.s3ImageKey as string,
+        options: { validateObjectExistence: true },
+      }),
     select(data) {
       return data.url;
     },
@@ -145,7 +149,11 @@ export function Services() {
       imageObj: File;
       filePath: string;
     }) =>
-      uploadData({ data: imageObj as FileType, path: String(filePath) }).result,
+      uploadData({
+        data: imageObj as FileType,
+        key: String(filePath),
+        options: { accessLevel: "guest" },
+      }).result,
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: ["service_image", openedRecord?.s3ImageKey],
@@ -171,9 +179,9 @@ export function Services() {
       const fileExtension = imageObj?.name.split(".")[1];
       const uploadedFile = await mutationUploadData.mutateAsync({
         imageObj: imageObj as FileType,
-        filePath: `protected/album/services/${values["name"]}.${fileExtension}`,
+        filePath: `album/services/${values["name"]}.${fileExtension}`,
       });
-      const filePath = uploadedFile.path;
+      const filePath = uploadedFile.key;
       formattedValues["s3ImageKey"] = filePath;
     }
     if (openedRecord) {
