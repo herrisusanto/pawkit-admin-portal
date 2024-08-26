@@ -1,3 +1,4 @@
+import { getUrl } from "@aws-amplify/storage";
 import { generateCustomerSpecificShortId, graphqlClient } from "./core";
 import {
   servicesByServiceProvider,
@@ -61,6 +62,7 @@ import {
 import {
   customBookingById,
   customBookingsByCustomer,
+  customDeleteBooking,
   customGetBooking,
   customListBookings,
   customListServices,
@@ -73,7 +75,6 @@ import {
 } from "./order";
 import { fetchPaymentsByOrderId } from "./payment";
 import { isValidDateTime, isValidBookingStatusTransition } from "./validation";
-import { customDeleteBooking } from "../api.backup/graphql/custom";
 
 const logger = new ConsoleLogger("api/service-booking.ts");
 
@@ -84,6 +85,7 @@ const generateBookingId = async (customerId: string, timeSlotId: string) => {
 export type AddBookingInput = {
   orderId: string;
   customerId: string;
+  customerUsername: string;
   serviceId: string;
   startDateTime: string;
   address: string;
@@ -198,7 +200,7 @@ export const addBooking = async (input: AddBookingInput) => {
         input: {
           id,
           orderId: input.orderId,
-          customerUsername: input.customerId,
+          customerUsername: input.customerUsername,
           owners: [input.customerId, service.serviceProviderId],
           customerId: input.customerId,
           serviceName: service.name,
@@ -214,7 +216,10 @@ export const addBooking = async (input: AddBookingInput) => {
           bookingType: input.bookingType,
           amount: input.amount,
           currency: input.currency,
-          status: BookingStatus.PENDING,
+          status:
+            input.bookingType === BookingType.FREE_TRIAL
+              ? BookingStatus.PENDING_CONFIRMATION
+              : BookingStatus.PENDING_PAYMENT,
         } as CreateBookingInput,
       },
     });
@@ -457,6 +462,37 @@ export const fetchServiceById = async (id: string) => {
     logger.error(`Error fetching service with id ${id}: `, error);
     if (error instanceof CustomError) throw error;
     throw new InternalServerError("Error fetching service");
+  }
+};
+
+export const downloadServiceImage = async (serviceId: string) => {
+  try {
+    const service = await fetchServiceById(serviceId);
+    if (!service) {
+      console.error("Service not found");
+      return;
+    }
+
+    if (!service.s3ImageKey) {
+      console.error("Service image URL not found");
+      return;
+    }
+
+    const getUrlResult = await getUrl({
+      key: service.s3ImageKey,
+      // Alternatively, path: ({identityId}) => `protected/${identityId}/album/2024/1.jpg`
+      options: {
+        validateObjectExistence: false, // Check if object exists before creating a URL
+        expiresIn: 20, // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
+        // useAccelerateEndpoint: true // Whether to use accelerate endpoint
+      },
+    });
+    logger.info("signed URL: ", getUrlResult.url);
+    logger.info("URL expires at: ", getUrlResult.expiresAt);
+    return getUrlResult.url;
+  } catch (error) {
+    logger.error("Error : ", JSON.stringify(error));
+    throw new InternalServerError("Error download service image");
   }
 };
 
@@ -1439,7 +1475,7 @@ export const addBookingToTimeSlot = async (
     }
 
     const bookingIds = timeSlot.bookingIds || [];
-    if (!bookingIds?.includes(bookingId)) {
+    if (bookingIds?.includes(bookingId)) {
       logger.warn("Booking id already exists in time slot");
       return timeSlot;
     }
@@ -1646,13 +1682,12 @@ export const removeService = async (
     const promises = bookings
       .filter((booking) => booking.status === BookingStatus.PENDING)
       .map((booking) =>
-        updateBookingStatus(
-          booking.customerUsername,
-          booking.timeSlotId,
-          booking.startDateTime,
-          BookingStatus.CANCELLED,
-          true
-        )
+        modifyBooking({
+          customerUsername: booking.customerUsername,
+          timeSlotId: booking.timeSlotId,
+          startDateTime: booking.startDateTime,
+          status: BookingStatus.CANCELLED,
+        })
       );
     await Promise.all(promises);
 
@@ -1693,33 +1728,23 @@ export const removeService = async (
   }
 };
 
-export const updateBookingStatus = async (
-  customerUsername: string,
-  timeSlotId: string,
-  newStartDateTime: string | undefined,
-  status: BookingStatus,
-  toRefund: boolean
-) => {
+export const modifyBooking = async (input: UpdateBookingInput) => {
   try {
-    if (!customerUsername) {
-      logger.error("Customer username is required");
-      throw new BadRequestError("Customer username is required");
-    }
-
-    if (!timeSlotId) {
-      logger.error("Time slot id is required");
-      throw new BadRequestError("Time slot id is required");
-    }
-
-    const { booking } = await fetchBooking(customerUsername, timeSlotId);
+    const { booking } = await fetchBooking(
+      input.customerUsername,
+      input.timeSlotId
+    );
     if (!booking) {
       logger.error(
-        `Booking not found for customer=${customerUsername} and time slot=${timeSlotId}`
+        `Booking not found for customer=${input.customerUsername} and time slot=${input.timeSlotId}`
       );
       throw new NotFoundError("Booking not found");
     }
 
-    if (!isValidBookingStatusTransition(booking.status, status)) {
+    if (
+      input.status &&
+      !isValidBookingStatusTransition(booking.status, input.status)
+    ) {
       logger.error(
         `Booking status cannot transition from ${booking.status} to ${status}`
       );
@@ -1729,12 +1754,10 @@ export const updateBookingStatus = async (
     // If cancelling order, remove booking from order and timeslot
     let order;
     let timeSlot;
-    if (status === BookingStatus.CANCELLED) {
+    if (input.status === BookingStatus.CANCELLED) {
       order = await updateBookingCancellationInOrder(
         booking.orderId,
-        booking.id,
-        booking.amount,
-        toRefund
+        booking.id
       );
       timeSlot = await removeBookingFromTimeSlot(
         booking.serviceId,
@@ -1745,22 +1768,20 @@ export const updateBookingStatus = async (
 
     const updatedBooking = await graphqlClient.graphql({
       query: updateBooking,
-      variables: {
-        input: {
-          customerUsername,
-          timeSlotId,
-          startDateTime: newStartDateTime || booking.startDateTime,
-          status,
-        } as UpdateBookingInput,
-      },
+      variables: { input },
     });
-    logger.info(`Updated booking status from ${booking.status} to ${status}`);
+    logger.info(
+      `Updated booking ${booking.id} for customer ${input.customerUsername}.`
+    );
 
     return { updatedBooking, timeSlot, order };
   } catch (error) {
-    logger.error(`Error updating booking status to ${status}: `, error);
+    logger.error(
+      `Error updating booking for customer=${input.customerUsername}, timeSlotId=${input.timeSlotId}: `,
+      error
+    );
     if (error instanceof CustomError) throw error;
-    throw new InternalServerError("Error updating booking status");
+    throw new InternalServerError("Error updating booking.");
   }
 };
 

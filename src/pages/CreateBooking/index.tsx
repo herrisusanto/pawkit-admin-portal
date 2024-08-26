@@ -19,7 +19,7 @@ import {
   addBooking,
   fetchServices,
   fetchTimeSlots,
-  updateBookingStatus,
+  modifyBooking,
 } from "../../api/service-booking";
 import dayjs from "dayjs";
 import {
@@ -185,13 +185,11 @@ export const CreateBooking = () => {
       customerUsername: string;
       timeSlotId: string;
     }) =>
-      updateBookingStatus(
+      modifyBooking({
         customerUsername,
         timeSlotId,
-        undefined,
-        BookingStatus.CONFIRMED,
-        false
-      ),
+        status: BookingStatus.CONFIRMED,
+      }),
   });
 
   const handleFinish: FormProps["onFinish"] = async ({
