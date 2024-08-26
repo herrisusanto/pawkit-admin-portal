@@ -11,7 +11,7 @@ import {
   SwitchFieldProps,
   TextFieldProps,
 } from "@aws-amplify/ui-react";
-import { Question } from "../api.backup/graphql/API.ts";
+import { Question } from "../api/graphql/API.ts";
 export declare type EscapeHatchProps = {
   [elementHierarchy: string]: Record<string, unknown>;
 } | null;

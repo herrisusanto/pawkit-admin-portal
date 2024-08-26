@@ -23,7 +23,8 @@
         "paymentConfirmation": {
           "secretsPathAmplifyAppId": "dd5j6wo9u36ak",
           "deploymentBucketName": "amplify-pawkit-qa-1531c-deployment",
-          "s3Key": "amplify-builds/paymentConfirmation-4d55746e724e4e48584d-build.zip"
+          "s3Key": "amplify-builds/paymentConfirmation-4d55746e724e4e48584d-build.zip",
+          "hitpayEndpoint": "https://api.sandbox.hit-pay.com/v1/payment-requests"
         },
         "paymentRequests": {
           "hitpayEndpoint": "https://api.sandbox.hit-pay.com/v1/payment-requests",
@@ -63,6 +64,11 @@
       },
       "storage": {
         "content": {}
+      },
+      "api": {
+        "AdminQueries": {},
+        "pawkit": {},
+        "payments": {}
       }
     }
   },

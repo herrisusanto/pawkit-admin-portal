@@ -23,7 +23,7 @@ import {
   fetchServiceById,
   fetchBookings,
   removeBooking,
-  updateBookingStatus,
+  modifyBooking,
 } from "../../api/service-booking";
 import {
   DeleteOutlined,
@@ -86,13 +86,12 @@ export function Bookings() {
         duration: 2.5,
       });
       if (bookingStatus) {
-        const result = await updateBookingStatus(
+        const result = await modifyBooking({
           customerUsername,
-          openedRecord?.timeSlotId as string,
-          formattedStartDateTime,
-          bookingStatus,
-          false
-        );
+          timeSlotId: openedRecord?.timeSlotId as string,
+          startDateTime: formattedStartDateTime,
+          status: bookingStatus as BookingStatus,
+        });
         if (result) {
           queryClient.invalidateQueries({ queryKey: ["bookings"] });
           message.success("Update Booking Success", 2.5);
