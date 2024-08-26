@@ -3,7 +3,7 @@ import { listUsers } from "../api/admin";
 
 export const useUsers = () => {
   const { data: users } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["userss"],
     queryFn: listUsers,
     select(data) {
       const users = data["Users"];

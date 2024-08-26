@@ -354,7 +354,10 @@ export function Bookings() {
             <Row>
               <Col span={12}>
                 <Form.Item name="startDateTime" label="Date">
-                  <DatePicker showTime={{ showSecond: false }} />
+                  <DatePicker
+                    allowClear={false}
+                    showTime={{ showSecond: false, minuteStep: 15 }}
+                  />
                 </Form.Item>
               </Col>
               <Col span={12}>

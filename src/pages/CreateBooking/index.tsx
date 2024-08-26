@@ -5,6 +5,7 @@ import {
   DatePicker,
   Form,
   FormProps,
+  Input,
   message,
   Row,
   Select,
@@ -12,13 +13,12 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useUsers } from "../../hooks";
 import { fetchPetsByCustomer } from "../../api/pet";
 import {
   addBooking,
   fetchServices,
-  fetchTimeSlots,
   updateBookingStatus,
 } from "../../api/service-booking";
 import dayjs from "dayjs";
@@ -36,9 +36,7 @@ export const CreateBooking = () => {
   const customerId = Form.useWatch("customerId", form);
   const petId = Form.useWatch("petId", form);
   const serviceId = Form.useWatch("serviceId", form);
-  const startDateTime = Form.useWatch("startDateTime", form) as dayjs.Dayjs;
   const selectedAddons = Form.useWatch("addOns", form);
-  const timeSlotId = Form.useWatch("timeSlotId", form);
   const users = useUsers();
   const usersAsOptions = useMemo(() => {
     return (
@@ -107,25 +105,6 @@ export const CreateBooking = () => {
       label: `${addon.name} | S$ ${addon.basePrice + getAdditionalPrice(Number(selectedPet?.weightValue), addon) || 0}`,
     }));
   }, [addons, selectedPet]);
-  const { data: timeslots } = useQuery({
-    queryKey: ["timeslots", serviceId, startDateTime],
-    queryFn: () =>
-      fetchTimeSlots({
-        filter: {
-          serviceId: { eq: serviceId },
-          startDateTime: {
-            ge: startDateTime.format("YYYY-MM-DDTHH:mm:ss[Z]"),
-          },
-        },
-      }),
-    enabled: !!serviceId && !!startDateTime,
-  });
-  const timeslotsAsOptions = useMemo(() => {
-    return timeslots?.map((timeslot) => ({
-      value: timeslot.id,
-      label: dayjs(timeslot.startDateTime).format("hh:mm:ss A"),
-    }));
-  }, [timeslots]);
 
   const estimatedPrice = useMemo(() => {
     const service = selectedService;
@@ -197,16 +176,14 @@ export const CreateBooking = () => {
   const handleFinish: FormProps["onFinish"] = async ({
     startDateTime,
     petId,
+    address,
     ...values
   }) => {
     const addedOrder = await mutationAddOrder.mutateAsync({
       customerId,
       currency: Currency.SGD,
     });
-    const user = users.find((user: any) => user.sub === customerId);
-    const address = user.address;
-    const timeslot = timeslots?.find((timeslot) => timeslot.id === timeSlotId);
-    const formattedStartDateTime = timeslot?.startDateTime;
+    const formattedStartDateTime = dayjs(startDateTime).toISOString();
     const formattedValues = {
       ...values,
       orderId: addedOrder.id,
@@ -217,9 +194,19 @@ export const CreateBooking = () => {
       startDateTime: formattedStartDateTime,
       address,
     };
-
     mutationAddBooking.mutate(formattedValues);
   };
+
+  useEffect(() => {
+    if (customerId) {
+      const user = users.find((user: any) => user.sub === customerId);
+      console.log(user);
+      if (user?.address) {
+        form.setFieldValue("address", user.address);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customerId]);
 
   return (
     <div className="my-6 p-8 bg-white rounded-2xl">
@@ -231,6 +218,9 @@ export const CreateBooking = () => {
               form.resetFields(["petId", "serviceId", "addOns"]);
             }}
           />
+        </Form.Item>
+        <Form.Item name="address" label="Address" initialValue="">
+          <Input />
         </Form.Item>
         <Row gutter={16}>
           <Col span={8}>
@@ -261,12 +251,7 @@ export const CreateBooking = () => {
         </Row>
         <Space>
           <Form.Item name="startDateTime" label="Date">
-            <DatePicker
-              disabledDate={(date) => date.isBefore(dayjs().subtract(1, "d"))}
-            />
-          </Form.Item>
-          <Form.Item name="timeSlotId" label="Time" className="w-36">
-            <Select options={timeslotsAsOptions} />
+            <DatePicker showTime={{ showSecond: false, minuteStep: 15 }} />
           </Form.Item>
         </Space>
         <Row justify="space-between" align="bottom">
