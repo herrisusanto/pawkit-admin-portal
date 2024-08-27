@@ -329,8 +329,10 @@ export const customListBookings = /* GraphQL */ `
         pets {
           items {
             pet {
+              id
               name
               birthdate
+              breedName
             }
           }
         }

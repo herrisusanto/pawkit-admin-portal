@@ -267,7 +267,7 @@ export function Services() {
           <InputNumber min={0} addonAfter="Minutes" />
         </Form.Item>
         <Form.Item name={[name, "amount"]} label="Amount" initialValue={0}>
-          <InputNumber min={0} addonAfter="SGD" />
+          <InputNumber step={0.01} min={0} addonAfter="SGD" />
         </Form.Item>
       </Flex>
       <Flex gap={16}>
@@ -276,18 +276,18 @@ export function Services() {
           label="Min weight"
           initialValue={0}
         >
-          <InputNumber min={0} addonAfter="KG" />
+          <InputNumber step={0.01} min={0} addonAfter="KG" />
         </Form.Item>
         <Form.Item
           name={[name, "maxWeight"]}
           label="Max weight"
           initialValue={0}
         >
-          <InputNumber min={0} addonAfter="KG" />
+          <InputNumber step={0.01} min={0} addonAfter="KG" />
         </Form.Item>
       </Flex>
       <Form.Item hidden name={[name, "weightUnit"]} initialValue="KG">
-        <InputNumber min={0} />
+        <InputNumber step={0.01} />
       </Form.Item>
       <Form.Item
         hidden
@@ -476,8 +476,12 @@ export function Services() {
             >
               <Select
                 options={[
-                  { label: "Grooming", value: "GROOMING" },
-                  { label: "Vaccination", value: "VACCINATION" },
+                  { label: "Grooming", value: ServiceCategory.GROOMING },
+                  { label: "Vaccination", value: ServiceCategory.VACCINATION },
+                  {
+                    label: "Medical Sitting",
+                    value: ServiceCategory.MEDICAL_SITTING,
+                  },
                 ]}
               />
             </Form.Item>
@@ -501,7 +505,7 @@ export function Services() {
               label="Base price"
               rules={[{ required: true }]}
             >
-              <InputNumber min={0} addonAfter="SGD" />
+              <InputNumber step={0.01} min={0} addonAfter="SGD" />
             </Form.Item>
             <Form.Item
               name="baseDuration"
