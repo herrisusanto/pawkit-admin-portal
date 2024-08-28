@@ -32,11 +32,17 @@ import {
   modifyService,
   removeService,
 } from "../../api/service-booking";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchServiceProviders } from "../../api/service-provider";
 import { getUrl, uploadData } from "aws-amplify/storage";
 import { FileType, getBase64 } from "../../utils";
+import { useNavigate } from "react-router-dom";
 
 type DeleteServicePayload = {
   name: string;
@@ -61,6 +67,7 @@ export function Services() {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const [, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: serviceProviders, isPending: serviceProvidersPending } =
     useQuery({
@@ -299,7 +306,7 @@ export function Services() {
     </>
   );
 
-  const columns: TableProps<any>["columns"] = useMemo(
+  const columns: TableProps<Service>["columns"] = useMemo(
     () => [
       {
         title: "Service ID",
@@ -316,7 +323,7 @@ export function Services() {
         dataIndex: "parentServiceIds",
         key: "parentServiceIds",
         render: (_, { parentServiceIds }) => {
-          if (parentServiceIds?.length > 0) {
+          if ((parentServiceIds?.length || 0) > 0) {
             return "Add-On";
           } else {
             return "Main Service";
@@ -344,6 +351,14 @@ export function Services() {
         render: (_, record) => {
           return (
             <Flex gap={4}>
+              <Button
+                shape="circle"
+                onClick={() => {
+                  navigate(`/services/${record.id}`);
+                }}
+              >
+                <EyeOutlined />
+              </Button>
               <Button
                 onClick={() => handleShowModal(record)}
                 type="default"

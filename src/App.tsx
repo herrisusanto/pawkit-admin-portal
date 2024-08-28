@@ -57,6 +57,13 @@ const router = createBrowserRouter([
           return { Component: Services };
         },
       },
+      {
+        path: "services/:serviceId",
+        lazy: async () => {
+          const { ServiceTimeslots } = await import("./pages/ServiceTimeslots");
+          return { Component: ServiceTimeslots };
+        },
+      },
     ],
   },
 ]);
