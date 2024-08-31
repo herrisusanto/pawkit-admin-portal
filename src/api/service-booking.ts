@@ -67,6 +67,7 @@ import {
   customListBookings,
   customListServices,
   customServiceById,
+  customUpdateBooking,
 } from "./graphql/custom";
 import {
   fetchOrder,
@@ -1767,7 +1768,7 @@ export const modifyBooking = async (input: UpdateBookingInput) => {
     }
 
     const updatedBooking = await graphqlClient.graphql({
-      query: updateBooking,
+      query: customUpdateBooking,
       variables: { input },
     });
     logger.info(

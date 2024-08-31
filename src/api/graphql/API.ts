@@ -21,7 +21,12 @@ export type ModelServicePrimaryCompositeKeyInput = {
 export enum ServiceCategory {
   VACCINATION = "VACCINATION",
   GROOMING = "GROOMING",
-  MEDICAL_SITTING = "MEDICAL_SITTING",
+  NURSING = "NURSING",
+  VET_CONSULT = "VET_CONSULT",
+  WELLNESS = "WELLNESS",
+  PET_SITTING = "PET_SITTING",
+  TRANSPORT = "TRANSPORT",
+  MICROCHIPPING = "MICROCHIPPING",
 }
 
 
@@ -378,6 +383,8 @@ export type Disclaimer = {
   serviceCategory?: ServiceCategory | null,
   petType?: PetType | null,
   service?: Service | null,
+  header?: string | null,
+  subheader?: string | null,
   text?: string | null,
   s3Link?: string | null,
   supersededBy?: Disclaimer | null,
@@ -627,29 +634,9 @@ export type ModelBookingStatusInput = {
   ne?: BookingStatus | null,
 };
 
-export type CreateBookingInput = {
-  id?: string | null,
-  orderId: string,
+export type DeleteBookingInput = {
   customerUsername: string,
-  owners: Array< string >,
-  customerId: string,
-  serviceName: string,
-  serviceProviderName: string,
-  serviceCategory: ServiceCategory,
-  petType: PetType,
-  serviceId: string,
-  startDateTime: string,
   timeSlotId: string,
-  address: string,
-  petIds: Array< string >,
-  addOns?: Array< string > | null,
-  bookingType: BookingType,
-  amount: number,
-  currency: Currency,
-  status: BookingStatus,
-  serviceProviderBookingsName?: string | null,
-  timeSlotBookingsServiceId?: string | null,
-  timeSlotBookingsStartDateTime?: string | null,
 };
 
 export type ModelBookingConditionInput = {
@@ -679,6 +666,81 @@ export type ModelBookingConditionInput = {
   timeSlotBookingsStartDateTime?: ModelStringInput | null,
 };
 
+export type ModelQuestionAnswerFilterInput = {
+  petId?: ModelIDInput | null,
+  questionId?: ModelIDInput | null,
+  answer?: ModelStringInput | null,
+  id?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelQuestionAnswerFilterInput | null > | null,
+  or?: Array< ModelQuestionAnswerFilterInput | null > | null,
+  not?: ModelQuestionAnswerFilterInput | null,
+  customerId?: ModelStringInput | null,
+};
+
+export type ModelQuestionAnswerConnection = {
+  __typename: "ModelQuestionAnswerConnection",
+  items:  Array<QuestionAnswer | null >,
+  nextToken?: string | null,
+};
+
+export type QuestionAnswer = {
+  __typename: "QuestionAnswer",
+  petId: string,
+  pet: Pet,
+  questionId: string,
+  question: Question,
+  answer: string,
+  createdAt: string,
+  updatedAt: string,
+  customerId?: string | null,
+};
+
+export type Question = {
+  __typename: "Question",
+  id: string,
+  serviceCategory: ServiceCategory,
+  questionString: string,
+  questionType: QuestionType,
+  followUpQuestionIds?: Array< string > | null,
+  isRequired: boolean,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export enum QuestionType {
+  TEXT = "TEXT",
+  YES_NO = "YES_NO",
+  DATE = "DATE",
+}
+
+
+export type CreateBookingInput = {
+  id?: string | null,
+  orderId: string,
+  customerUsername: string,
+  owners: Array< string >,
+  customerId: string,
+  serviceName: string,
+  serviceProviderName: string,
+  serviceCategory: ServiceCategory,
+  petType: PetType,
+  serviceId: string,
+  startDateTime: string,
+  timeSlotId: string,
+  address: string,
+  petIds: Array< string >,
+  addOns?: Array< string > | null,
+  bookingType: BookingType,
+  amount: number,
+  currency: Currency,
+  status: BookingStatus,
+  serviceProviderBookingsName?: string | null,
+  timeSlotBookingsServiceId?: string | null,
+  timeSlotBookingsStartDateTime?: string | null,
+};
+
 export type UpdateBookingInput = {
   id?: string | null,
   orderId?: string | null,
@@ -702,11 +764,6 @@ export type UpdateBookingInput = {
   serviceProviderBookingsName?: string | null,
   timeSlotBookingsServiceId?: string | null,
   timeSlotBookingsStartDateTime?: string | null,
-};
-
-export type DeleteBookingInput = {
-  customerUsername: string,
-  timeSlotId: string,
 };
 
 export type CreateBreedInput = {
@@ -819,6 +876,8 @@ export type CreateDisclaimerInput = {
   serviceProviderName?: string | null,
   serviceCategory?: ServiceCategory | null,
   petType?: PetType | null,
+  header?: string | null,
+  subheader?: string | null,
   text?: string | null,
   s3Link?: string | null,
   supersessionDate?: string | null,
@@ -829,6 +888,8 @@ export type ModelDisclaimerConditionInput = {
   serviceProviderName?: ModelStringInput | null,
   serviceCategory?: ModelServiceCategoryInput | null,
   petType?: ModelPetTypeInput | null,
+  header?: ModelStringInput | null,
+  subheader?: ModelStringInput | null,
   text?: ModelStringInput | null,
   s3Link?: ModelStringInput | null,
   supersessionDate?: ModelStringInput | null,
@@ -845,6 +906,8 @@ export type UpdateDisclaimerInput = {
   serviceProviderName?: string | null,
   serviceCategory?: ServiceCategory | null,
   petType?: PetType | null,
+  header?: string | null,
+  subheader?: string | null,
   text?: string | null,
   s3Link?: string | null,
   supersessionDate?: string | null,
@@ -1128,13 +1191,6 @@ export type CreateQuestionInput = {
   isRequired: boolean,
 };
 
-export enum QuestionType {
-  TEXT = "TEXT",
-  YES_NO = "YES_NO",
-  DATE = "DATE",
-}
-
-
 export type ModelQuestionConditionInput = {
   serviceCategory?: ModelServiceCategoryInput | null,
   questionString?: ModelStringInput | null,
@@ -1151,18 +1207,6 @@ export type ModelQuestionConditionInput = {
 export type ModelQuestionTypeInput = {
   eq?: QuestionType | null,
   ne?: QuestionType | null,
-};
-
-export type Question = {
-  __typename: "Question",
-  id: string,
-  serviceCategory: ServiceCategory,
-  questionString: string,
-  questionType: QuestionType,
-  followUpQuestionIds?: Array< string > | null,
-  isRequired: boolean,
-  createdAt: string,
-  updatedAt: string,
 };
 
 export type UpdateQuestionInput = {
@@ -1192,18 +1236,6 @@ export type ModelQuestionAnswerConditionInput = {
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
   customerId?: ModelStringInput | null,
-};
-
-export type QuestionAnswer = {
-  __typename: "QuestionAnswer",
-  petId: string,
-  pet: Pet,
-  questionId: string,
-  question: Question,
-  answer: string,
-  createdAt: string,
-  updatedAt: string,
-  customerId?: string | null,
 };
 
 export type UpdateQuestionAnswerInput = {
@@ -1512,6 +1544,8 @@ export type ModelDisclaimerFilterInput = {
   serviceProviderName?: ModelStringInput | null,
   serviceCategory?: ModelServiceCategoryInput | null,
   petType?: ModelPetTypeInput | null,
+  header?: ModelStringInput | null,
+  subheader?: ModelStringInput | null,
   text?: ModelStringInput | null,
   s3Link?: ModelStringInput | null,
   supersessionDate?: ModelStringInput | null,
@@ -1634,25 +1668,6 @@ export type ModelQuestionFilterInput = {
 export type ModelQuestionConnection = {
   __typename: "ModelQuestionConnection",
   items:  Array<Question | null >,
-  nextToken?: string | null,
-};
-
-export type ModelQuestionAnswerFilterInput = {
-  petId?: ModelIDInput | null,
-  questionId?: ModelIDInput | null,
-  answer?: ModelStringInput | null,
-  id?: ModelIDInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelQuestionAnswerFilterInput | null > | null,
-  or?: Array< ModelQuestionAnswerFilterInput | null > | null,
-  not?: ModelQuestionAnswerFilterInput | null,
-  customerId?: ModelStringInput | null,
-};
-
-export type ModelQuestionAnswerConnection = {
-  __typename: "ModelQuestionAnswerConnection",
-  items:  Array<QuestionAnswer | null >,
   nextToken?: string | null,
 };
 
@@ -1844,6 +1859,8 @@ export type ModelSubscriptionDisclaimerFilterInput = {
   serviceProviderName?: ModelSubscriptionStringInput | null,
   serviceCategory?: ModelSubscriptionStringInput | null,
   petType?: ModelSubscriptionStringInput | null,
+  header?: ModelSubscriptionStringInput | null,
+  subheader?: ModelSubscriptionStringInput | null,
   text?: ModelSubscriptionStringInput | null,
   s3Link?: ModelSubscriptionStringInput | null,
   supersessionDate?: ModelSubscriptionStringInput | null,
@@ -2389,8 +2406,10 @@ export type CustomListBookingsQuery = {
           __typename: "PetBookings",
           pet:  {
             __typename: "Pet",
+            id: string,
             name: string,
             birthdate?: string | null,
+            breedName?: string | null,
           },
         } | null >,
       } | null,
@@ -2400,6 +2419,122 @@ export type CustomListBookingsQuery = {
       serviceProviderBookingsName?: string | null,
       timeSlotBookingsServiceId?: string | null,
       timeSlotBookingsStartDateTime?: string | null,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type CustomDeleteBookingMutationVariables = {
+  input: DeleteBookingInput,
+  condition?: ModelBookingConditionInput | null,
+};
+
+export type CustomDeleteBookingMutation = {
+  deleteBooking?:  {
+    __typename: "Booking",
+    id: string,
+    orderId: string,
+    order:  {
+      __typename: "Order",
+      id: string,
+      customerId: string,
+      currency: Currency,
+      totalAmount: number,
+      bookingIds?: Array< string > | null,
+      paymentRequestId?: string | null,
+      status: OrderStatus,
+      createdAt: string,
+      updatedAt: string,
+    },
+    customerUsername: string,
+    owners: Array< string >,
+    customerId: string,
+    customer:  {
+      __typename: "Customer",
+      id: string,
+      username: string,
+      isDeactivated: boolean,
+      createdAt: string,
+      updatedAt: string,
+    },
+    serviceName: string,
+    serviceProviderName: string,
+    serviceProvider:  {
+      __typename: "ServiceProvider",
+      id: string,
+      name: string,
+      displayName?: string | null,
+      description?: string | null,
+      website?: string | null,
+      email?: string | null,
+      phone?: string | null,
+      isHeadquarters: boolean,
+      createdAt: string,
+      updatedAt: string,
+      serviceProviderHeadquartersName?: string | null,
+    },
+    serviceCategory: ServiceCategory,
+    petType: PetType,
+    serviceId: string,
+    startDateTime: string,
+    timeSlot:  {
+      __typename: "TimeSlot",
+      id: string,
+      serviceId: string,
+      startDateTime: string,
+      endDateTime?: string | null,
+      capacity: number,
+      bookingCount: number,
+      isFull: boolean,
+      bookingIds?: Array< string > | null,
+      createdAt: string,
+      updatedAt: string,
+      serviceProviderId?: string | null,
+    },
+    timeSlotId: string,
+    address: string,
+    petIds: Array< string >,
+    pets?:  {
+      __typename: "ModelPetBookingsConnection",
+      nextToken?: string | null,
+    } | null,
+    addOns?: Array< string > | null,
+    bookingType: BookingType,
+    amount: number,
+    currency: Currency,
+    status: BookingStatus,
+    createdAt: string,
+    updatedAt: string,
+    serviceProviderBookingsName?: string | null,
+    timeSlotBookingsServiceId?: string | null,
+    timeSlotBookingsStartDateTime?: string | null,
+  } | null,
+};
+
+export type CustomListQuestionAnswersQueryVariables = {
+  petId?: string | null,
+  questionId?: ModelIDKeyConditionInput | null,
+  filter?: ModelQuestionAnswerFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+};
+
+export type CustomListQuestionAnswersQuery = {
+  listQuestionAnswers?:  {
+    __typename: "ModelQuestionAnswerConnection",
+    items:  Array< {
+      __typename: "QuestionAnswer",
+      petId: string,
+      questionId: string,
+      question:  {
+        __typename: "Question",
+        questionString: string,
+      },
+      answer: string,
+      createdAt: string,
+      updatedAt: string,
+      customerId?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -2956,6 +3091,8 @@ export type CreateDisclaimerMutation = {
       createdAt: string,
       updatedAt: string,
     } | null,
+    header?: string | null,
+    subheader?: string | null,
     text?: string | null,
     s3Link?: string | null,
     supersededBy?:  {
@@ -2965,6 +3102,8 @@ export type CreateDisclaimerMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -3026,6 +3165,8 @@ export type UpdateDisclaimerMutation = {
       createdAt: string,
       updatedAt: string,
     } | null,
+    header?: string | null,
+    subheader?: string | null,
     text?: string | null,
     s3Link?: string | null,
     supersededBy?:  {
@@ -3035,6 +3176,8 @@ export type UpdateDisclaimerMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -3096,6 +3239,8 @@ export type DeleteDisclaimerMutation = {
       createdAt: string,
       updatedAt: string,
     } | null,
+    header?: string | null,
+    subheader?: string | null,
     text?: string | null,
     s3Link?: string | null,
     supersededBy?:  {
@@ -3105,6 +3250,8 @@ export type DeleteDisclaimerMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -3148,6 +3295,8 @@ export type CreateDisclaimerAcceptanceMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -3186,6 +3335,8 @@ export type UpdateDisclaimerAcceptanceMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -3224,6 +3375,8 @@ export type DeleteDisclaimerAcceptanceMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -3982,6 +4135,8 @@ export type CreateServiceMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -4113,6 +4268,8 @@ export type UpdateServiceMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -4244,6 +4401,8 @@ export type DeleteServiceMutation = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -5318,6 +5477,8 @@ export type GetDisclaimerQuery = {
       createdAt: string,
       updatedAt: string,
     } | null,
+    header?: string | null,
+    subheader?: string | null,
     text?: string | null,
     s3Link?: string | null,
     supersededBy?:  {
@@ -5327,6 +5488,8 @@ export type GetDisclaimerQuery = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -5361,6 +5524,8 @@ export type ListDisclaimersQuery = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -5397,6 +5562,8 @@ export type GetDisclaimerAcceptanceQuery = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -6367,6 +6534,8 @@ export type GetServiceQuery = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -7674,6 +7843,8 @@ export type OnCreateDisclaimerSubscription = {
       createdAt: string,
       updatedAt: string,
     } | null,
+    header?: string | null,
+    subheader?: string | null,
     text?: string | null,
     s3Link?: string | null,
     supersededBy?:  {
@@ -7683,6 +7854,8 @@ export type OnCreateDisclaimerSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -7743,6 +7916,8 @@ export type OnUpdateDisclaimerSubscription = {
       createdAt: string,
       updatedAt: string,
     } | null,
+    header?: string | null,
+    subheader?: string | null,
     text?: string | null,
     s3Link?: string | null,
     supersededBy?:  {
@@ -7752,6 +7927,8 @@ export type OnUpdateDisclaimerSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -7812,6 +7989,8 @@ export type OnDeleteDisclaimerSubscription = {
       createdAt: string,
       updatedAt: string,
     } | null,
+    header?: string | null,
+    subheader?: string | null,
     text?: string | null,
     s3Link?: string | null,
     supersededBy?:  {
@@ -7821,6 +8000,8 @@ export type OnDeleteDisclaimerSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -7864,6 +8045,8 @@ export type OnCreateDisclaimerAcceptanceSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -7902,6 +8085,8 @@ export type OnUpdateDisclaimerAcceptanceSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -7940,6 +8125,8 @@ export type OnDeleteDisclaimerAcceptanceSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -8695,6 +8882,8 @@ export type OnCreateServiceSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -8826,6 +9015,8 @@ export type OnUpdateServiceSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,
@@ -8957,6 +9148,8 @@ export type OnDeleteServiceSubscription = {
       serviceProviderName?: string | null,
       serviceCategory?: ServiceCategory | null,
       petType?: PetType | null,
+      header?: string | null,
+      subheader?: string | null,
       text?: string | null,
       s3Link?: string | null,
       supersessionDate?: string | null,

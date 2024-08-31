@@ -494,8 +494,28 @@ export function Services() {
                   { label: "Grooming", value: ServiceCategory.GROOMING },
                   { label: "Vaccination", value: ServiceCategory.VACCINATION },
                   {
-                    label: "Medical Sitting",
-                    value: ServiceCategory.MEDICAL_SITTING,
+                    label: "Pet Sitting",
+                    value: ServiceCategory.PET_SITTING,
+                  },
+                  {
+                    label: "Nursing",
+                    value: ServiceCategory.NURSING,
+                  },
+                  {
+                    label: "Transport",
+                    value: ServiceCategory.TRANSPORT,
+                  },
+                  {
+                    label: "Vet Consult",
+                    value: ServiceCategory.VET_CONSULT,
+                  },
+                  {
+                    label: "Wellness",
+                    value: ServiceCategory.WELLNESS,
+                  },
+                  {
+                    label: "Microchipping",
+                    value: ServiceCategory.MICROCHIPPING,
                   },
                 ]}
               />
