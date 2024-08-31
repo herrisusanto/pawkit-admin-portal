@@ -47,7 +47,6 @@ import {
   createTimeSlot,
   deleteService,
   deleteTimeSlot,
-  updateBooking,
   updateQuestion,
   updateService,
   updateTimeSlot,
