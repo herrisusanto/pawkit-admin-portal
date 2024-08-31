@@ -130,20 +130,6 @@ export const customGetBooking = `query CustomGetBooking(
    petType
    serviceId
    startDateTime
-   timeSlot {
-     id
-     serviceId
-     startDateTime
-     endDateTime
-     capacity
-     bookingCount
-     isFull
-     bookingIds
-     createdAt
-     updatedAt
-     serviceProviderId
-     __typename
-   }
    timeSlotId
    petIds
    pets {
@@ -333,6 +319,7 @@ export const customListBookings = /* GraphQL */ `
               name
               birthdate
               breedName
+              weightValue
             }
           }
         }

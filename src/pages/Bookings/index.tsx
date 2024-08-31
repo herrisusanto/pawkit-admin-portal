@@ -33,7 +33,12 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Booking, Pet, BookingStatus } from "../../api/graphql/API";
+import {
+  Booking,
+  Pet,
+  BookingStatus,
+  UpdateBookingInput,
+} from "../../api/graphql/API";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../../api/admin";
 import { useSetAtom } from "jotai";
@@ -86,12 +91,15 @@ export function Bookings() {
         duration: 2.5,
       });
       if (bookingStatus) {
-        const result = await modifyBooking({
+        const formattedValues: UpdateBookingInput = {
           customerUsername,
           timeSlotId: openedRecord?.timeSlotId as string,
           startDateTime: formattedStartDateTime,
-          status: bookingStatus as BookingStatus,
-        });
+        };
+        if (bookingStatus !== openedRecord?.status) {
+          formattedValues["status"] = bookingStatus;
+        }
+        const result = await modifyBooking(formattedValues);
         if (result) {
           queryClient.invalidateQueries({ queryKey: ["bookings"] });
           message.success("Update Booking Success", 2.5);
@@ -117,10 +125,7 @@ export function Bookings() {
     if (openedRecord) {
       form.setFieldsValue({
         startDateTime: dayjs(openedRecord.startDateTime),
-        bookingStatus: {
-          value: openedRecord.status,
-          label: openedRecord.status.replace("_", " "),
-        },
+        bookingStatus: openedRecord.status,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -275,7 +280,6 @@ export function Bookings() {
       title: "Action",
       key: "action",
       render: (_, record) => {
-        getUser(record.customerUsername);
         return (
           <Space size={8}>
             <Button
@@ -401,6 +405,8 @@ const CustomerDetails = ({ customerId }: { customerId: string }) => {
   const { data: user, isPending } = useQuery({
     queryKey: ["users", customerId],
     queryFn: () => getUser(customerId),
+    enabled: !!customerId,
+    retry: false,
   });
   const userAttributes: any = Array.from(
     (user as any)?.["UserAttributes"] || []
