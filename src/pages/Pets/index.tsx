@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Breadcrumb, Button, Flex, Table, TableProps } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchPetsByCustomer } from "../../api/pet";
-import { Pet } from "../../api/graphql/API";
 import { petDetailsAtom } from "../../views/PetDetails/state";
 import { useSetAtom } from "jotai";
 import { EyeOutlined } from "@ant-design/icons";
@@ -16,7 +15,7 @@ export const Pets = () => {
   });
   const setPetDetails = useSetAtom(petDetailsAtom);
 
-  const columns: TableProps<Pet>["columns"] = [
+  const columns: TableProps["columns"] = [
     {
       title: "Name",
       dataIndex: "name",
