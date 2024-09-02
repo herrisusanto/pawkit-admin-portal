@@ -11,8 +11,10 @@ import {
 import { listUsers } from "../../api/admin";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function Users() {
+  const navigate = useNavigate();
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -116,6 +118,24 @@ export function Users() {
       render(value) {
         const isConfirmed = value === "CONFIRMED";
         return <Tag color={isConfirmed ? "green" : "red"}>{value}</Tag>;
+      },
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => {
+        return (
+          <Flex gap={4}>
+            <Button
+              type="primary"
+              onClick={() => {
+                navigate(`/users/${record["sub"]}/pets`);
+              }}
+            >
+              Pets
+            </Button>
+          </Flex>
+        );
       },
     },
   ];
