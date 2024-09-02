@@ -36,8 +36,8 @@ export const Pets = () => {
       },
     },
     {
-      title: "Birthday",
-      dataIndex: "birthday",
+      title: "Birthdate",
+      dataIndex: "birthdate",
       render(value) {
         return value ? value : "-";
       },
