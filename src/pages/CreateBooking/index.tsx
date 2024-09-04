@@ -13,14 +13,15 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { useEffect, useMemo } from "react";
-import { useUsers } from "../../hooks";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchUsers } from "../../hooks";
 import { fetchPetsByCustomer } from "../../api/pet";
 import { addBooking, fetchServices } from "../../api/service-booking";
 import dayjs from "dayjs";
 import { BookingType, Currency, Service } from "../../api/graphql/API";
 import { getAdditionalPrice } from "../../utils";
 import { addOrder } from "../../api/order";
+import debounce from "debounce";
 
 export const CreateBooking = () => {
   const [form] = Form.useForm();
@@ -28,7 +29,8 @@ export const CreateBooking = () => {
   const petId = Form.useWatch("petId", form);
   const serviceId = Form.useWatch("serviceId", form);
   const selectedAddons = Form.useWatch("addOns", form);
-  const users = useUsers();
+  const [nameSearch, setNameSearch] = useState<string | undefined>();
+  const { data: users, isFetching } = useSearchUsers(nameSearch);
   const usersAsOptions = useMemo(() => {
     return (
       users &&
@@ -43,6 +45,7 @@ export const CreateBooking = () => {
       }))
     );
   }, [users]);
+
   const { data: userPets } = useQuery({
     queryKey: ["pets", customerId],
     queryFn: () => fetchPetsByCustomer(customerId),
@@ -144,6 +147,8 @@ export const CreateBooking = () => {
     },
   });
 
+  const handleNameSearch = debounce((value) => setNameSearch(value), 500);
+
   const handleFinish: FormProps["onFinish"] = async ({
     startDateTime,
     petId,
@@ -172,7 +177,6 @@ export const CreateBooking = () => {
   useEffect(() => {
     if (customerId) {
       const user = users.find((user: any) => user.sub === customerId);
-      console.log(user);
       if (user?.address) {
         form.setFieldValue("address", user.address);
       }
@@ -185,6 +189,13 @@ export const CreateBooking = () => {
       <Form onFinish={handleFinish} layout="vertical" form={form}>
         <Form.Item name="customerId" label="User">
           <Select
+            showSearch
+            allowClear
+            autoClearSearchValue
+            onClear={() => setNameSearch(undefined)}
+            loading={isFetching}
+            filterOption={false}
+            onSearch={handleNameSearch}
             options={usersAsOptions}
             onChange={() => {
               form.resetFields(["petId", "serviceId", "addOns"]);

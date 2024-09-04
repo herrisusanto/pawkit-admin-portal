@@ -24,7 +24,7 @@ export function Users() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["users"],
+    queryKey: ["users_infinite"],
     queryFn: listUsers,
     getNextPageParam: (lastPage) => {
       return lastPage?.["NextToken"];

@@ -17,6 +17,7 @@
   "antd": "^5.17.4",
   "aws-amplify": "^6.3.8",
   "date-fns": "^3.6.0",
+  "debounce": "^2.1.0",
   "jotai": "^2.9.2",
   "localforage": "^1.10.0",
   "match-sorter": "^6.3.4",
