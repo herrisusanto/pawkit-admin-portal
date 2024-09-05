@@ -69,19 +69,19 @@ export function Services() {
   const [, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data: serviceProviders, isPending: serviceProvidersPending } =
+  const { data: serviceProviders, isFetching: serviceProvidersPending } =
     useQuery({
       queryKey: ["service_providers"],
       queryFn: () => fetchServiceProviders({}),
     });
-  const { data: services, isPending } = useQuery({
+  const { data: services, isFetching } = useQuery({
     queryKey: ["services"],
     queryFn: () => fetchServices({}),
     select(data) {
       return data.sort((a, b) => Number(a.id) - Number(b.id));
     },
   });
-  const { data: servicesAsOptions, isPending: servicesAsOptionsPending } =
+  const { data: servicesAsOptions, isFetching: servicesAsOptionsPending } =
     useQuery({
       queryKey: ["services", petType],
       queryFn: () => fetchServices({ filter: { petType: { eq: petType } } }),
@@ -418,7 +418,7 @@ export function Services() {
           rowKey="id"
           columns={columns}
           dataSource={services}
-          loading={isPending}
+          loading={isFetching}
           pagination={false}
         />
       </div>
@@ -530,6 +530,8 @@ export function Services() {
                 options={[
                   { label: "Dog", value: "DOG" },
                   { label: "Cat", value: "CAT" },
+                  { label: "Rabbit", value: "RABBIT" },
+                  { label: "Guinea Pig", value: "GUINEA_PIG" },
                 ]}
               />
             </Form.Item>
@@ -575,6 +577,28 @@ export function Services() {
               </Radio.Group>
             </Form.Item>
           </Flex>
+          <Form.Item
+            shouldUpdate={(prev, curr) =>
+              prev["defaultDisplay"] !== curr["defaultDisplay"] ||
+              prev["petType"] !== curr["petType"]
+            }
+            noStyle
+          >
+            {({ getFieldValue }) => {
+              const isMainService =
+                getFieldValue(["defaultDisplay"]) === "true";
+              const petType = typeof getFieldValue(["petType"]) !== "undefined";
+              return isMainService && petType ? (
+                <Form.Item name="childServiceIds" label="Addons">
+                  <Select
+                    loading={servicesAsOptionsPending}
+                    options={servicesAsOptions}
+                    mode="multiple"
+                  />
+                </Form.Item>
+              ) : null;
+            }}
+          </Form.Item>
           <Form.Item name="shortDescription" label="Short description">
             <Input.TextArea />
           </Form.Item>
@@ -618,21 +642,6 @@ export function Services() {
                 ]}
               />
             </Card>
-            <Form.Item shouldUpdate className="w-full">
-              {({ getFieldValue }) => {
-                const isMainService =
-                  getFieldValue(["defaultDisplay"]) === "true";
-                return isMainService ? (
-                  <Form.Item name="childServiceIds" label="Addons">
-                    <Select
-                      loading={servicesAsOptionsPending}
-                      options={servicesAsOptions}
-                      mode="multiple"
-                    />
-                  </Form.Item>
-                ) : null;
-              }}
-            </Form.Item>
           </Flex>
           <Form.Item name="currency" initialValue="SGD" hidden>
             <Input />
