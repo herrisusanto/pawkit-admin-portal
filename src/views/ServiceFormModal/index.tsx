@@ -17,6 +17,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import {
   CreateServiceInput,
+  PetType,
   Service,
   ServiceCategory,
   UpdateServiceInput,
@@ -311,34 +312,14 @@ const ServiceFormModal = () => {
             rules={[{ required: true }]}
           >
             <Select
-              options={[
-                { label: "Grooming", value: ServiceCategory.GROOMING },
-                { label: "Vaccination", value: ServiceCategory.VACCINATION },
-                {
-                  label: "Pet Sitting",
-                  value: ServiceCategory.PET_SITTING,
-                },
-                {
-                  label: "Nursing",
-                  value: ServiceCategory.NURSING,
-                },
-                {
-                  label: "Transport",
-                  value: ServiceCategory.TRANSPORT,
-                },
-                {
-                  label: "Vet Consult",
-                  value: ServiceCategory.VET_CONSULT,
-                },
-                {
-                  label: "Wellness",
-                  value: ServiceCategory.WELLNESS,
-                },
-                {
-                  label: "Microchipping",
-                  value: ServiceCategory.MICROCHIPPING,
-                },
-              ]}
+              options={Object.keys(ServiceCategory).map((value) => ({
+                label: (
+                  <span className="capitalize">
+                    {value.split("_").join(" ").toLowerCase()}
+                  </span>
+                ),
+                value,
+              }))}
             />
           </Form.Item>
           <Form.Item
@@ -348,12 +329,14 @@ const ServiceFormModal = () => {
             rules={[{ required: true }]}
           >
             <Select
-              options={[
-                { label: "Dog", value: "DOG" },
-                { label: "Cat", value: "CAT" },
-                { label: "Rabbit", value: "RABBIT" },
-                { label: "Guinea Pig", value: "GUINEA_PIG" },
-              ]}
+              options={Object.keys(PetType).map((value) => ({
+                label: (
+                  <span className="capitalize">
+                    {value.split("_").join(" ").toLowerCase()}
+                  </span>
+                ),
+                value,
+              }))}
             />
           </Form.Item>
         </Flex>
