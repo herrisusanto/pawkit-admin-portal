@@ -348,7 +348,7 @@ export function Bookings() {
         title="Booking Detail"
         open={isModalOpen}
         onOk={form.submit}
-        okText="Update Booking Status"
+        okText="Update Booking"
         onCancel={handleCancel}
       >
         <Typography.Title level={3}>ID: {openedRecord?.id}</Typography.Title>
