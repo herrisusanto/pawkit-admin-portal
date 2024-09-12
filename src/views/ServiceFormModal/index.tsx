@@ -50,6 +50,22 @@ const ServiceFormModal = () => {
   const [form] = Form.useForm();
   const petType = Form.useWatch("petType", form);
   const queryClient = useQueryClient();
+  const { data: servicesIds } = useQuery({
+    queryKey: ["services"],
+    queryFn: () => fetchServices({}),
+    select(data) {
+      return data.map((service) => service.id).filter((id) => id !== serviceId);
+    },
+  });
+  const { data: latestId } = useQuery({
+    queryKey: ["services"],
+    queryFn: () => fetchServices({}),
+    select(data) {
+      return data.reduce((_, currValue) => {
+        return +currValue.id;
+      }, 0);
+    },
+  });
   const { data: service } = useQuery({
     queryKey: ["services", serviceId],
     queryFn: () => fetchServiceById(serviceId as string),
@@ -248,6 +264,8 @@ const ServiceFormModal = () => {
       title="Edit Service"
       open={open}
       footer={null}
+      width="100%"
+      className="max-w-[700px]"
       onCancel={handleCancel}
     >
       <Form
@@ -282,6 +300,24 @@ const ServiceFormModal = () => {
         </Flex>
         <Flex gap={16}>
           <Form.Item
+            name="id"
+            label="Custom ID"
+            className="w-full"
+            initialValue={Number(latestId) + 1}
+            rules={[
+              () => ({
+                validator(_, value) {
+                  if (servicesIds?.includes(String(value))) {
+                    return Promise.reject(new Error("ID already used"));
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <InputNumber className="w-full" />
+          </Form.Item>
+          <Form.Item
             name="name"
             label="Name"
             className="w-full"
@@ -289,6 +325,8 @@ const ServiceFormModal = () => {
           >
             <Input />
           </Form.Item>
+        </Flex>
+        <Flex>
           <Form.Item
             name="serviceProviderId"
             label="Service provider"
