@@ -32,31 +32,27 @@ const PetDetails = () => {
     >
       <Space direction="vertical">
         <Space direction="vertical">
-          <Typography.Text style={{ fontWeight: 700 }}>
-            Pet Behaviors
-          </Typography.Text>
+          <Typography.Text className="font-bold">Pet Behaviors</Typography.Text>
           <Divider style={{ margin: 0 }} />
           <Flex wrap gap={8}>
             {pet?.predefinedBehaviors?.map((behavior) => (
-              <Tag color="blue" style={{ textTransform: "capitalize" }}>
+              <Tag color="blue" className="capitalize text-wrap">
                 {String(behavior).split("_").join(" ").toLowerCase()}
               </Tag>
             ))}
             {pet?.customBehaviors?.map((behavior) => (
-              <Tag color="blue" style={{ textTransform: "capitalize" }}>
+              <Tag color="blue" className="capitalize text-wrap">
                 {String(behavior).split("_").join(" ").toLowerCase()}
               </Tag>
             ))}
           </Flex>
         </Space>
         <Space direction="vertical">
-          <Typography.Text style={{ fontWeight: 700 }}>
-            Questions
-          </Typography.Text>
+          <Typography.Text className="font-bold">Questions</Typography.Text>
           <Divider style={{ margin: 0 }} />
           <Space size={0} direction="vertical">
             <Typography.Text>Has medical condition?</Typography.Text>
-            <Typography.Text style={{ fontWeight: 600 }}>
+            <Typography.Text className="font-semibold">
               {pet?.hasMedicalCondition ? (
                 <Tag color="green">Yes</Tag>
               ) : (
@@ -66,7 +62,7 @@ const PetDetails = () => {
           </Space>
           <Space size={0} direction="vertical">
             <Typography.Text>Is microchipped?</Typography.Text>
-            <Typography.Text style={{ fontWeight: 600 }}>
+            <Typography.Text className="font-semibold">
               {pet?.isMicrochipped ? (
                 <Tag color="green">Yes</Tag>
               ) : (
@@ -76,7 +72,7 @@ const PetDetails = () => {
             {pet?.microchipNumber && (
               <Space>
                 <Typography.Text>Microchip number:</Typography.Text>
-                <Typography.Text style={{ fontWeight: 600 }}>
+                <Typography.Text className="font-semibold">
                   {pet?.microchipNumber}
                 </Typography.Text>
               </Space>
@@ -84,7 +80,7 @@ const PetDetails = () => {
           </Space>
           <Space size={0} direction="vertical">
             <Typography.Text>Is neutered?</Typography.Text>
-            <Typography.Text style={{ fontWeight: 600 }}>
+            <Typography.Text className="font-semibold">
               {pet?.isNeutered ? (
                 <Tag color="green">Yes</Tag>
               ) : (
@@ -96,13 +92,15 @@ const PetDetails = () => {
             questionAnswers?.map((qa) => (
               <Space size={0} direction="vertical">
                 <Typography.Text>{qa.question.questionString}</Typography.Text>
-                <Typography.Text style={{ fontWeight: 600 }}>
+                <Typography.Text className="font-semibold">
                   {qa.answer === "true" ? (
                     <Tag color="green">Yes</Tag>
                   ) : qa.answer === "false" ? (
                     <Tag color="red">No</Tag>
                   ) : (
-                    <Tag color="blue">{qa.answer}</Tag>
+                    <Tag color="blue" className="text-wrap">
+                      {qa.answer}
+                    </Tag>
                   )}
                 </Typography.Text>
               </Space>
