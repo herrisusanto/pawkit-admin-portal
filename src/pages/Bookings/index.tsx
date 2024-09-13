@@ -137,10 +137,32 @@ export function Bookings() {
       dataIndex: "startDateTime",
       key: "startDateTime",
       width: 200,
+      sorter: (a, b) =>
+        dayjs(a.startDateTime).unix() - dayjs(b.startDateTime).unix(),
       render: (startDateTime) => {
         return startDateTime
           ? dayjs(startDateTime).format("DD/MM/YYYY HH:mm")
           : "";
+      },
+    },
+    {
+      title: "Created at",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 200,
+      sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+      render: (value) => {
+        return value ? dayjs(value).format("DD/MM/YYYY HH:mm") : "";
+      },
+    },
+    {
+      title: "Updated at",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      width: 200,
+      sorter: (a, b) => dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
+      render: (value) => {
+        return value ? dayjs(value).format("DD/MM/YYYY HH:mm") : "";
       },
     },
     {
