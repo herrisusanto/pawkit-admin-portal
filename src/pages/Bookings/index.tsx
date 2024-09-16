@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import {
   Button,
+  Card,
   Col,
   DatePicker,
   Flex,
   Form,
   FormProps,
+  Input,
   Modal,
   Popconfirm,
   Row,
@@ -44,6 +46,7 @@ import { getUser } from "../../api/admin";
 import { useSetAtom } from "jotai";
 import { petDetailsAtom } from "../../views/PetDetails/state";
 import { bookingStatusTransitions } from "../../api/validation";
+import debounce from "debounce";
 
 export function Bookings() {
   const {
@@ -58,10 +61,11 @@ export function Bookings() {
   const [bookingStatus, setBookingStatus] = useState<BookingStatus | null>(
     null
   );
+  const [filter, setFilter] = useState({ id: null });
   const setPetDetails = useSetAtom(petDetailsAtom);
   const { data: bookings, isPending } = useQuery({
-    queryKey: ["bookings"],
-    queryFn: () => fetchBookings({}),
+    queryKey: ["bookings", filter],
+    queryFn: () => fetchBookings(filter),
     select(data) {
       return data.sort(
         (a, b) => dayjs(b.updatedAt).unix() - dayjs(a.updatedAt).unix()
@@ -337,18 +341,33 @@ export function Bookings() {
     }));
   };
 
+  const handleSearch: FormProps["onValuesChange"] = debounce((_, values) => {
+    setFilter(values);
+  }, 500);
+
   return (
-    <>
+    <div className="py-4">
       {contextHolder}
-      <Flex justify="end" className="mt-4">
-        <Button
-          onClick={() => navigate("/bookings/new")}
-          type="primary"
-          icon={<PlusOutlined />}
-        >
-          Create Booking
-        </Button>
-      </Flex>
+      <Card classNames={{ body: "!py-0" }}>
+        <Flex justify="space-between" align="center">
+          <Form
+            layout="vertical"
+            onValuesChange={handleSearch}
+            className="pt-4"
+          >
+            <Form.Item name="id" label="Booking ID">
+              <Input />
+            </Form.Item>
+          </Form>
+          <Button
+            onClick={() => navigate("/bookings/new")}
+            type="primary"
+            icon={<PlusOutlined />}
+          >
+            Create Booking
+          </Button>
+        </Flex>
+      </Card>
       <div
         style={{
           margin: "16px 0",
@@ -419,7 +438,7 @@ export function Bookings() {
           </Flex>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 }
 

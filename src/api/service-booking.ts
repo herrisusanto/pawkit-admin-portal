@@ -650,7 +650,11 @@ export const fetchTimeSlot = async (
   }
 };
 
-export const fetchBookings = async (variables: ListBookingsQueryVariables) => {
+export const fetchBookings = async ({ id }: { id: string | null }) => {
+  const variables: ListBookingsQueryVariables = {};
+  if (id) {
+    variables["filter"] = { id: { eq: id } };
+  }
   try {
     const result: any = await graphqlClient.graphql({
       query: customListBookings,
