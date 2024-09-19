@@ -67,8 +67,8 @@ const router = createBrowserRouter([
       {
         path: "services/:serviceId",
         lazy: async () => {
-          const { ServiceTimeslots } = await import("./pages/ServiceTimeslots");
-          return { Component: ServiceTimeslots };
+          const { ServiceDetails } = await import("./pages/ServiceDetails");
+          return { Component: ServiceDetails };
         },
       },
     ],

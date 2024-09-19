@@ -1,5 +1,4 @@
 import {
-  Breadcrumb,
   Button,
   DatePicker,
   Flex,
@@ -9,7 +8,7 @@ import {
   TableProps,
   Tag,
 } from "antd";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { TimeSlot } from "../../api/graphql/API";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchTimeSlots, removeTimeSlot } from "../../api/service-booking";
@@ -20,7 +19,6 @@ import { timeslotFormModalAtom } from "../../views/TimeslotFormModal/state";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 export const ServiceTimeslots = () => {
-  const navigate = useNavigate();
   const { serviceId } = useParams();
   const setTimeslotFormModal = useSetAtom(timeslotFormModalAtom);
   const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
@@ -115,20 +113,8 @@ export const ServiceTimeslots = () => {
   ];
 
   return (
-    <div className="p-4">
-      <Breadcrumb
-        items={[
-          {
-            title: "Services",
-            className: "hover:cursor-pointer",
-            onClick: () => {
-              navigate("/services");
-            },
-          },
-          { title: "Timeslots" },
-        ]}
-      />
-      <Flex className="py-4" justify="space-between">
+    <Flex vertical gap={16}>
+      <Flex justify="space-between">
         <DatePicker defaultValue={date} onChange={setDate} />
         <Button
           type="primary"
@@ -144,6 +130,8 @@ export const ServiceTimeslots = () => {
         </Button>
       </Flex>
       <Table columns={columns} dataSource={timeslots} />
-    </div>
+    </Flex>
   );
 };
+
+export default ServiceTimeslots;
