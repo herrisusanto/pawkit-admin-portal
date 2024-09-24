@@ -222,27 +222,18 @@ const ServiceFormModal = () => {
         <Form.Item
           name={[name, "additionalDuration"]}
           label="Additional duration"
-          initialValue={0}
         >
           <InputNumber min={0} addonAfter="Minutes" />
         </Form.Item>
-        <Form.Item name={[name, "amount"]} label="Amount" initialValue={0}>
+        <Form.Item name={[name, "amount"]} label="Amount">
           <InputNumber step={0.01} min={0} addonAfter="SGD" />
         </Form.Item>
       </Flex>
       <Flex gap={16}>
-        <Form.Item
-          name={[name, "minWeight"]}
-          label="Min weight"
-          initialValue={0}
-        >
+        <Form.Item name={[name, "minWeight"]} label="Min weight">
           <InputNumber step={0.01} min={0} addonAfter="KG" />
         </Form.Item>
-        <Form.Item
-          name={[name, "maxWeight"]}
-          label="Max weight"
-          initialValue={0}
-        >
+        <Form.Item name={[name, "maxWeight"]} label="Max weight">
           <InputNumber step={0.01} min={0} addonAfter="KG" />
         </Form.Item>
       </Flex>

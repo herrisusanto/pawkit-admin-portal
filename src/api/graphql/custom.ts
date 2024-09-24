@@ -504,6 +504,54 @@ export const customServiceById = /* GraphQL */ `
         requiredQuestionIds
         createdAt
         updatedAt
+        xsWeightPrice {
+          additionalDuration
+          additionalDurationUnit
+          amount
+          minWeight
+          maxWeight
+          weightUnit
+        }
+        sWeightPrice {
+          additionalDuration
+          additionalDurationUnit
+          amount
+          minWeight
+          maxWeight
+          weightUnit
+        }
+        mWeightPrice {
+          additionalDuration
+          additionalDurationUnit
+          amount
+          minWeight
+          maxWeight
+          weightUnit
+        }
+        lWeightPrice {
+          additionalDuration
+          additionalDurationUnit
+          amount
+          minWeight
+          maxWeight
+          weightUnit
+        }
+        xlWeightPrice {
+          additionalDuration
+          additionalDurationUnit
+          amount
+          minWeight
+          maxWeight
+          weightUnit
+        }
+        xxlWeightPrice {
+          additionalDuration
+          additionalDurationUnit
+          amount
+          minWeight
+          maxWeight
+          weightUnit
+        }
         __typename
       }
       nextToken
